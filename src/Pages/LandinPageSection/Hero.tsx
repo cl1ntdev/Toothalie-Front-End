@@ -1,4 +1,5 @@
 import React from "react";
+import { Link }  from "react-router-dom"
 
 export default function HeroSection() {
   return (
@@ -18,7 +19,7 @@ export default function HeroSection() {
         </nav>
         
         <div className="flex items-center space-x-4">
-          <a href="#" className="text-sm hover:text-blue-400 transition-colors">Log in</a>
+          <Link to="/login" className="text-sm hover:text-blue-400 transition-colors">Log in</Link>
           <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm transition-colors hidden sm:block">
             Sign up
           </button>
