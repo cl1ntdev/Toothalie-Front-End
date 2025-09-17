@@ -21,7 +21,7 @@ export function LoginForm({
   }
   
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -62,6 +62,6 @@ export function LoginForm({
         
         <Link to="/register" className="underline underline-offset-4">Sign up</Link>
       </div>
-    </form>
+    </div>
   )
 }
