@@ -6,7 +6,7 @@ export default function LPage_Section1() {
       <div className="bg-gray-900 text-white min-h-screen p-6">
         
         <div className="flex justify-center items-center mb-20">
-          <div className="text-center mt-130">
+          <div className="text-center mt-40">
             <h1 className="text-4xl font-bold">Everything you need</h1>
             <h3 className="text-xl text-blue-400">No server? No problem.</h3>
             <p className="text-gray-400 mt-2">
@@ -28,24 +28,21 @@ export default function LPage_Section1() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8 mb-90">
           <div className="bg-gray-800 p-4 rounded">
-            <span className="text-blue-400">🌱</span>
+            <span className="text-blue-400">Feature Icon</span>
             <p className="text-gray-400 mt-2">
-              Push to deploy. Lorem ipsum, dolor sit amet consectetur adipiscing
-              elit aute id magna.
+              Feature Information. Lorem ipsum
             </p>
           </div>
           <div className="bg-gray-800 p-4 rounded">
-            <span className="text-blue-400">🔒</span>
+            <span className="text-blue-400">Feature Icon</span>
             <p className="text-gray-400 mt-2">
-              SSL certificates. Anim ut id magna aliqua ad ad non deserunt sunt.
-              Qui nisi lorem cupidatat commodo.
+              Feature Information. Lorem ipsum
             </p>
           </div>
           <div className="bg-gray-800 p-4 rounded">
-            <span className="text-blue-400">📡</span>
+            <span className="text-blue-400">Feature Icon</span>
             <p className="text-gray-400 mt-2">
-              Simple queues. Ac tincidunt sapien vehicula erat auctor
-              pellentesque rhoncus.
+              Feature Information
             </p>
           </div>
           <div className="bg-gray-800 p-4 rounded">
@@ -56,17 +53,15 @@ export default function LPage_Section1() {
             </p>
           </div>
           <div className="bg-gray-800 p-4 rounded">
-            <span className="text-blue-400">🤖</span>
+            <span className="text-blue-400">Feature Icon</span>
             <p className="text-gray-400 mt-2">
-              Powerful API. Anim ut id magna aliqua ad ad non deserunt sunt. Qui
-              nisi lorem cupidatat commodo.
+              Feature Information
             </p>
           </div>
           <div className="bg-gray-800 p-4 rounded">
-            <span className="text-blue-400">💾</span>
+            <span className="text-blue-400">Feature Icon</span>
             <p className="text-gray-400 mt-2">
-              Database backups. Ac incididunt sapien vehicula erat auctor
-              pellentesque rhoncus.
+              Feauture Information
             </p>
           </div>
         </div>
