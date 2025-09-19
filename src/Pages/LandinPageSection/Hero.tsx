@@ -8,14 +8,14 @@ export default function HeroSection() {
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center">
           <span className="text-blue-400 text-3xl mr-2">∼</span>
-          <span className="font-semibold text-lg">YourBrand</span>
+          <span className="font-semibold text-lg">Toothalie</span>
         </div>
         
         <nav className="hidden md:flex items-center space-x-6 text-sm">
           <a href="#" className="hover:text-blue-400 transition-colors">Product</a>
-          <a href="#" className="hover:text-blue-400 transition-colors">Features</a>
-          <a href="#" className="hover:text-blue-400 transition-colors">Marketplace</a>
+          <a href="#" className="hover:text-blue-400 transition-colors">About</a>
           <a href="#" className="hover:text-blue-400 transition-colors">Company</a>
+          <a href="#" className="hover:text-blue-400 transition-colors">Contact</a>
         </nav>
         
         <div className="flex items-center space-x-4">
@@ -60,13 +60,13 @@ export default function HeroSection() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-medium transition-colors flex items-center">
-              Get started
+              Book Now!
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </button>
             <button className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-md font-medium transition-colors flex items-center">
-              Live demo
+              Learn More
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
@@ -77,7 +77,7 @@ export default function HeroSection() {
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-400" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            JavaScript support
+            Lorem ipsum
             <a href="#" className="ml-2 text-blue-400 hover:text-blue-300 transition-colors flex items-center">
               Learn more
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
