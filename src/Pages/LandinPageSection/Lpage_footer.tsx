@@ -70,29 +70,30 @@ export default function Lpage_footer({
   return (
     <footer
       className={cn(
-        // light and dark backgrounds
-        "w-full px-4 bg-gray-900 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
+        "w-full px-4 bg-gray-900 text-gray-200", // dark base
         className
       )}
     >
-      <div className="max-w-container mx-auto bg-gray-600">
-        <Footer>
+      <div className="max-w-container mx-auto">
+        <Footer className="bg-gray-900">
           <FooterContent>
-            <FooterColumn className="bg-gray col-span-2 sm:col-span-3 md:col-span-1">
+            {/* Logo / name */}
+            <FooterColumn className="col-span-2 sm:col-span-3 md:col-span-1">
               <div className="flex items-center gap-2">
                 {logo}
                 <h3 className="text-xl font-bold">{name}</h3>
               </div>
             </FooterColumn>
 
+            {/* Footer columns */}
             {columns.map((column, index) => (
               <FooterColumn key={index}>
-                <h3 className=" text-2xl pt-1 font-semibold">{column.title}</h3>
+                <h3 className="text-2xl pt-1 font-semibold">{column.title}</h3>
                 {column.links.map((link, linkIndex) => (
                   <a
                     key={linkIndex}
                     href={link.href}
-                    className="text-lg text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                    className="text-lg text-gray-400 hover:text-white transition-colors"
                   >
                     {link.text}
                   </a>
@@ -101,14 +102,15 @@ export default function Lpage_footer({
             ))}
           </FooterContent>
 
-          <FooterBottom className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+          {/* Bottom bar */}
+          <FooterBottom className="border-t border-gray-700 pt-4 mt-4 text-gray-400">
             <div className="text-sm">{copyright}</div>
             <div className="flex items-center gap-4 text-sm">
               {policies.map((policy, index) => (
                 <a
                   key={index}
                   href={policy.href}
-                  className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+                  className="hover:text-white transition-colors"
                 >
                   {policy.text}
                 </a>
