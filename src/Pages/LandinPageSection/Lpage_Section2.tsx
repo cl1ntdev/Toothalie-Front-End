@@ -2,26 +2,72 @@ import React from 'react'
 
 export default function LPage_Section2() {
   return (
-    <section className="bg-gradient-to-br from-gray-900 to-indigo-900 py-40">
-      <div className="max-w-fit  bg-gray-800  shadow-lg grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        {/* IMAGE */}
-        <div className="flex justify-center">
+    <>
+      <div className="bg-gray-900 text-white min-h-screen p-6">
+        
+        <div className="flex justify-center items-center mb-20">
+          <div className="text-center mt-40">
+            <h1 className="text-4xl font-bold">Everything you need</h1>
+            <h3 className="text-xl text-blue-400">No server? No problem.</h3>
+            <p className="text-gray-400 mt-2">
+              Lorem ipsum, dolor sit amet consectetur adipiscing elit. Maiores
+              impedit perferendis suscipit eaque, iste dolor cupiditate
+              blanditiis.
+            </p>
+          </div>
+        </div>
+
+        {/* IMAGE HERE TO SHOW THE APPLICATION */}
+        <div className="flex h-280 w-full justify-center my-8 bg-blue-500 ">
           <img
-            src="https://via.placeholder.com/400"
-            alt="CEO"
-            className="w-80 h-80 md:w-120 md:h-160 rounded-2xl object-cover border-4 border-gray-700 shadow-xl bg-blue-400"
+            src="https://via.placeholder.com/600x400" // sample image
+            alt="App preview"
+            className="w-full max-w-3xl h-auto rounded-lg shadow-lg"
           />
         </div>
 
-        {/* TEXT */}
-        <div className="flex flex-col text-center md:text-left">
-          <p className="text-lg md:text-xl text-gray-200 italic leading-relaxed">
-            “Gravida quam mi erat tortor neque molestie. Auctor aliquet at porttitor a enim nunc suscipit tincidunt nunc. Et non lorem tortor posuere. Nunc eu scelerisque interdum eget tellus non nibh scelerisque bibendum.”
-          </p>
-          <h4 className="mt-6 text-2xl font-bold text-white">Judith Black</h4>
-          <span className="text-gray-400 text-lg">CEO of Tuple</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8 mb-60">
+          <div className="p-4 rounded">
+            <span className="text-blue-400">Feature Icon</span>
+            <div>  
+              <p className="text-white-400 mt-2 text-xl">
+                Feature Information. Lorem ipsum
+              </p>   
+            </div>
+           
+          </div>
+          <div className="p-4 rounded">
+            <span className="text-blue-400">Feature Icon</span>
+            <p className="text-white-400 mt-2 text-xl">
+              Feature Information. Lorem ipsum
+            </p>
+          </div>
+          <div className="p-4 rounded">
+            <span className="text-blue-400">Feature Icon</span>
+            <p className="text-white-400 mt-2 text-xl">
+              Feature Information
+            </p>
+          </div>
+          <div className="p-4 rounded">
+            <span className="text-blue-400">Feature Icon</span>
+            <p className="text-white-400 mt-2 text-xl">
+              Feature Information
+            </p>
+          </div>
+          <div className="p-4 rounded">
+            <span className="text-blue-400">Feature Icon</span>
+            <p className="text-white-400 mt-2 text-xl">
+              Feature Information
+            </p>
+          </div>
+          <div className="p-4 rounded">
+            <span className="text-blue-400">Feature Icon</span>
+            <p className="text-white-400 mt-2 text-xl">
+              Feauture Information
+            </p>
+          </div>
         </div>
       </div>
-    </section>
+    </>
   )
 }

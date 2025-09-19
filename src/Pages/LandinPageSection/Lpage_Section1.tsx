@@ -1,73 +1,100 @@
-import React from 'react'
+import React from "react";
+import { Link }  from "react-router-dom"
 
 export default function LPage_Section1() {
   return (
-    <>
-      <div className="bg-gray-900 text-white min-h-screen p-6">
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col justify-between">
+      {/* Header */}
+      <header className="container mx-auto px-4 py-6 flex justify-between items-center">
+        <div className="flex items-center">
+          <span className="text-blue-400 text-3xl mr-2">∼</span>
+          <span className="font-semibold text-2xl">Toothalie</span>
+        </div>
         
-        <div className="flex justify-center items-center mb-20">
-          <div className="text-center mt-40">
-            <h1 className="text-4xl font-bold">Everything you need</h1>
-            <h3 className="text-xl text-blue-400">No server? No problem.</h3>
-            <p className="text-gray-400 mt-2">
-              Lorem ipsum, dolor sit amet consectetur adipiscing elit. Maiores
-              impedit perferendis suscipit eaque, iste dolor cupiditate
-              blanditiis.
-            </p>
-          </div>
+        <nav className="hidden md:flex items-center space-x-6 text-sm">
+          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">Product</a>
+          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">About</a>
+          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">Company</a>
+          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">Contact</a>
+        </nav>
+        
+        <div className="flex items-center space-x-4">
+          <Link to="/login" className="text-2xl hover:text-blue-400 transition-colors">Log in</Link>
+          <button className=" bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-2xl transition-colors hidden sm:block">
+            Sign up
+          </button>
+          
+          {/* <><><><><><><><><><><><><><><><><><><><><><><><><><><> */}
+          {/*  THIS CONTENT HERE IS STILL UNCLICKABLE IN MOBILE VIEW */}
+          {/* <><><><><><><><><><><><><><><><><><><><><><><><><><><> */}
+          
+          
+          <button className="md:hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
+      </header>
 
-        {/* IMAGE HERE TO SHOW THE APPLICATION */}
-        <div className="flex h-280 w-full justify-center my-8 bg-blue-500 ">
-          <img
-            src="https://via.placeholder.com/600x400" // sample image
-            alt="App preview"
-            className="w-full max-w-3xl h-auto rounded-lg shadow-lg"
-          />
-        </div>
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-10 md:py-20 flex flex-col items-center justify-center flex-grow">
+        <section className="text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center bg-blue-900/30 text-blue-300 px-4 py-2 rounded-full text-xs md:text-sm mb-6 md:mb-8">
+            Announcing our next round of funding
+            <a href="#" className="ml-2 font-medium flex items-center hover:text-blue-100 transition-colors">
+              Read more
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </a>
+          </div>
+          
+          <h1 className="
+              text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem]
+              font-bold mb-6 leading-tight
+              bg-clip-text text-transparent
+              bg-gradient-to-r from-blue-400 to-cyan-400">
+            Data to enrich your online business
+          </h1>
+          
+          <p className="
+            text-xl md:text-xl lg:text-xxl  /* bumped up sizes */
+            text-slate-300 mb-10 
+            max-w-3xl mx-auto leading-relaxed">
+            Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat.
+          </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8 mb-60">
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <div>  
-              <p className="text-white-400 mt-2 text-xl">
-                Feature Information. Lorem ipsum
-              </p>   
-            </div>
-           
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-medium transition-colors flex items-center">
+              Book Now!
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+            <button className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-md font-medium transition-colors flex items-center">
+              Learn More
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </button>
           </div>
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-white-400 mt-2 text-xl">
-              Feature Information. Lorem ipsum
-            </p>
+          
+          <div className="inline-flex items-center text-slate-400 text-sm">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            Lorem ipsum
+            <a href="#" className="ml-2 text-blue-400 hover:text-blue-300 transition-colors flex items-center">
+              Learn more
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </a>
           </div>
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-white-400 mt-2 text-xl">
-              Feature Information
-            </p>
-          </div>
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-white-400 mt-2 text-xl">
-              Feature Information
-            </p>
-          </div>
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-white-400 mt-2 text-xl">
-              Feature Information
-            </p>
-          </div>
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-white-400 mt-2 text-xl">
-              Feauture Information
-            </p>
-          </div>
-        </div>
-      </div>
-    </>
-  )
+        </section>
+      </main>
+    </div>
+  );
 }
