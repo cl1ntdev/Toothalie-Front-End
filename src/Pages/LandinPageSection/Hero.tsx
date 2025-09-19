@@ -8,19 +8,19 @@ export default function HeroSection() {
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center">
           <span className="text-blue-400 text-3xl mr-2">∼</span>
-          <span className="font-semibold text-lg">Toothalie</span>
+          <span className="font-semibold text-2xl">Toothalie</span>
         </div>
         
         <nav className="hidden md:flex items-center space-x-6 text-sm">
-          <a href="#" className="hover:text-blue-400 transition-colors">Product</a>
-          <a href="#" className="hover:text-blue-400 transition-colors">About</a>
-          <a href="#" className="hover:text-blue-400 transition-colors">Company</a>
-          <a href="#" className="hover:text-blue-400 transition-colors">Contact</a>
+          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">Product</a>
+          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">About</a>
+          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">Company</a>
+          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">Contact</a>
         </nav>
         
         <div className="flex items-center space-x-4">
-          <Link to="/login" className="text-sm hover:text-blue-400 transition-colors">Log in</Link>
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm transition-colors hidden sm:block">
+          <Link to="/login" className="text-2xl hover:text-blue-400 transition-colors">Log in</Link>
+          <button className=" bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-2xl transition-colors hidden sm:block">
             Sign up
           </button>
           
@@ -50,13 +50,21 @@ export default function HeroSection() {
             </a>
           </div>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400">
+          <h1 className="
+              text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem]
+              font-bold mb-6 leading-tight
+              bg-clip-text text-transparent
+              bg-gradient-to-r from-blue-400 to-cyan-400">
             Data to enrich your online business
           </h1>
           
-          <p className="text-lg md:text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="
+            text-xl md:text-xl lg:text-xxl  /* bumped up sizes */
+            text-slate-300 mb-10 
+            max-w-3xl mx-auto leading-relaxed">
             Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat.
           </p>
+
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-medium transition-colors flex items-center">
