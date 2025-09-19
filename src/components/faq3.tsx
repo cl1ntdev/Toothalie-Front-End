@@ -1,9 +1,4 @@
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import React, { useState } from "react";
 
 interface FaqItem {
   id: string;
@@ -70,33 +65,61 @@ const Faq3 = ({
   heading = "Frequently Asked Questions",
   description = "Find answers to common questions about our products. Can't find what you're looking for? Contact our support team.",
   items = faqItems,
-}: Faq3Props) => {
+}: Partial<Faq3Props>) => {
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const toggleItem = (id: string) => {
+    setOpenId((prev) => (prev === id ? null : id));
+  };
+
   return (
-    <section className="py-24 bg-gray-900 text-gray-200">
-      <div className="container mx-auto max-w-4xl px-4">
+    <section className="py-24 bg-gray-900 text-gray-200 w-full">
+      <div className="container mx-auto max-w-4xl px-4 ">
         {/* Heading */}
         <div className="text-center space-y-4 mb-12">
           <h2 className="text-3xl font-bold md:text-4xl text-white">{heading}</h2>
           <p className="text-gray-400 md:text-lg">{description}</p>
         </div>
 
-        {/* Accordion */}
-        <Accordion type="single" collapsible className="space-y-4">
-          {items.map((item) => (
-            <AccordionItem
-              key={item.id}
-              value={item.id}
-              className="rounded-xl border border-gray-700 bg-gray-800 shadow-sm"
-            >
-              <AccordionTrigger className="px-4 py-3 font-medium text-left text-lg hover:bg-gray-700 rounded-t-xl text-gray-100">
-                {item.question}
-              </AccordionTrigger>
-              <AccordionContent className="px-4 pb-4 text-gray-400">
-                {item.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+        {/* FAQ items */}
+        <div className="space-y-4">
+          {items.map((item) => {
+            const isOpen = openId === item.id;
+            return (
+              <div
+                key={item.id}
+                className=" overflow-hidden w-full border-b pb-5"
+              >
+                <button
+                  onClick={() => toggleItem(item.id)}
+                  className="w-full px-4 py-4 font-semibold text-left flex justify-between items-center hover:bg-gray-700 text-gray-100 border"
+                >
+                  <span className="text-2xl md:text-3xl ">{item.question}</span>
+                  <svg
+                    className={`w-6 h-6 ml-2 transform transition-transform duration-200 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                {isOpen && (
+                  <div className="px-4 pb-4 text-xl md:text-2xl text-gray-300 leading-relaxed">
+                    {item.answer}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
