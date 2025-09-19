@@ -26,41 +26,43 @@ export default function LPage_Section1() {
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8 mb-90">
-          <div className="bg-gray-800 p-4 rounded">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8 mb-60">
+          <div className="p-4 rounded">
             <span className="text-blue-400">Feature Icon</span>
-            <p className="text-gray-400 mt-2">
+            <div>  
+              <p className="text-white-400 mt-2 text-xl">
+                Feature Information. Lorem ipsum
+              </p>   
+            </div>
+           
+          </div>
+          <div className="p-4 rounded">
+            <span className="text-blue-400">Feature Icon</span>
+            <p className="text-white-400 mt-2 text-xl">
               Feature Information. Lorem ipsum
             </p>
           </div>
-          <div className="bg-gray-800 p-4 rounded">
+          <div className="p-4 rounded">
             <span className="text-blue-400">Feature Icon</span>
-            <p className="text-gray-400 mt-2">
-              Feature Information. Lorem ipsum
-            </p>
-          </div>
-          <div className="bg-gray-800 p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-gray-400 mt-2">
+            <p className="text-white-400 mt-2 text-xl">
               Feature Information
             </p>
           </div>
-          <div className="bg-gray-800 p-4 rounded">
-            <span className="text-blue-400">🔐</span>
-            <p className="text-gray-400 mt-2">
-              Advanced security. Lorem ipsum, dolor sit amet consectetur
-              adipiscing elit aute id magna.
-            </p>
-          </div>
-          <div className="bg-gray-800 p-4 rounded">
+          <div className="p-4 rounded">
             <span className="text-blue-400">Feature Icon</span>
-            <p className="text-gray-400 mt-2">
+            <p className="text-white-400 mt-2 text-xl">
               Feature Information
             </p>
           </div>
-          <div className="bg-gray-800 p-4 rounded">
+          <div className="p-4 rounded">
             <span className="text-blue-400">Feature Icon</span>
-            <p className="text-gray-400 mt-2">
+            <p className="text-white-400 mt-2 text-xl">
+              Feature Information
+            </p>
+          </div>
+          <div className="p-4 rounded">
+            <span className="text-blue-400">Feature Icon</span>
+            <p className="text-white-400 mt-2 text-xl">
               Feauture Information
             </p>
           </div>
