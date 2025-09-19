@@ -3,13 +3,13 @@ import React from 'react'
 export default function LPage_Section2() {
   return (
     <section className="bg-gradient-to-br from-gray-900 to-indigo-900 py-40">
-      <div className="max-w-fit  bg-gray-800  shadow-lg p-8 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div className="max-w-fit  bg-gray-800  shadow-lg grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
         {/* IMAGE */}
         <div className="flex justify-center">
           <img
             src="https://via.placeholder.com/400"
             alt="CEO"
-            className="w-80 h-80 md:w-120 md:h-140 rounded-2xl object-cover border-4 border-gray-700 shadow-xl bg-blue-400"
+            className="w-80 h-80 md:w-120 md:h-160 rounded-2xl object-cover border-4 border-gray-700 shadow-xl bg-blue-400"
           />
         </div>
 
