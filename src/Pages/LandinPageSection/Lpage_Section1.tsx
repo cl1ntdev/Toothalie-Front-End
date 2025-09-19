@@ -4,8 +4,9 @@ export default function LPage_Section1() {
   return (
     <>
       <div className="bg-gray-900 text-white min-h-screen p-6">
-        <div className="flex justify-between items-center mb-8">
-          <div className="text-left">
+        
+        <div className="flex justify-center items-center mb-20">
+          <div className="text-center mt-130">
             <h1 className="text-4xl font-bold">Everything you need</h1>
             <h3 className="text-xl text-blue-400">No server? No problem.</h3>
             <p className="text-gray-400 mt-2">
@@ -14,13 +15,10 @@ export default function LPage_Section1() {
               blanditiis.
             </p>
           </div>
-          <button className="bg-purple-600 text-white px-4 py-2 rounded">
-            New project
-          </button>
         </div>
 
         {/* IMAGE HERE TO SHOW THE APPLICATION */}
-        <div className="flex h-120 w-full justify-center my-8 bg-blue-500">
+        <div className="flex h-280 w-full justify-center my-8 bg-blue-500 ">
           <img
             src="https://via.placeholder.com/600x400" // sample image
             alt="App preview"
@@ -28,7 +26,7 @@ export default function LPage_Section1() {
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8 mb-90">
           <div className="bg-gray-800 p-4 rounded">
             <span className="text-blue-400">🌱</span>
             <p className="text-gray-400 mt-2">
