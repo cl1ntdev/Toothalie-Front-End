@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 interface FaqItem {
   id: string;
   question: string;
@@ -73,55 +73,49 @@ const Faq3 = ({
   };
 
   return (
-    <section className="py-24 bg-gray-900 text-gray-200 w-full">
-      <div className="container mx-auto max-w-4xl px-4 ">
-        {/* Heading */}
-        <div className="text-center space-y-4 mb-12">
-          <h2 className="text-3xl font-bold md:text-4xl text-white">{heading}</h2>
-          <p className="text-gray-400 md:text-lg">{description}</p>
-        </div>
-
-        {/* FAQ items */}
-        <div className="space-y-4">
-          {items.map((item) => {
-            const isOpen = openId === item.id;
-            return (
-              <div
-                key={item.id}
-                className=" overflow-hidden w-full border-b pb-5"
-              >
-                <button
-                  onClick={() => toggleItem(item.id)}
-                  className="w-full px-4 py-4 font-semibold text-left flex justify-between items-center hover:bg-gray-700 text-gray-100 border"
-                >
-                  <span className="text-2xl md:text-3xl ">{item.question}</span>
-                  <svg
-                    className={`w-6 h-6 ml-2 transform transition-transform duration-200 ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+    <section className="py-24 bg-gray-900 text-gray-200 w-full font-poppins">
+          <div className="container mx-auto max-w-4xl px-4">
+            {/* Heading */}
+            <div className="text-center space-y-4 mb-12">
+              <h2 className="text-3xl md:text-4xl font-ceramon font-bold text-white">
+                {heading}
+              </h2>
+              <p className="text-gray-400 md:text-lg">{description}</p>
+            </div>
+    
+            {/* FAQ items */}
+            <div className="space-y-6">
+              {items.map((item) => {
+                const isOpen = openId === item.id;
+                return (
+                  <div
+                    key={item.id}
+                    className="overflow-hidden w-full bg-gray-800 rounded-2xl shadow-md transition hover:shadow-lg"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-                {isOpen && (
-                  <div className="px-4 pb-4 text-xl md:text-2xl text-gray-300 leading-relaxed">
-                    {item.answer}
+                    <button
+                      onClick={() => toggleItem(item.id)}
+                      className="w-full px-6 py-5 font-semibold text-left flex justify-between items-center hover:bg-gray-700/60 transition-colors rounded-2xl"
+                    >
+                      <span className="text-lg md:text-xl">{item.question}</span>
+                      <ChevronDownIcon
+                        className={`w-6 h-6 ml-3 transform transition-transform duration-300 ${
+                          isOpen ? 'rotate-180' : ''
+                        }`}
+                      />
+                    </button>
+                    <div
+                      className={`px-6 pb-5 text-base md:text-lg text-gray-300 leading-relaxed transition-all duration-300 ${
+                        isOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+                      } overflow-hidden`}
+                    >
+                      {item.answer}
+                    </div>
                   </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
+                );
+              })}
+            </div>
+          </div>
+        </section>
   );
 };
 
