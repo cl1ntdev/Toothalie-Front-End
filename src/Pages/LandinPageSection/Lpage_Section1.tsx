@@ -1,6 +1,6 @@
 import React from "react";
 import dentist from "../../assets/dentist-bg.png";
-import dentist2 from "../../assets/dentist-bg2.png";
+import dentist2 from "../../assets/dentist-bg3.png";
 
 export default function LPage_Section1() {
   return (
