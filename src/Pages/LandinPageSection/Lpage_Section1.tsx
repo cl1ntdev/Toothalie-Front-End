@@ -1,9 +1,14 @@
 import React from "react";
 import { Link }  from "react-router-dom"
-
+import bgLight from '../../assets/bgLight.png'
+import bgDark from '../../assets/bgDark.png'
 export default function LPage_Section1() {
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col justify-between">
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col justify-between
+      bg-cover bg-center h-screen
+      "
+          style={{ backgroundImage: `url(${bgDark})` }}
+    >
       {/* Header */}
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center">
