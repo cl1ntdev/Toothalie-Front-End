@@ -5,6 +5,7 @@ import LPage_Section2 from "./LandinPageSection/Lpage_Section2";
 import LPage_Section3 from "./LandinPageSection/Lpage_Section3";
 import Lpage_faq from "./LandinPageSection/Lpage_faq";
 import Lpage_footer from "./LandinPageSection/Lpage_footer";
+import Footer from "./LandinPageSection/Footer";
 export default function LandingPage(){
   return(
     <>
@@ -14,7 +15,7 @@ export default function LandingPage(){
         <LPage_Section2 />
         <LPage_Section3 />
         <Lpage_faq />
-        <Lpage_footer />
+        <Footer />
       </div>
     </>
   )
