@@ -1,73 +1,94 @@
-import React from 'react'
+import React from 'react';
+import darkBg from '../../assets/bgDark.png'
+import lightBg from '../../assets/bgLight.png'
+import {
+  CalendarDaysIcon,
+  CreditCardIcon,
+  UserGroupIcon,
+  ChartBarIcon,
+  BellAlertIcon,
+  ShieldCheckIcon,
+} from '@heroicons/react/24/outline';
 
 export default function LPage_Section2() {
   return (
-    <>
-      <div className="bg-gray-900 text-white min-h-screen p-6">
-        
-        <div className="flex justify-center items-center mb-20">
-          <div className="text-center mt-40">
-            <h1 className="text-4xl font-bold">Everything you need</h1>
-            <h3 className="text-xl text-blue-400">No server? No problem.</h3>
-            <p className="text-gray-400 mt-2">
-              Lorem ipsum, dolor sit amet consectetur adipiscing elit. Maiores
-              impedit perferendis suscipit eaque, iste dolor cupiditate
-              blanditiis.
-            </p>
-          </div>
-        </div>
-
-        {/* IMAGE HERE TO SHOW THE APPLICATION */}
-        <div className="flex h-280 w-full justify-center my-8 bg-blue-500 ">
-          <img
-            src="https://via.placeholder.com/600x400" // sample image
-            alt="App preview"
-            className="w-full max-w-3xl h-auto rounded-lg shadow-lg"
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-8 mb-60">
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <div>  
-              <p className="text-white-400 mt-2 text-xl">
-                Feature Information. Lorem ipsum
-              </p>   
-            </div>
-           
-          </div>
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-white-400 mt-2 text-xl">
-              Feature Information. Lorem ipsum
-            </p>
-          </div>
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-white-400 mt-2 text-xl">
-              Feature Information
-            </p>
-          </div>
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-white-400 mt-2 text-xl">
-              Feature Information
-            </p>
-          </div>
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-white-400 mt-2 text-xl">
-              Feature Information
-            </p>
-          </div>
-          <div className="p-4 rounded">
-            <span className="text-blue-400">Feature Icon</span>
-            <p className="text-white-400 mt-2 text-xl">
-              Feauture Information
-            </p>
-          </div>
+    <div className="bg-gray-900 text-white px-6 py-16
+      relative min-h-screen flex flex-col justify-between bg-cover bg-center"
+      style={{backgroundImage:`url(${darkBg})`}}
+    >
+      {/* Heading */}
+      <div className="flex justify-center items-center mb-16">
+        <div className="text-center max-w-2xl">
+          <h1 className="font-ceramon text-4xl md:text-5xl font-bold mb-4">Everything you need</h1>
+          <h3 className="font-poppins text-xl text-blue-400 font-medium mb-2">Dental software made simple</h3>
+          <p className="font-poppins text-gray-400">
+            Streamline your dental clinic’s operations — from appointment scheduling to patient billing —
+            with our all-in-one platform.
+          </p>
         </div>
       </div>
-    </>
-  )
+
+      {/* Responsive App Screenshot */}
+      <div className="w-full my-12 px-4">
+        <div className="bg-blue-500 rounded-xl flex justify-center items-center p-4 shadow-xl">
+          <img
+            src="https://via.placeholder.com/900x500"
+            alt="Dental Software preview"
+            className="w-full max-w-5xl h-auto rounded-lg shadow-lg object-contain"
+          />
+        </div>
+      </div>
+
+      {/* Features */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-16">
+        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
+          <CalendarDaysIcon className="h-8 w-8 text-blue-400 mb-3" />
+          <h4 className="font-ceramon text-xl font-semibold mb-2">Appointment Scheduling</h4>
+          <p className="font-poppins text-gray-400">
+            Manage patient bookings, confirmations, and cancellations seamlessly.
+          </p>
+        </div>
+
+        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
+          <CreditCardIcon className="h-8 w-8 text-blue-400 mb-3" />
+          <h4 className="font-ceramon text-xl font-semibold mb-2">Billing & Payments</h4>
+          <p className="font-poppins text-gray-400">
+            Track payments, generate invoices, and simplify insurance claims.
+          </p>
+        </div>
+
+        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
+          <UserGroupIcon className="h-8 w-8 text-blue-400 mb-3" />
+          <h4 className="font-ceramon text-xl font-semibold mb-2">Patient Records</h4>
+          <p className="font-poppins text-gray-400">
+            Store and access patient data, history, and treatment plans securely.
+          </p>
+        </div>
+
+        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
+          <ChartBarIcon className="h-8 w-8 text-blue-400 mb-3" />
+          <h4 className="font-ceramon text-xl font-semibold mb-2">Analytics Dashboard</h4>
+          <p className="font-poppins text-gray-400">
+            Monitor your clinic’s growth with easy-to-read charts and reports.
+          </p>
+        </div>
+
+        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
+          <BellAlertIcon className="h-8 w-8 text-blue-400 mb-3" />
+          <h4 className="font-ceramon text-xl font-semibold mb-2">Automated Reminders</h4>
+          <p className="font-poppins text-gray-400">
+            Reduce no-shows with automated SMS or email appointment reminders.
+          </p>
+        </div>
+
+        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
+          <ShieldCheckIcon className="h-8 w-8 text-blue-400 mb-3" />
+          <h4 className="font-ceramon text-xl font-semibold mb-2">Secure & Compliant</h4>
+          <p className="font-poppins text-gray-400">
+            HIPAA-compliant security keeps your patient data safe.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
