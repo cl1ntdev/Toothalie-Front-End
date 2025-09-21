@@ -22,11 +22,11 @@ export default function NavigationComp() {
 
   return (
     <header
-      className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 
+      className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300
         ${showHeader ? 'translate-y-0' : '-translate-y-full'}
-        bg-white/80 backdrop-blur-lg border-b border-white/30 shadow-md`}
+        bg-white/20 backdrop-blur-xl border-b border-white/20 shadow-sm`}
     >
-      <div className="w-full mx-auto py-2 px-5 flex justify-between items-center">
+      <div className="w-full mx-auto py-1 px-5 flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center">
           <img
@@ -44,8 +44,7 @@ export default function NavigationComp() {
           {['Product', 'About', 'Company', 'Contact'].map((item) => (
             <p
               key={item}
-              
-              className="cursor-pointer font-poppins text-black drop-shadow-sm hover:text-blue-600 transition-colors text-lg"
+              className="cursor-pointer font-poppins text-black/90 hover:text-blue-600 transition-colors text-lg"
             >
               {item}
             </p>
@@ -56,7 +55,7 @@ export default function NavigationComp() {
         <div className="flex items-center space-x-4">
           <Link
             to="/login"
-            className="font-poppins text-black drop-shadow-sm hover:text-blue-600 transition-colors text-lg"
+            className="font-poppins text-black/90 hover:text-blue-600 transition-colors text-lg"
           >
             Log in
           </Link>
