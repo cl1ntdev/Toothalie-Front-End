@@ -1,12 +1,12 @@
 import React from "react";
-import bgLight from '../../assets/bgLight.png'
+import dentist from '../../assets/dentist-bg.png'
 import bgDark from '../../assets/bgDark.png'
 export default function LPage_Section1() {
   return (
     <div className="min-h-screen bg-gray-900 text-white flex flex-col justify-between
       bg-cover bg-center h-screen
       "
-          style={{ backgroundImage: `url(${bgDark})` }}
+          style={{ backgroundImage: `url(${dentist})` }}
     >
      
 
