@@ -8,7 +8,7 @@ export default function Footer() {
     <div
       className="
         relative min-h-screen flex flex-col md:flex-row justify-between
-        bg-gray-900 text-gray-100 bg-cover bg-center
+        bg-[#1575aa] text-gray-100 bg-cover bg-center
       "
     >
       {/* Left Section */}
@@ -122,7 +122,7 @@ export default function Footer() {
             <a href="#" className="hover:text-gray-200"> IP Notice</a> | 
             <a href="#" className="hover:text-gray-200"> Security Center</a>
           </div>
-          <p className="mt-2">© 2025 Ouraing Inc. | All Rights Reserved</p>
+          <p className="mt-2">© 2025 Toothalie. | All Rights Reserved</p>
           <p className="mt-1 text-xs text-gray-500">Tootahlie Health may not be used without permission.</p>
         </div>
       </div>

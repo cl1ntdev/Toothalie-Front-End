@@ -13,7 +13,7 @@ import {
 export default function LPage_Section2() {
   return (
     <div className="bg-gray-900 text-white px-6 py-16
-      relative min-h-screen flex flex-col justify-between bg-cover bg-center"
+      relative min-h-screen flex flex-col justify-between bg-cover bg-center bg-fixed"
       style={{backgroundImage:`url(${darkBg})`}}
     >
       {/* Heading */}

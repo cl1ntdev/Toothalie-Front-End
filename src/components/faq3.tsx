@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import darkBg from "../assets/bgDark.png"
+
 interface FaqItem {
   id: string;
   question: string;
@@ -73,14 +75,17 @@ const Faq3 = ({
   };
 
   return (
-    <section className="py-24 bg-gray-900 text-gray-200 w-full font-poppins">
+    <section className="py-24 bg-gray-900 text-gray-200 w-full font-poppins
+      relative min-h-screen flex flex-col justify-between bg-cover bg-center bg-fixed"
+      style={{backgroundImage:`url(${darkBg})`}}
+    >
           <div className="container mx-auto max-w-4xl px-4">
             {/* Heading */}
             <div className="text-center space-y-4 mb-12">
               <h2 className="text-3xl md:text-4xl font-ceramon font-bold text-white">
                 {heading}
               </h2>
-              <p className="text-gray-400 md:text-lg">{description}</p>
+              <p className="text-gray-900 md:text-lg">{description}</p>
             </div>
     
             {/* FAQ items */}

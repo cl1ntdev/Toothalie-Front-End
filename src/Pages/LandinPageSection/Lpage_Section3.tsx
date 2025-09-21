@@ -3,7 +3,7 @@ import ceoImage from '../../assets/ceo.png';
 
 export default function LPage_Section3() {
   return (
-    <section className="bg-gray-900 py-20">
+    <section className="bg-[#1575aa] py-20">
       <div className="container mx-auto px-6">
         <div className="bg-gray-800/90 backdrop-blur-sm rounded-3xl shadow-2xl grid grid-cols-1 md:grid-cols-2 gap-10 items-center p-10">
           {/* IMAGE */}
