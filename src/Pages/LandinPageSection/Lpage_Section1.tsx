@@ -8,19 +8,19 @@ export default function LPage_Section1() {
       <header className="container mx-auto px-4 py-6 flex justify-between items-center">
         <div className="flex items-center">
           <span className="text-blue-400 text-3xl mr-2">∼</span>
-          <span className="font-semibold text-2xl">Toothalie</span>
+          <span className="font-ceramon font-semibold text-2xl">Toothalie</span>
         </div>
         
         <nav className="hidden md:flex items-center space-x-6 text-sm">
-          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">Product</a>
-          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">About</a>
-          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">Company</a>
-          <a href="#" className="text-2xl hover:text-blue-400 transition-colors">Contact</a>
+          <a href="#" className="font-poppins text-2xl hover:text-blue-400 transition-colors">Product</a>
+          <a href="#" className="font-poppins text-2xl hover:text-blue-400 transition-colors">About</a>
+          <a href="#" className="font-poppins text-2xl hover:text-blue-400 transition-colors">Company</a>
+          <a href="#" className="font-poppins text-2xl hover:text-blue-400 transition-colors">Contact</a>
         </nav>
         
         <div className="flex items-center space-x-4">
-          <Link to="/login" className="text-2xl hover:text-blue-400 transition-colors">Log in</Link>
-          <button className=" bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-2xl transition-colors hidden sm:block">
+          <Link to="/login" className="font-poppins text-2xl hover:text-blue-400 transition-colors">Log in</Link>
+          <button className="font-poppins bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-2xl transition-colors hidden sm:block">
             Sign up
           </button>
           
@@ -40,7 +40,7 @@ export default function LPage_Section1() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-10 md:py-20 flex flex-col items-center justify-center flex-grow">
         <section className="text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center bg-blue-900/30 text-blue-300 px-4 py-2 rounded-full text-xs md:text-sm mb-6 md:mb-8">
+          <div className="font-poppins inline-flex items-center bg-blue-900/30 text-blue-300 px-4 py-2 rounded-full text-xs md:text-sm mb-6 md:mb-8">
             Announcing our next round of funding
             <a href="#" className="ml-2 font-medium flex items-center hover:text-blue-100 transition-colors">
               Read more
@@ -51,6 +51,7 @@ export default function LPage_Section1() {
           </div>
           
           <h1 className="
+              font-ceramon
               text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] xl:text-[12rem]
               font-bold mb-6 leading-tight
               bg-clip-text text-transparent
@@ -59,6 +60,7 @@ export default function LPage_Section1() {
           </h1>
           
           <p className="
+            font-poppins
             text-xl md:text-xl lg:text-xxl  /* bumped up sizes */
             text-slate-300 mb-10 
             max-w-3xl mx-auto leading-relaxed">
@@ -67,13 +69,13 @@ export default function LPage_Section1() {
 
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-medium transition-colors flex items-center">
+            <button className="font-poppins bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-medium transition-colors flex items-center">
               Book Now!
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </button>
-            <button className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-md font-medium transition-colors flex items-center">
+            <button className="font-poppins bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-md font-medium transition-colors flex items-center">
               Learn More
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -81,7 +83,7 @@ export default function LPage_Section1() {
             </button>
           </div>
           
-          <div className="inline-flex items-center text-slate-400 text-sm">
+          <div className="font-poppins inline-flex items-center text-slate-400 text-sm">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-400" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
