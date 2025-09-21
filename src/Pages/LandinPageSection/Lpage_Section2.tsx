@@ -17,16 +17,19 @@ export default function LPage_Section2() {
       style={{backgroundImage:`url(${darkBg})`}}
     >
       {/* Heading */}
-      <div className="flex justify-center items-center mb-16">
-        <div className="text-center max-w-2xl">
-          <h1 className="font-ceramon text-4xl md:text-5xl font-bold mb-4">Everything you need</h1>
-          <h3 className="font-poppins text-xl text-blue-400 font-medium mb-2">Dental software made simple</h3>
-          <p className="font-poppins text-gray-400">
-            Streamline your dental clinic’s operations — from appointment scheduling to patient billing —
-            with our all-in-one platform.
-          </p>
-        </div>
-      </div>
+           <div className="flex justify-center items-center mb-20">
+             <div className="text-center max-w-3xl space-y-4">
+               <p className="font-ceramon text-3xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                 Everything you need to know
+               </p>
+               <h3 className="font-poppins text-2xl md:text-3xl text-blue-400 font-medium">
+                 Dental software made simple
+               </h3>
+               <p className="font-poppins text-lg md:text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                 Streamline your dental clinic’s operations — from appointment scheduling to patient billing — with our all-in-one platform.
+               </p>
+             </div>
+           </div>
 
       {/* Responsive App Screenshot */}
       <div className="w-full my-12 px-4">
