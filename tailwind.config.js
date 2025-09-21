@@ -7,7 +7,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'ceramo': ['Ceramo', 'sans-serif'],
+        'ceramon': ['Ceramon', 'sans-serif'],
         'poppins': ['Poppins', 'sans-serif'],
       },
     },
