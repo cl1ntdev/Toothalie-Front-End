@@ -2,6 +2,26 @@ import React from 'react';
 import darkbg from "../../assets/bgDark.png";
 import handPic from '../../assets/hand.jpg';
 import { Button } from '@/components/ui/button';
+import { Instagram, Facebook, Twitch, Twitter } from 'lucide-react';
+const SocialMedia= [
+  {
+    name:"facebook",
+    element:<Facebook />,
+  },
+  {
+    name:"instagram",
+    element:<Instagram />,
+  },
+  {
+    name:"twitch",
+    element:<Twitch />,
+  },
+  {
+    name:"twitter",
+    element:<Twitter />,
+  }
+  
+] 
 
 export default function Footer() {
   return (
@@ -76,14 +96,15 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
             {/* Social Icons */}
             <div className="flex space-x-4">
-              {['facebook-f', 'instagram', 'x', 'youtube', 'tiktok', 'pinterest'].map((icon, idx) => (
-                <a
-                  key={idx}
-                  href="#"
-                  className="text-gray-400 hover:text-white transition-colors text-lg"
-                >
-                  <i className={`fab fa-${icon}`}></i>
-                </a>
+              {SocialMedia.map((icon, idx) => (
+                // <a
+                //   key={idx}
+                //   href="#"
+                //   className="text-gray-400 hover:text-white transition-colors text-lg"
+                // >
+                //   <i className={`fab fa-${icon}`}></i>
+                // </a>
+                icon.element
               ))}
             </div>
 
