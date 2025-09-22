@@ -16,5 +16,5 @@ export default async function LoginAuth(value: UserLoginInfoClass) {
   //
   
   
-  return response;
+  return result;
 }

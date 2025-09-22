@@ -10,5 +10,5 @@ export default async function LoginAuth(value:string) {
   const result = await response.json()
   console.log(result)
   
-  return response;
+  return result;
 }
