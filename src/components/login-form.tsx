@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label"
 import { Link } from "react-router-dom"
 
 import LoginAuth from "@/API/LoginAuth" // checking username and password only
-import { UserLoginInfo } from "@/Classes/UserLogin"
+import { UserLoginInfoClass } from "@/Classes/UserLogin"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
 import UserPage from "@/Pages/UserPage"
@@ -19,9 +19,10 @@ export function LoginForm({
   const navigate = useNavigate()
   
   const handleLogin = async() =>{
-    const user = new UserLoginInfo(userName,password)
-    const userLoginID = await LoginAuth(user)
-    navigate(`/user/${userLoginID}`)
+    const user = new UserLoginInfoClass(userName,password)
+    const userLoginInfo = await LoginAuth(user)
+    console.log("userlogininfo," + UserLoginInfoClass)
+    navigate(`/user/${userLoginInfo}`)
   }
   
   return (

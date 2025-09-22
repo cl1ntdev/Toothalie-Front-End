@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate} from "react-router-dom"
 import { useState } from "react"
-import { UserLoginInfo } from "@/Classes/UserLogin"
+import { UserLoginInfoClass } from "@/Classes/UserLogin"
 import LoginAuth from "@/API/LoginAuth"
 
 export function RegisterForm({
@@ -19,12 +19,13 @@ export function RegisterForm({
   const handleLogin = async() =>{
     console.log('working')
     if(password.trim() == confPassword.trim()){
-      const user = new UserLoginInfo(userName,password)
-      const userLoginID = await LoginAuth(user)
-      if(userLoginID){
+      const user = new UserLoginInfoClass(userName,password)
+      const UserLoginData = await LoginAuth(user)
+      console.log("userlogininfo," + UserLoginData)
+      if(UserLoginData){
         alert("account exists")
       }else{
-        navigate(`/user/${userLoginID}`)        
+        navigate(`/user/${UserLoginData}`)        
       }
   
     }
