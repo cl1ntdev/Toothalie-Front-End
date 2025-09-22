@@ -1,5 +1,5 @@
 import { UserLoginInfo } from "@/Classes/UserLogin";
-export default async function checkUserLogin(value: UserLoginInfo) {
+export default async function LoginAuth(value: UserLoginInfo) {
   const userInfo = value;
 
   const response = await fetch("http://127.0.0.1:8000/api/login-auth", {
