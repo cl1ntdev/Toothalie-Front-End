@@ -4,9 +4,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link } from "react-router-dom"
 
-import checkUserLogin from "@/API/LoginAuth" // checking username and password only
+import LoginAuth from "@/API/LoginAuth" // checking username and password only
 import { UserLoginInfo } from "@/Classes/UserLogin"
+import { useNavigate } from "react-router-dom"
 import { useState } from "react"
+import UserPage from "@/Pages/UserPage"
 
 export function LoginForm({
   className,
@@ -14,10 +16,12 @@ export function LoginForm({
 }: React.ComponentProps<"form">) {
   const [userName,setUsername] = useState<string>("")
   const [password,setPassword] = useState<string>("")
+  const navigate = useNavigate()
   
   const handleLogin = async() =>{
     const user = new UserLoginInfo(userName,password)
-    await checkUserLogin(user)
+    const userLoginID = await LoginAuth(user)
+    navigate(`/user/${userLoginID}`)
   }
   
   return (
