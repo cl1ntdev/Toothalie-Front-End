@@ -1,12 +1,28 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+// =============== //
+//     PANNELS     //
+// =============== //
+import DoctorPanel from './Panes/Doctor'
+import PatientPanel from './Panes/Patient'
+
+ 
+
 export default function UserPage(){
-  const {id} = useParams() || null 
-  const [user,setUser] = useState<number>(0)
+  const {id} = useParams()
+  const [userIDLocal,setUserIDLocal] = useState<string>("")
+  
   useEffect(()=>{
-    // api for fetching user then send to other panes (patient, doctor)
+    if(id){
+      localStorage.setItem("userID", id)
+      const storedID = localStorage.getItem("userID")
+    if(storedID){
+      setUserIDLocal(storedID)
+    } 
+    }
   },[id])
+  
   return(
     <>
       
