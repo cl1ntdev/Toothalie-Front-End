@@ -18,7 +18,7 @@ export function RegisterForm({
   
   const handleLogin = async() =>{
     console.log('working')
-    if(password.trim() == confPassword){
+    if(password.trim() == confPassword.trim()){
       const user = new UserLoginInfo(userName,password)
       const userLoginID = await LoginAuth(user)
       if(userLoginID){
