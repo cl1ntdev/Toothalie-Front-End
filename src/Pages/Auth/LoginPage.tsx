@@ -1,6 +1,8 @@
 import { LoginForm } from "@/components/login-form"
 import { Link } from "react-router-dom"
 import logo from '../../assets/logo2.png'
+import imgbg from '../../assets/login-pic.png'
+
 export default function LoginPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
@@ -21,7 +23,7 @@ export default function LoginPage() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <img
-          src="/placeholder.svg"
+          src={imgbg}
           alt="Image"
           className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
