@@ -21,11 +21,14 @@ export default function UserPage(){
       setUserIDLocal(storedID)
     } 
     }
+    console.log(id)
   },[id])
   
   return(
     <>
-      
+      <div>
+        <h1>Hello User {id}</h1>
+      </div>
     </>
   )
 }
