@@ -21,8 +21,9 @@ export function LoginForm({
   const handleLogin = async() =>{
     const user = new UserLoginInfoClass(userName,password)
     const userLoginInfo = await LoginAuth(user)
-    console.log("userlogininfo," + UserLoginInfoClass)
-    navigate(`/user/${userLoginInfo}`)
+    const userLoginID = userLoginInfo.userID
+    console.log(userLoginInfo)
+    navigate(`/user/${userLoginID}`)
   }
   
   return (
