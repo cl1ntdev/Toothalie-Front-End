@@ -1,69 +1,107 @@
-# React + TypeScript + Vite
+# Toothalie - Dental Clinic Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for Toothalie, a modern and responsive dental clinic website built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+## Getting Started
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
-## Expanding the ESLint configuration
+### Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js (v18 or later)
+- npm
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+1. Clone the repo
+   ```sh
+   git clone https://github.com/your_username/your_project_name.git
+   ```
+2. Install NPM packages
+   ```sh
+   npm install
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Running the Application
+
+To run the app in development mode, run the following command:
+
+```sh
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+This will start the development server at `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Available Scripts
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+In the project directory, you can run:
+
+- `npm run dev`: Runs the app in the development mode.
+- `npm run build`: Builds the app for production to the `dist` folder.
+- `npm run lint`: Lints the code using ESLint.
+- `npm run preview`: Serves the production build locally.
+
+## Project Structure
+
+The project structure is as follows:
+
 ```
+.
+├── public/
+│   ├── fonts/
+│   └── vite.svg
+├── src/
+│   ├── API/
+│   │   ├── LoginAuth.ts
+│   │   └── RegisterAuth.ts
+│   ├── assets/
+│   ├── Classes/
+│   │   └── UserLogin.ts
+│   ├── components/
+│   │   ├── sections/
+│   │   ├── shadcnblocks/
+│   │   └── ui/
+│   ├── config/
+│   │   └── site.ts
+│   ├── hooks/
+│   │   └── use-mobile.ts
+│   ├── lib/
+│   │   └── utils.ts
+│   ├── Pages/
+│   │   ├── Auth/
+│   │   ├── LandinPageSection/
+│   │   └── Panes/
+│   └── TestUser/
+├── .gitignore
+├── index.html
+├── package.json
+├── README.md
+└── vite.config.ts
+```
+
+### File Descriptions
+
+- **`public/`**: Contains static assets that are not processed by Vite, such as fonts and images.
+- **`src/`**: Contains the main source code of the application.
+- **`src/API/`**: Contains functions for making API calls to the backend.
+- **`src/assets/`**: Contains images and other assets used in the application.
+- **`src/Classes/`**: Contains class definitions.
+- **`src/components/`**: Contains reusable React components.
+- **`src/config/`**: Contains configuration files.
+- **`src/hooks/`**: Contains custom React hooks.
+- **`src/lib/`**: Contains utility functions.
+- **`src/Pages/`**: Contains the main pages of the application.
+- **`index.html`**: The main HTML file of the application.
+- **`package.json`**: Contains the project's dependencies and scripts.
+- **`vite.config.ts`**: The configuration file for Vite.
+
+## Dependencies
+
+The main dependencies of the project are:
+
+- **React**: A JavaScript library for building user interfaces.
+- **TypeScript**: A typed superset of JavaScript.
+- **Vite**: A fast build tool for modern web projects.
+- **React Router**: For routing and navigation.
+- **Tailwind CSS**: A utility-first CSS framework.
+- **Shadcn/ui**: A collection of reusable UI components.
