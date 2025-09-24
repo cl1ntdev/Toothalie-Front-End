@@ -2,10 +2,37 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Toothalie_logo2 from "../../assets/logo.png"
 
-export default function NavigationComp() {
+
+const HomePageSections = [
+  {
+    sectionName:"Home",
+  },
+  {
+    sectionName:"About",
+  },
+  {
+    sectionName:"FAQ",
+  },
+  {
+    sectionName:"Contact",
+  },
+]
+
+type SectionStateProps = {
+  // SectionState: string
+  onChangeNewSection: (newSection:string) => void
+}
+
+
+export default function NavigationComp({onChangeNewSection}:SectionStateProps) {
   const [showHeader, setShowHeader] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
-
+  
+  const handleChangeSection = (sectionName:string) =>{
+    console.log(sectionName)
+    onChangeNewSection(sectionName)
+  }
+  
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY
@@ -34,19 +61,20 @@ export default function NavigationComp() {
             alt="Toothalie logo"
             className="h-10 w-auto mr-2"
           />
-          <span className="font-ceramon font-semibold text-2xl text-black tracking-wide drop-shadow-sm">
+          <span className="font-ceramon font-semibold text-2xl text-blue-900 tracking-wide drop-shadow-sm">
             Toothalie
           </span>
         </div>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex items-center space-x-6">
-          {['Product', 'About', 'Company', 'Contact'].map((item) => (
+          {HomePageSections.map((item,index) => (
             <p
-              key={item}
-              className="cursor-pointer font-poppins text-black/90 hover:text-blue-600 transition-colors text-lg"
+              key={index}
+              className="cursor-pointer font-poppins text-blue-900 hover:text-gray-600 transition-colors text-lg"
+              onClick={(e)=>handleChangeSection(item.sectionName)} 
             >
-              {item}
+              {item.sectionName}
             </p>
           ))}
         </nav>
@@ -64,7 +92,7 @@ export default function NavigationComp() {
           </button>
 
           {/* Mobile menu button */}
-          <button className="md:hidden text-black hover:text-blue-600">
+          <button className="md:hidden text-gray-100 hover:text-blue-600">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
