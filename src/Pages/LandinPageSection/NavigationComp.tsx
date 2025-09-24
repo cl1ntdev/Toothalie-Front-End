@@ -51,17 +51,17 @@ export default function NavigationComp({onChangeNewSection}:SectionStateProps) {
     <header
       className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300
         ${showHeader ? 'translate-y-0' : '-translate-y-full'}
-        bg-white/20 backdrop-blur-xl border-b border-white/20 shadow-sm`}
+        bg-white/30 md:bg-white/20 backdrop-blur-xl border-b border-white/20 shadow-sm`}
     >
-      <div className="w-full mx-auto py-1 px-5 flex justify-between items-center">
+      <div className="w-full mx-auto py-0.5 px-3 sm:px-5 flex justify-between items-center">
         {/* Logo */}
         <div className="flex items-center">
           <img
             src={Toothalie_logo2}
             alt="Toothalie logo"
-            className="h-10 w-auto mr-2"
+            className="h-10 w-10"
           />
-          <span className="font-ceramon font-semibold text-2xl text-blue-900 tracking-wide drop-shadow-sm">
+          <span className="font-ceramon font-semibold text-lg sm:text-xl text-blue-900 tracking-wide drop-shadow-sm">
             Toothalie
           </span>
         </div>
@@ -80,19 +80,19 @@ export default function NavigationComp({onChangeNewSection}:SectionStateProps) {
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3 sm:space-x-4">
           <Link
             to="/login"
-            className="font-poppins text-black/90 hover:text-blue-600 transition-colors text-lg"
+            className="font-poppins text-black/90 hover:text-blue-600 transition-colors text-base sm:text-lg"
           >
             Log in
           </Link>
-          <button className="hidden sm:block font-poppins bg-blue-500 hover:bg-blue-600 text-white px-5 py-2.5 rounded-xl text-lg shadow transition-colors">
+          <button className="hidden sm:block font-poppins bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-base sm:text-lg shadow transition-colors">
             Sign up
           </button>
 
           {/* Mobile menu button */}
-          <button className="md:hidden text-gray-100 hover:text-blue-600">
+          <button className="md:hidden text-blue-900 hover:text-blue-600">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
