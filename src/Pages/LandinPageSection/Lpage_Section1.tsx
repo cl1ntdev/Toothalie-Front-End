@@ -8,13 +8,13 @@ export default function LPage_Section1() {
       className="relative min-h-screen flex flex-col justify-between bg-cover bg-center"
       style={{ backgroundImage: `url(${dentist2})` }}
     >
-      {/* Dark overlay for readability */}
-      {/* <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px]"></div> */}
+      {/* Dark overlay for readability on top of image */}
+      {/* <div className="absolute inset-0 bg-black/50 md:bg-black/40"></div> */}
 
       {/* Main Content */}
-      <main className="relative z-10 container mx-10 py-12 md:py-20 flex flex-col items-start justify-center flex-grow">
+      <main className="relative z-10 container px-4 sm:px-6 md:px-10 py-12 md:py-20 flex flex-col items-start justify-center flex-grow">
         <section className="text-left max-w-3xl">
-          <div className="font-poppins inline-flex items-center bg-white/10 text-white px-4 py-2 rounded-full text-xs md:text-sm mb-6 md:mb-8">
+          <div className="font-poppins inline-flex items-center bg-white/10 text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-[11px] sm:text-xs md:text-sm mb-4 sm:mb-6 md:mb-8">
             See Articles
             <a
               href="#"
@@ -37,17 +37,17 @@ export default function LPage_Section1() {
           </div>
 
           {/* BIG HEADLINE */}
-          <h1 className="font-ceramon text-white text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-extrabold mb-6 leading-tight drop-shadow-lg">
+          <h1 className="font-ceramon text-white text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-extrabold mb-4 sm:mb-6 leading-tight drop-shadow-lg">
             Smile Bright, Live Right
           </h1>
 
-          <p className="font-poppins text-base md:text-xl text-gray-200 mb-10 max-w-2xl leading-relaxed">
+          <p className="font-poppins text-sm sm:text-base md:text-xl text-gray-100 mb-8 sm:mb-10 max-w-2xl leading-relaxed">
             Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui
             lorem cupidatat commodo. Elit sunt amet fugiat veniam occaecat.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-start gap-4 mb-12">
-            <button className="font-poppins bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-medium transition-colors flex items-center shadow">
+          <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4 mb-10 sm:mb-12">
+            <button className="font-poppins bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-md font-medium transition-colors flex items-center shadow">
               Book Now!
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -62,7 +62,7 @@ export default function LPage_Section1() {
                 />
               </svg>
             </button>
-            <button className="font-poppins border border-blue-400 text-blue-300 hover:bg-blue-700/30 px-8 py-3 rounded-md font-medium transition-colors flex items-center">
+            <button className="font-poppins border border-blue-400 text-blue-300 hover:bg-blue-700/30 px-6 sm:px-8 py-2.5 sm:py-3 rounded-md font-medium transition-colors flex items-center">
               Learn More
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -81,7 +81,7 @@ export default function LPage_Section1() {
             </button>
           </div>
 
-          <div className="font-poppins inline-flex items-center text-gray-300 text-sm">
+          <div className="font-poppins inline-flex items-center text-gray-200 text-xs sm:text-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5 mr-2 text-green-400"
