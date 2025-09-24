@@ -334,3 +334,28 @@ button:focus-visible {
   font-weight: 100;
   font-style: italic;
 }
+
+/* --- Mobile-safe global styles --- */
+/* Prevent horizontal scrolling and oversized content on small screens */
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Make common media responsive by default */
+img, video, canvas {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Avoid fixed oversized headings on very small viewports */
+@media (max-width: 640px) {
+  h1 { font-size: clamp(1.5rem, 8vw, 2rem); line-height: 1.2; }
+  h2 { font-size: clamp(1.25rem, 6.5vw, 1.75rem); line-height: 1.25; }
+  h3 { font-size: clamp(1.125rem, 5.5vw, 1.5rem); line-height: 1.3; }
+  /* Gentle horizontal padding for common wrappers if present */
+  .container, .wrapper, .section, .hero, .content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
