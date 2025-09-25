@@ -1,5 +1,31 @@
-const AdminPermission = ["Create","Read","Update","Delete"]
-const OwnerPermission = ["Create","Read","Update","Delete"]
+
+// Patient 
+// - create schedule, delete schedule, update schedule 
+
+// Doctor
+// - accept schedule, decline schedule(update)
+ 
+
+// Admin
+// - see statistics 
+
+const AdminPermission = [
+  {
+    Scheduling:["Create","Read","Update","Delete"]
+  }
+]
+
+const PatientPermission = [
+  {
+    Scheduling:["Create","Read","Update","Delete"]
+  }
+]
+
+const DoctorPermission = [
+  {
+    Scheduling:["Create","Read","Update","Delete"]
+  }
+]
 
 const Roles = [
   {
@@ -8,7 +34,14 @@ const Roles = [
   },
   {
     RoleName:"Patient",
-    Permissions: OwnerPermission
+    Permissions: PatientPermission
   },
+  {
+    RoleName:"Doctor",
+    Permissions: DoctorPermission
+  },
+  
 ]
 
+
+export default { Roles }
