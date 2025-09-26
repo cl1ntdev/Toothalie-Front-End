@@ -4,7 +4,7 @@ import LandingPage from './Pages/LandingPage'
 import { Routes, Route } from "react-router-dom";
 import LoginPage from './Pages/Auth/LoginPage';
 import  RegisterPage  from './Pages/Auth/RegisterPage';
-import UserPage from './Pages/UserPage';
+import UserPage from './Pages/Authenticated/UserPage';
 
 function App() {
 
