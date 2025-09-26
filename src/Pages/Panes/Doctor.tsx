@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react'
 
-export default function DoctorPanel(){
- 
+type idProps = {
+  doctorID?: string
+}
+
+
+export default function DoctorPanel({doctorID}: idProps){
+  
   return(
     <>
       <div>
-        <h1>Hello Doctor</h1>
+        <h1>Hello Doctor { doctorID}</h1>
       </div>
     </>
   )
