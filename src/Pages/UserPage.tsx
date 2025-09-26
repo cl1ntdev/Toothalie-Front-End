@@ -40,13 +40,9 @@ export default function UserPage(){
   return(
     <>
      {userID ? (
-       <div>
-         <h1>Hello {userID}</h1>
-       </div>
+       <DoctorPanel />
      ):(
-       <div>
-         <h1>No user ID</h1>
-       </div>
+      <PatientPanel userLoginID={id} />
      )
      }
     </>
