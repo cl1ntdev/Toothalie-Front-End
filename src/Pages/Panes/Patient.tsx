@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 
 type userLoginProps = {
-  userLoginID: string
+  userLoginID?: string
 }
 
 export default function PatientPanel({userLoginID}:userLoginProps){
@@ -9,7 +9,7 @@ export default function PatientPanel({userLoginID}:userLoginProps){
   return(
     <>
       <div>
-        <h1>Hello Patient</h1>
+        <h1>Hello Patient: { userID }</h1>
       </div>
     </>
   )
