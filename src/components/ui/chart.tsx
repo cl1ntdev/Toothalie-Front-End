@@ -344,8 +344,12 @@ function getPayloadConfigFromPayload(
     ? config[configLabelKey]
     : config[key as keyof typeof config]
 }
-
+const ChartConfig = {
+  // whatever config you need
+  colors: ["#8884d8", "#82ca9d"]
+}
 export {
+  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
