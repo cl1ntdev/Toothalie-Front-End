@@ -8,7 +8,7 @@ import LoginAuth from "@/API/LoginAuth" // checking username and password only
 import { UserLoginInfoClass } from "@/Classes/UserLogin"
 import { useNavigate } from "react-router-dom"
 import { useState } from "react"
-import UserPage from "@/Pages/UserPage"
+import UserPage from "@/Pages/Authenticated/UserPage"
 
 export function LoginForm({
   className,

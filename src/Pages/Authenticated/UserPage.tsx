@@ -11,7 +11,7 @@ import PatientPanel from './Panes/Patient'
 
 export default function UserPage(){
   const {id} = useParams()
-  const userID = id
+  const userID = id // VALIDATED and AUTHENTICATED  ID OF USER 
   const [userIDLocal,setUserIDLocal] = useState<string>("")
   const [userInfo,setUserInfo] = useState("")
   useEffect(()=>{
@@ -21,26 +21,31 @@ export default function UserPage(){
       setUserInfo(userInfo)
       console.log(userInfo)
     }
+    
+    // AFTER VALIDATION IT WILL GET INFORMATION OF THE LOGIN USER
     if(userID){
       getUserFunc(userID)      
     }else{
       alert("User ID is invalid: ")
       return
     }
+    
+    // STORE ID IN LOCAL BROWSER 
     if(id){
-      localStorage.setItem("userID", id)
-      const storedID = localStorage.getItem("userID")
-    if(storedID){
-      setUserIDLocal(storedID)
-    } 
+        localStorage.setItem("userID", id)
+        const storedID = localStorage.getItem("userID")
+        // STORE ID LOCAL for debugging 
+        if(storedID){
+          setUserIDLocal(storedID)
+        } 
     }
     console.log(id)
   },[id])
   
   return(
     <>
-     {userID ? (
-       <DoctorPanel />
+     {userInfo.Role ? (
+        <DoctorPanel doctorID={id} />
      ):(
       <PatientPanel userLoginID={id} />
      )
