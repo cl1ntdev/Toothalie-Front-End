@@ -24,7 +24,7 @@ export default function UserPage(){
     if(userID){
       getUserFunc(userID)      
     }else{
-      alert("User ID is invalid: ",userID)
+      alert("User ID is invalid: ")
       return
     }
     if(id){
