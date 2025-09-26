@@ -20,7 +20,7 @@ export default function UserPage(){
     
     const getUserFunc = async(id:string)=>{
       const userInfo = await GetLoginUser(id);  
-      const loginUser = new LoginedUserClass(userInfo.firstname,userInfo.lastname,userInfo.role)
+      const loginUser = new LoginedUserClass(userInfo.firstname,userInfo.lastname,userInfo.role,userInfo.id)
       setUserInfo(loginUser)
       console.log(userInfo)
     }
@@ -48,10 +48,10 @@ export default function UserPage(){
   
   return(
     <>
-     {userInfo.role ? (
-        <DoctorPanel doctorID={id} />
+     {userInfo?.role ? (
+        <DoctorPanel userLoginedInfo={userInfo} />
      ):(
-      <PatientPanel userLoginID={id} />
+      <PatientPanel userLoginedInfo={userInfo} />
      )
      }
     </>
