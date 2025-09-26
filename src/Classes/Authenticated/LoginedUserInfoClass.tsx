@@ -1,4 +1,4 @@
-class UserLoginInfoClass {
+class LoginedUserClass {
   firstname: string
   lastname: string
   role: string
@@ -10,4 +10,4 @@ class UserLoginInfoClass {
   }
 }
 
-export {UserLoginInfoClass}
+export {LoginedUserClass}
