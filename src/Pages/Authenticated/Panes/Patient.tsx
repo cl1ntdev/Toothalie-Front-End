@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react'
+import { LoginedUserClass } from '@/Classes/Authenticated/LoginedUserInfoClass'
 
-type userLoginProps = {
-  userLoginID?: string
+type PatientPanelProps = {
+  userLoginedInfo?: LoginedUserClass
 }
 
-export default function PatientPanel({userLoginID}:userLoginProps){
-  const userID = userLoginID
+export default function PatientPanel({ userLoginedInfo }:PatientPanelProps){
+  const user = userLoginedInfo
   return(
     <>
       <div>
-        <h1>Hello Patient: { userID }</h1>
+        <h1>Hello Patient: {user?.id}</h1>
       </div>
     </>
   )
