@@ -18,9 +18,20 @@ export default function UserPage(){
   const [userInfo, setUserInfo] = useState<LoginedUserClass>()
   useEffect(()=>{
     
+    // 
+    // 
+    // DEBUGGING PURPOSES 
+    // 
+    const loginUser = new LoginedUserClass("TestUserPage","TestUserPage","Patient",userID || "0")
+    setUserInfo(loginUser) 
+    // 
+    // 
+    // 
+    // 
+    
     const getUserFunc = async(id:string)=>{
       const userInfo = await GetLoginUser(id);  
-      const loginUser = new LoginedUserClass(userInfo.firstname,userInfo.lastname,userInfo.role,userInfo.id)
+      const loginUser = new LoginedUserClass(userInfo.firstname,userInfo.lastname,userInfo.role,id)
       setUserInfo(loginUser)
       console.log(userInfo)
     }
@@ -48,7 +59,7 @@ export default function UserPage(){
   
   return(
     <>
-     {userInfo?.role ? (
+     {userInfo?.role == "Doctor" ? (
         <DoctorPanel userLoginedInfo={userInfo} />
      ):(
       <PatientPanel userLoginedInfo={userInfo} />
