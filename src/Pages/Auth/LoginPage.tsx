@@ -21,13 +21,14 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="bg-muted relative hidden lg:block">
-        <img
-          src={imgbg}
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
-      </div>
+      <div className="bg-muted w-full h-full relative hidden lg:block">
+              <img
+                src={imgbg}
+                alt="Image"
+                // Use object-cover to ensure the grid space is fully covered (will crop the sides)
+                className="absolute inset-0 h-fit w-fit object-cover object-left" 
+              />
+            </div>
     </div>
   )
 }
