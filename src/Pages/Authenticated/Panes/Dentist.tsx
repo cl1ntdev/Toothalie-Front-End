@@ -12,12 +12,12 @@ import {
 
 import data from "../../../app/dashboard/data.json"
 
-type DoctorPanelProps = {
+type DentistPanelProps = {
   userLoginedInfo?: LoginedUserClass
 }
 
 
-export default function DoctorPanel({ userLoginedInfo }:DoctorPanelProps){
+export default function DentistPanel({ userLoginedInfo }:DentistPanelProps){
   const user = userLoginedInfo
   
   return(
