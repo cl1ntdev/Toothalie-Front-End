@@ -23,7 +23,7 @@ export default function UserPage(){
     // 
     // DEBUGGING PURPOSES 
     // 
-    const loginUser = new LoginedUserClass("TestUserPage","TestUserPage","Dentist",userID || "0")
+    const loginUser = new LoginedUserClass("TestUserPage","TestUserPage","Patient",userID || "0")
     setUserInfo(loginUser) 
     // 
     // 
