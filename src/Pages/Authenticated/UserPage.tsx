@@ -12,6 +12,7 @@ import PatientPanel from './Panes/Patient'
  
 
 export default function UserPage(){
+  const [isWaiting,setIsWaiting] = useState<boolean>(true)
   const {id} = useParams()
   const userID = id // VALIDATED and AUTHENTICATED  ID OF USER 
   const [userIDLocal,setUserIDLocal] = useState<string>("")
@@ -22,7 +23,7 @@ export default function UserPage(){
     // 
     // DEBUGGING PURPOSES 
     // 
-    const loginUser = new LoginedUserClass("TestUserPage","TestUserPage","Doctor",userID || "0")
+    const loginUser = new LoginedUserClass("TestUserPage","TestUserPage","Dentist",userID || "0")
     setUserInfo(loginUser) 
     // 
     // 
@@ -57,14 +58,25 @@ export default function UserPage(){
     console.log(id)
   },[id])
   
+  useEffect(()=>{
+    if(userInfo){
+      setIsWaiting(false)
+    }
+  },[userInfo])
+  
   return(
     <>
-     {userInfo?.role == "Doctor" ? (
-        <DoctorPanel userLoginedInfo={userInfo} />
-     ):(
-      <PatientPanel userLoginedInfo={userInfo} />
-     )
-     }
+      {isWaiting ? (
+        <h1>Page Loading</h1>
+      ):(
+        userInfo?.role == "Dentist" ? (
+          <DoctorPanel userLoginedInfo={userInfo} />
+        ):(
+          <PatientPanel userLoginedInfo={userInfo} />
+        )
+      )}
     </>
   )
 }
+
+
