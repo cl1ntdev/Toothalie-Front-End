@@ -6,7 +6,7 @@ import { LoginedUserClass } from '@/Classes/Authenticated/LoginedUserInfoClass'
 // =============== //
 //     PANNELS     //
 // =============== //
-import DoctorPanel from './Panes/Doctor'
+import DentistPanel from './Panes/Dentist'
 import PatientPanel from './Panes/Patient'
 
  
@@ -70,7 +70,7 @@ export default function UserPage(){
         <h1>Page Loading</h1>
       ):(
         userInfo?.role == "Dentist" ? (
-          <DoctorPanel userLoginedInfo={userInfo} />
+          <DentistPanel userLoginedInfo={userInfo} />
         ):(
           <PatientPanel userLoginedInfo={userInfo} />
         )
