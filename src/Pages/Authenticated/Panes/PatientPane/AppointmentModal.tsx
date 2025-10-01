@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DentistClass from "@/Classes/Authenticated/DentistClass";
 import getAllDentist from "@/API/Authenticated/GetDentist";
-
+import SubmitAppointment from "@/API/Authenticated/appointment/SubmitAppointment";
 type Props = {
   onClose: () => void;
 };
@@ -10,6 +10,21 @@ export default function AppointmentModal({ onClose }: Props) {
   const [dentists, setDentists] = useState<DentistClass[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedTimes, setSelectedTimes] = useState<Record<number, string>>({});
+  
+  // picked time and Dentist
+  const [pickDentist,setPickDentist] = useState<string>("")
+  const [pickTime,setPickTime] = useState<string>("")
+
+  const submit = () => {
+    console.log("working")
+    const userID = localStorage.getItem('userID')
+    const userIDBase = JSON.stringify(userID)
+    
+    if(userID && pickDentist && pickTime){
+      SubmitAppointment(userIDBase,pickDentist,pickTime)
+    }
+  }
+  
   useEffect(() => {
     const fetchDentists = async () => {
       try {
@@ -102,6 +117,8 @@ export default function AppointmentModal({ onClose }: Props) {
                                   onClick={() => {
                                     setSelectedTimes((prev) => ({ ...prev, [index]: time }));
                                     console.log(`Selected ${time} with ${den.name}`);
+                                    setPickDentist(den.dentistID)
+                                    setPickTime(time)
                                   }}
                                 >
                                   {time}
@@ -123,7 +140,7 @@ export default function AppointmentModal({ onClose }: Props) {
                 </div>
     
                 {/* Book Button */}
-                <button className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm w-full">
+                <button onClick={()=>submit()} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm w-full">
                   Book with {den.name}
                 </button>
               </div>
