@@ -7,7 +7,7 @@ import { LoginedUserClass } from '@/Classes/Authenticated/LoginedUserInfoClass'
 //     PANNELS     //
 // =============== //
 import DentistPanel from './Panes/Dentist'
-import PatientPanel from './Panes/Patient'
+import PatientPanel from './Panes/PatientPane/Patient'
 
  
 
