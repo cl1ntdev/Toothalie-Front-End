@@ -1,4 +1,5 @@
 import React,{useState} from "react";
+import AppointmentModal from "./AppointmentModal";
 import {
   CalendarDays,
   ClipboardList,
@@ -25,6 +26,12 @@ export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
     setIsDashboardButPressed(true)
     setPressedDashboardButton("Book")
   }
+  
+  const closeModal = () =>{
+    setIsDashboardButPressed(false)
+    setPressedDashboardButton("")
+  }
+  
   
   return (
     <div className="flex h-screen bg-gray-100">
@@ -64,9 +71,9 @@ export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-6">
-        {isDashboardButPressed ?? (
-          <h1>HEllo</h1>
-        )}
+        {isDashboardButPressed && pressedDashboardButton === "Book" && (
+                 <AppointmentModal onClose={closeModal} />
+               )}
         {/* Header */}
         <header className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
