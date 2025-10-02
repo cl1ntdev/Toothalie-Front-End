@@ -13,7 +13,10 @@ export default function DeleteAppointmentModal({ appointmentID, onClose, onDelet
   const handleDelete = async () => {
     setIsLoading(true);
     setError(null);
-    DeleteAppointmentAPI(appointmentID)
+    const delStatus = await DeleteAppointmentAPI(appointmentID)
+    if(delStatus.status == "ok"){
+      onClose()
+    }
   };
 
   const handleCancel = () => {
