@@ -2,10 +2,11 @@
   import FetchAppointment from '@/API/Authenticated/appointment/FetchAppointment';
   import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
   import DeleteAppointmentModal from './DeleteAppointmentModal';
+  import EditModal from './EditModal';
   
   type appointmentProps ={
     fetchNewAppointment: boolean
-    onFetched: () => void;   // ✅ new prop
+    onFetched: () => void;  
   }
   
   export default function UpcomingAppointment({ fetchNewAppointment,onFetched }:appointmentProps) {
@@ -15,6 +16,7 @@
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
     const [isUpdate,setIsUpdate] = useState<boolean>(false)
+    const [editModalOpen,setEditModalOpen] = useState<boolean>(false)
     
     useEffect(() => {
       const fetchData = async () => {
@@ -36,7 +38,7 @@
           onFetched();  // reset parent flag
         }
       };
-      
+      setIsUpdate(false)
       fetchData();
     }, [fetchNewAppointment,isUpdate]);
   
@@ -59,8 +61,9 @@
     };
   
     const handleEdit = (appointmentId: string) => {
-      console.log(`Edit appointment with ID: ${appointmentId}`);
-      // TODO: Open edit modal
+      console.log(appointmentId)
+      setSelectedAppointmentId(appointmentId);
+      setEditModalOpen(true)
     };
   
     const triggerDelete = () => {
@@ -169,6 +172,17 @@
             deleteSuccess={triggerDelete}    
           />
         )}
+        { editModalOpen && (
+          <EditModal 
+          appointmentID={selectedAppointmentId}
+          onClose={() => {
+               setEditModalOpen(false);
+               setSelectedAppointmentId(null);
+             }}
+          onSuccess={()=>setIsUpdate(prev=>!prev)}
+          />
+        )}
+        { }
       </div>
     );
   }
