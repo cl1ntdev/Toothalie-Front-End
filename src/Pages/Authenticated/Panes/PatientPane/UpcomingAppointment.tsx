@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FetchAppointment from '@/API/Authenticated/appointment/FetchAppointment';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import DeleteAppointment from './DeleteAppointment';
+import DeleteAppointmentModal from './DeleteAppointmentModal';
 
 export default function UpcomingAppointment() {
   const [appointmentsData, setAppointmentsData] = useState([]);
@@ -144,7 +144,7 @@ export default function UpcomingAppointment() {
         })}
       </div>
       {deleteModalOpen && (
-        <DeleteAppointment
+        <DeleteAppointmentModal
           appointmentID={selectedAppointmentId}
           onClose={handleCloseModal}
           onDeleteSuccess={handleDeleteSuccess}
