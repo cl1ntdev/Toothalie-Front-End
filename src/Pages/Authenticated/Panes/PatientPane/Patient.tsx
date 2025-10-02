@@ -21,6 +21,8 @@ export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
   const user = userLoginedInfo ?? { name: "Guest", email: "guest@email.com" };
   const [pressedDashboardButton,setPressedDashboardButton] = useState<string>("")
   const [isDashboardButPressed,setIsDashboardButPressed] = useState<boolean>(false)
+  const [isFetchNewAppointment, setFetchNewAppointment] = useState<boolean>(false)
+  
   
   const pressedActivate = () =>{
     console.log("test")
@@ -31,6 +33,10 @@ export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
   const closeModal = () =>{
     setIsDashboardButPressed(false)
     setPressedDashboardButton("")
+  }
+  
+  const updateAppointments = () => {
+    setFetchNewAppointment(true)
   }
   
   
@@ -73,7 +79,7 @@ export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-6">
         {isDashboardButPressed && pressedDashboardButton === "Book" && (
-                 <AppointmentModal onClose={closeModal} />
+          <AppointmentModal onClose={closeModal} onSuccess={updateAppointments} />
                )}
         {/* Header */}
         <header className="flex items-center justify-between mb-6">
@@ -108,7 +114,10 @@ export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
         </section>
 
         {/* Upcoming Appointments */}
-       <UpcomingAppointment />
+       <UpcomingAppointment
+         fetchNewAppointment={isFetchNewAppointment}
+         onFetched={() => setFetchNewAppointment(false)} 
+       />
 
         {/* Notifications */}
         <section className="bg-white rounded-xl shadow p-6">
