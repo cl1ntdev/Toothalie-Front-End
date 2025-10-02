@@ -10,4 +10,5 @@ export default async function SubmitAppointment(patientID:string, dentistID:stri
   })
   
   console.log(submit)
+  return submit
 }
