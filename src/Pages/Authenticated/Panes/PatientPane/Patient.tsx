@@ -1,5 +1,6 @@
 import React,{useState} from "react";
 import AppointmentModal from "./AppointmentModal";
+import UpcomingAppointment from "./UpcomingAppointment";
 import {
   CalendarDays,
   ClipboardList,
@@ -107,19 +108,7 @@ export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
         </section>
 
         {/* Upcoming Appointments */}
-        <section className="bg-white rounded-xl shadow p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-4">Upcoming Appointments</h3>
-          <div className="space-y-3">
-            <div className="bg-gray-100 p-3 rounded-lg">
-              <p className="font-medium">Dental Cleaning with Dr. Smith</p>
-              <p className="text-sm text-gray-600">Oct 5, 2025 - 10:00 AM</p>
-            </div>
-            <div className="bg-gray-100 p-3 rounded-lg">
-              <p className="font-medium">Checkup with Dr. Lee</p>
-              <p className="text-sm text-gray-600">Oct 12, 2025 - 1:30 PM</p>
-            </div>
-          </div>
-        </section>
+       <UpcomingAppointment />
 
         {/* Notifications */}
         <section className="bg-white rounded-xl shadow p-6">
