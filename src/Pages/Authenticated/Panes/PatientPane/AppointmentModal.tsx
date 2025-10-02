@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import getAllDentist from "@/API/Authenticated/GetDentist";
 import SubmitAppointment from "@/API/Authenticated/appointment/SubmitAppointment";
 
-export default function AppointmentModal({ onClose }) {
+export default function AppointmentModal({ onClose, onSuccess }) {
   const [dentists, setDentists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pickDentist, setPickDentist] = useState("");
@@ -35,6 +35,7 @@ export default function AppointmentModal({ onClose }) {
       console.log(response)
       if (response.ok == true) {
         onClose();
+        onSuccess()
       }
     }
   };
