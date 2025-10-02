@@ -4,9 +4,9 @@ import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DeleteAppointmentModal from './DeleteAppointmentModal';
 
 export default function UpcomingAppointment() {
-  const [appointmentsData, setAppointmentsData] = useState([]);
+  const [appointmentsData, setAppointmentsData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
 
@@ -16,8 +16,13 @@ export default function UpcomingAppointment() {
         setLoading(true);
         const data = await FetchAppointment();
         console.log('Fetched appointment data:', data);
-        const normalizedData = Array.isArray(data) ? data : data.status === 'ok' ? [data] : [];
-        setAppointmentsData(normalizedData);
+
+        // ✅ fix: access `data.appointments` not the root
+        if (data && data.status === 'ok' && Array.isArray(data.appointments)) {
+          setAppointmentsData(data.appointments);
+        } else {
+          setAppointmentsData([]);
+        }
       } catch (err) {
         console.error('Error fetching appointments:', err);
         setError('Failed to load appointments.');
@@ -49,7 +54,7 @@ export default function UpcomingAppointment() {
 
   const handleEdit = (appointmentId: string) => {
     console.log(`Edit appointment with ID: ${appointmentId}`);
-    // Add your modal trigger logic here
+    // TODO: Open edit modal
   };
 
   if (loading) {
@@ -104,8 +109,10 @@ export default function UpcomingAppointment() {
               <div className="p-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-xl font-semibold text-gray-800">{dentist.name}</h2>
-                    <p className="text-sm text-gray-500">{dentist.specialty}</p>
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      {dentist?.name || 'Unknown Dentist'}
+                    </h2>
+                    <p className="text-sm text-gray-500">{dentist?.specialty || 'No specialty'}</p>
                   </div>
                   <div className="flex space-x-2">
                     <button
