@@ -3,7 +3,12 @@ import FetchAppointment from '@/API/Authenticated/appointment/FetchAppointment';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import DeleteAppointmentModal from './DeleteAppointmentModal';
 
-export default function UpcomingAppointment() {
+type appointmentProps ={
+  fetchNewAppointment: boolean
+  onFetched: () => void;   // ✅ new prop
+}
+
+export default function UpcomingAppointment({ fetchNewAppointment,onFetched }:appointmentProps) {
   const [appointmentsData, setAppointmentsData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,11 +33,12 @@ export default function UpcomingAppointment() {
         setError('Failed to load appointments.');
       } finally {
         setLoading(false);
+        onFetched();  // ✅ reset parent flag
       }
     };
 
     fetchData();
-  }, []);
+  }, [fetchNewAppointment]);
 
   const handleDelete = (appointmentId: string) => {
     setSelectedAppointmentId(appointmentId);
