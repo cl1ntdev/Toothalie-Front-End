@@ -31,18 +31,11 @@ export default function AppointmentModal({ onClose }) {
     const userID = localStorage.getItem("userID");
     console.log(userID, pickDentist, pickDay, pickTime)
     if (userID && pickDentist && pickDay && pickTime) {
-      try {
-        const response = await SubmitAppointment(userID, pickDentist, pickDay, pickTime);
-        if (response.status === "ok") {
-          onClose();
-        } else {
-          setError(response.message || "Failed to book appointment.");
-        }
-      } catch (error) {
-        setError("Failed to book appointment.");
+      const response = await SubmitAppointment(userID, pickDentist, pickDay, pickTime);
+      console.log(response)
+      if (response.ok == true) {
+        onClose();
       }
-    } else {
-      setError("Please select a dentist, day, and time.");
     }
   };
 
