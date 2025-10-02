@@ -4,17 +4,21 @@ type AppointmentProps = {
   appointmentID: string;
   onClose: () => void;
   onDeleteSuccess: () => void;
+  deleteSuccess: () => void;
 };
 
-export default function DeleteAppointmentModal({ appointmentID, onClose, onDeleteSuccess }: AppointmentProps) {
+export default function DeleteAppointmentModal({ appointmentID, onClose, deleteSuccess,onDeleteSuccess }: AppointmentProps) {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDelete,setIsDelete] = useState<boolean>(true)
 
   const handleDelete = async () => {
     setIsLoading(true);
     setError(null);
     const delStatus = await DeleteAppointmentAPI(appointmentID)
     if(delStatus.status == "ok"){
+      onDeleteSuccess()
+      deleteSuccess()
       onClose()
     }
   };
