@@ -1,154 +1,165 @@
 import React, { useEffect, useState } from "react";
-import DentistClass from "@/Classes/Authenticated/DentistClass";
 import getAllDentist from "@/API/Authenticated/GetDentist";
 import SubmitAppointment from "@/API/Authenticated/appointment/SubmitAppointment";
-type Props = {
-  onClose: () => void;
-};
 
-export default function AppointmentModal({ onClose }: Props) {
-  const [dentists, setDentists] = useState<DentistClass[]>([]);
+export default function AppointmentModal({ onClose }) {
+  const [dentists, setDentists] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTimes, setSelectedTimes] = useState<Record<number, string>>({});
-  
-  // picked time and Dentist
-  const [pickDentist,setPickDentist] = useState<string>("")
-  const [pickTime,setPickTime] = useState<string>("")
+  const [pickDentist, setPickDentist] = useState("");
+  const [pickDay, setPickDay] = useState("");
+  const [pickTime, setPickTime] = useState("");
+  const [error, setError] = useState(null);
 
-  const submit = () => {
-    console.log("working")
-    const userID = localStorage.getItem('userID')
-    const userIDBase = JSON.stringify(userID)
-    
-    if(userID && pickDentist && pickTime){
-      SubmitAppointment(userIDBase,pickDentist,pickTime)
-    }
-  }
-  
   useEffect(() => {
     const fetchDentists = async () => {
       try {
+        setLoading(true);
         const res = await getAllDentist();
-        console.log(res)
-        
         if (res.status === "ok" && res.dentists) {
           setDentists(res.dentists);
         }
       } catch (error) {
-        console.error("Error fetching dentists:", error);
+        setError("Failed to load dentists.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchDentists();
   }, []);
-  
-  useEffect(()=>{
-    console.log(dentists)
-  },[dentists])
+
+  const handleSubmit = async () => {
+    const userID = localStorage.getItem("userID");
+    console.log(userID, pickDentist, pickDay, pickTime)
+    if (userID && pickDentist && pickDay && pickTime) {
+      try {
+        const response = await SubmitAppointment(userID, pickDentist, pickDay, pickTime);
+        if (response.status === "ok") {
+          onClose();
+        } else {
+          setError(response.message || "Failed to book appointment.");
+        }
+      } catch (error) {
+        setError("Failed to book appointment.");
+      }
+    } else {
+      setError("Please select a dentist, day, and time.");
+    }
+  };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 relative overflow-y-auto max-h-[90vh]">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-        >
-          ✖
-        </button>
-    
-        {/* MAIN MODAL CONTENT */}
-        <h2 className="text-xl font-bold mb-4 text-gray-800">
-          Book an Appointment
-        </h2>
-    
-        {loading ? (
-          <p className="text-gray-500">Loading dentists...</p>
-        ) : dentists.length === 0 ? (
-          <p className="text-red-500">No dentists available.</p>
-        ) : (
-          <div className="space-y-4">
-            {dentists.map((den, index) => (
-              <div
-                key={index}
-                className="border rounded-lg p-4 shadow-sm hover:shadow-md transition"
-              >
-                {/* Dentist Profile */}
-                <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                    {/* Placeholder Image */}
-                    <span className="text-sm">Photo</span>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+        {/* Header */}
+        <div className="bg-blue-600 p-4 text-white flex justify-between items-center">
+          <h2 className="text-lg font-semibold">Book Appointment</h2>
+          <button onClick={onClose} className="text-xl hover:text-gray-300" aria-label="Close">
+            ✕
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-4 space-y-4">
+          {error && (
+            <div className="bg-red-100 text-red-700 p-2 rounded text-sm">{error}</div>
+          )}
+
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+            </div>
+          ) : dentists.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">No dentists available.</div>
+          ) : (
+            <div className="space-y-4">
+              {dentists.map((dentist) => (
+                <div
+                  key={dentist.dentistID}
+                  className="border rounded-lg p-4 bg-white hover:shadow-md transition-shadow"
+                >
+                  {/* Dentist Info */}
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
+                      DR
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-800">{dentist.name}</h3>
+                      <p className="text-sm text-gray-600">{dentist.specialty}</p>
+                    </div>
+                    {pickDentist === dentist.dentistID && pickDay && pickTime && (
+                      <span className="ml-auto text-green-600 text-sm font-medium">Selected ✓</span>
+                    )}
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-lg text-blue-600">
-                      {den.name}
-                    </h3>
-                    <p className="text-sm text-gray-600">{den.specialty}</p>
-                    <p className="text-sm text-gray-600">
-                      {den.experience} experience
-                    </p>
-                    <p className="text-sm text-gray-600">{den.email}</p>
-                  </div>
-                </div>
-    
-                {/* Schedule */}
-                <div className="mt-4">
-                  <h4 className="font-medium text-gray-700 mb-2">
-                    Available Times:
-                  </h4>
-                  {den.schedule ? (
-                    <div className="space-y-2">
-                      {Object.entries(den.schedule).map(([day, times]) => (
-                        <div key={day}>
-                          <span className="font-semibold">{day}:</span>
-                          <div className="flex flex-wrap gap-2 mt-1">
-                            {Array.isArray(times) && times.length > 0 ? (
-                              times.map((time, i) => (
+
+                  {/* Schedule */}
+                  <div className="mb-3">
+                    <h4 className="text-sm font-medium text-gray-600 mb-2">Available Schedule:</h4>
+                    {dentist.schedule && Object.keys(dentist.schedule).length > 0 ? (
+                      <div className="space-y-2">
+                        {Object.keys(dentist.schedule).map((day) => (
+                          <div key={day} className="flex flex-col">
+                            <button
+                              onClick={() => {
+                                setPickDentist(dentist.dentistID);
+                                setPickDay(day);
+                                setPickTime("");
+                                setError(null);
+                              }}
+                              className={`text-left text-sm font-medium ${
+                                pickDentist === dentist.dentistID && pickDay === day
+                                  ? "text-blue-600"
+                                  : "text-gray-700 hover:text-blue-500"
+                              }`}
+                            >
+                              {day}
+                            </button>
+                            <div className="flex flex-wrap gap-2 ml-4">
+                              {dentist.schedule[day]?.map((time) => (
                                 <button
-                                  key={i}
-                                  className={`px-3 py-1 text-sm border rounded-md transition
-                                    ${
-                                      selectedTimes[index] === time
-                                        ? "border-blue-500 bg-blue-100 text-blue-700" // selected style
-                                        : "hover:bg-blue-100 hover:border-blue-400 border-gray-300 text-gray-700" // default style
-                                    }`}
+                                  key={time}
                                   onClick={() => {
-                                    setSelectedTimes((prev) => ({ ...prev, [index]: time }));
-                                    console.log(`Selected ${time} with ${den.name}`);
-                                    setPickDentist(den.dentistID)
-                                    setPickTime(time)
+                                    setPickDentist(dentist.dentistID);
+                                    setPickDay(day);
+                                    setPickTime(time);
+                                    setError(null);
                                   }}
+                                  className={`px-2 py-1 rounded text-xs border ${
+                                    pickDentist === dentist.dentistID &&
+                                    pickDay === day &&
+                                    pickTime === time
+                                      ? "bg-green-500 text-white border-green-500"
+                                      : "bg-white border-gray-300 hover:bg-green-50"
+                                  }`}
                                 >
                                   {time}
                                 </button>
-
-                              ))
-                            ) : (
-                              <span className="text-gray-500 ml-2">No times</span>
-                            )}
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-500 text-sm">
-                      No schedule available.
-                    </p>
-                  )}
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-gray-500 text-sm">No schedule available</div>
+                    )}
+                  </div>
+
+                  {/* Book Button */}
+                  <button
+                    onClick={handleSubmit}
+                    disabled={pickDentist !== dentist.dentistID || !pickDay || !pickTime}
+                    className={`w-full py-2 rounded-lg text-white font-medium ${
+                      pickDentist === dentist.dentistID && pickDay && pickTime
+                        ? "bg-green-600 hover:bg-green-700"
+                        : "bg-gray-400 cursor-not-allowed"
+                    }`}
+                  >
+                    Book with Dr. {dentist.name}
+                  </button>
                 </div>
-    
-                {/* Book Button */}
-                <button onClick={()=>submit()} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 text-sm w-full">
-                  Book with {den.name}
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
-
   );
 }
