@@ -39,12 +39,12 @@ export default function EditModal({
     fetchData();
   }, [appointmentID]);
 
-  const handleSave = () => {
+  const handleSave = async() => {
     console.log("Saving with:", {
       schedule: selectedSchedule,
     });
-    UpdateAppointment(appointmentID,selectedSchedule)
-
+    const result = await UpdateAppointment(appointmentID,selectedSchedule)
+    console.log(result)
     onSuccess();
     onClose();
   };
