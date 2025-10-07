@@ -31,17 +31,21 @@ export function LoginForm({
   }
   
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
-          Enter your email below to Register to your account
+          Enter your Username and Password below 
         </p>
       </div>
       <div className="grid gap-6">
         <div className="grid gap-3">
-          <Label htmlFor="username">Email</Label>
-          <Input onChange={(e)=>setUsername(e.target.value)} id="username" type="text" placeholder="m@example.com" required />
+          <Label htmlFor="username">Username</Label>
+          <Input 
+          onChange={(e)=>setUsername(e.target.value)} id="username" type="text" placeholder="johndoe" 
+          maxLength={20}
+          pattern="^[a-zA-Z0-9._-]+$"
+          required />
         </div>
         <div className="grid gap-3">
           <div className="flex items-center">
@@ -72,6 +76,6 @@ export function LoginForm({
         
         <Link to="/register" className="underline underline-offset-4">Sign up</Link>
       </div>
-    </div>
+    </form>
   )
 }
