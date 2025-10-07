@@ -7,8 +7,9 @@ import { Link } from "react-router-dom"
 import LoginAuth from "@/API/LoginAuth" // checking username and password only
 import { UserLoginInfoClass } from "@/Classes/UserLogin"
 import { useNavigate } from "react-router-dom"
-import { useState } from "react"
-import UserPage from "@/Pages/Authenticated/UserPage"
+import { useState, useEffect } from "react"
+import Alert from "./_myComp/Alerts"
+import { IconFlagSearch } from "@tabler/icons-react"
 
 export function LoginForm({
   className,
@@ -16,19 +17,32 @@ export function LoginForm({
 }: React.ComponentProps<"form">) {
   const [userName,setUsername] = useState<string>("")
   const [password,setPassword] = useState<string>("")
+  const [isWrong,setIsWrong] = useState<boolean>(false)
+  const [submitButton,setSubmitButton] = useState<string>("Login") 
   const navigate = useNavigate()
   
   const handleLogin = async() =>{
     const user = new UserLoginInfoClass(userName,password)
+    setSubmitButton("Loading Please Wait ...")
     const userLoginInfo = await LoginAuth(user)
     const userLoginID = userLoginInfo.userID
     if(userLoginInfo.status != "error"){
       navigate(`/user/${userLoginID}`)      
     }else{
       console.log("Error Login")
+      setIsWrong(true)
+  
     }
     console.log(userLoginInfo)
   }
+  
+  useEffect(()=>{
+    setSubmitButton("Login")
+    const reset = setInterval(()=>{
+      setIsWrong(false)
+      clearInterval(reset)
+    },6000)
+  },[isWrong])
   
   return (
     <form className={cn("flex flex-col gap-6", className)}
@@ -49,7 +63,7 @@ export function LoginForm({
           <Input 
           onChange={(e)=>setUsername(e.target.value)} id="username" type="text" placeholder="johndoe" 
           maxLength={20}
-          pattern="^[a-zA-Z0-9._-]+$"
+          // pattern="^[a-zA-Z0-9._-]+$"
           required />
         </div>
         <div className="grid gap-3">
@@ -59,9 +73,9 @@ export function LoginForm({
           <Input onChange={(e)=>setPassword(e.target.value)} id="password" type="password" required />
         </div>
         <Button type="submit" className="w-full">
-          Login
+          {submitButton}
         </Button>
-        <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+        {/*<div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
           <span className="bg-background text-muted-foreground relative z-10 px-2">
             Or continue with
           </span>
@@ -74,13 +88,17 @@ export function LoginForm({
             />
           </svg>
           Login with GitHub
-        </Button>
+        </Button>*/}
       </div>
       <div className="text-center text-sm">
         Don&apos;t have an account?{" "}
         
         <Link to="/register" className="underline underline-offset-4">Sign up</Link>
       </div>
+      {isWrong && (
+        <Alert status="error_stat_1" />
+      )}
     </form>
+    
   )
 }
