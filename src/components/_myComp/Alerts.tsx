@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Alert(){
+export default function Alert(message:string,description:string){
   return(
     <div role="alert" className="rounded-md border border-gray-300 bg-white p-4 shadow-sm">
       <div className="flex items-start gap-4">
@@ -20,9 +20,9 @@ export default function Alert(){
         </svg>
     
         <div className="flex-1">
-          <strong className="font-medium text-gray-900"> Success</strong>
+          <strong className="font-medium text-gray-900"> {message}</strong>
     
-          <p className="mt-0.5 text-sm text-gray-700"> Appointment Created</p>
+          <p className="mt-0.5 text-sm text-gray-700"> {description}</p>
         </div>
     
         <button
