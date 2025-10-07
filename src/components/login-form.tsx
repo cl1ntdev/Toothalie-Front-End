@@ -31,7 +31,12 @@ export function LoginForm({
   }
   
   return (
-    <form className={cn("flex flex-col gap-6", className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)}
+     onSubmit={(e)=>{
+       e.preventDefault()
+       handleLogin()
+     }}
+      {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Login your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
@@ -53,7 +58,7 @@ export function LoginForm({
           </div>
           <Input onChange={(e)=>setPassword(e.target.value)} id="password" type="password" required />
         </div>
-        <Button onClick={()=>handleLogin()} type="submit" className="w-full">
+        <Button type="submit" className="w-full">
           Login
         </Button>
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
