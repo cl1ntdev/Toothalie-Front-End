@@ -44,53 +44,51 @@ export default function LPage_Section2() {
 
       {/* Features */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-16">
-        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
-          <CalendarDaysIcon className="h-8 w-8 text-blue-400 mb-3" />
-          <h4 className="font-ceramon text-xl font-semibold mb-2">Appointment Scheduling</h4>
-          <p className="font-poppins text-gray-400">
-            Manage patient bookings, confirmations, and cancellations seamlessly.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
-          <CreditCardIcon className="h-8 w-8 text-blue-400 mb-3" />
-          <h4 className="font-ceramon text-xl font-semibold mb-2">Billing & Payments</h4>
-          <p className="font-poppins text-gray-400">
-            Track payments, generate invoices, and simplify insurance claims.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
-          <UserGroupIcon className="h-8 w-8 text-blue-400 mb-3" />
-          <h4 className="font-ceramon text-xl font-semibold mb-2">Patient Records</h4>
-          <p className="font-poppins text-gray-400">
-            Store and access patient data, history, and treatment plans securely.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
-          <ChartBarIcon className="h-8 w-8 text-blue-400 mb-3" />
-          <h4 className="font-ceramon text-xl font-semibold mb-2">Analytics Dashboard</h4>
-          <p className="font-poppins text-gray-400">
-            Monitor your clinic’s growth with easy-to-read charts and reports.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
-          <BellAlertIcon className="h-8 w-8 text-blue-400 mb-3" />
-          <h4 className="font-ceramon text-xl font-semibold mb-2">Automated Reminders</h4>
-          <p className="font-poppins text-gray-400">
-            Reduce no-shows with automated SMS or email appointment reminders.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors">
-          <ShieldCheckIcon className="h-8 w-8 text-blue-400 mb-3" />
-          <h4 className="font-ceramon text-xl font-semibold mb-2">Secure & Compliant</h4>
-          <p className="font-poppins text-gray-400">
-            HIPAA-compliant security keeps your patient data safe.
-          </p>
-        </div>
+        {[
+          {
+            icon: <CalendarDaysIcon className="h-8 w-8 text-[#5BB1E3] mb-3" />,
+            title: "Appointment Scheduling",
+            desc: "Manage patient bookings, confirmations, and cancellations seamlessly."
+          },
+          {
+            icon: <CreditCardIcon className="h-8 w-8 text-[#5BB1E3] mb-3" />,
+            title: "Billing & Payments",
+            desc: "Track payments, generate invoices, and simplify insurance claims."
+          },
+          {
+            icon: <UserGroupIcon className="h-8 w-8 text-[#5BB1E3] mb-3" />,
+            title: "Patient Records",
+            desc: "Store and access patient data, history, and treatment plans securely."
+          },
+          {
+            icon: <ChartBarIcon className="h-8 w-8 text-[#5BB1E3] mb-3" />,
+            title: "Analytics Dashboard",
+            desc: "Monitor your clinic’s growth with easy-to-read charts and reports."
+          },
+          {
+            icon: <BellAlertIcon className="h-8 w-8 text-[#5BB1E3] mb-3" />,
+            title: "Automated Reminders",
+            desc: "Reduce no-shows with automated SMS or email appointment reminders."
+          },
+          {
+            icon: <ShieldCheckIcon className="h-8 w-8 text-[#5BB1E3] mb-3" />,
+            title: "Secure & Compliant",
+            desc: "HIPAA-compliant security keeps your patient data safe."
+          },
+        ].map((card, index) => (
+          <div
+            key={index}
+            className="group relative p-[1px] rounded-2xl bg-gradient-to-r from-[#5BB1E3] via-[#4DA5D9] to-[#5BB1E3] transition-transform transform hover:scale-[1.03] hover:shadow-[0_0_20px_#5BB1E355]"
+          >
+            <div className="p-6 rounded-2xl bg-gray-900 text-center transition-all duration-300 group-hover:bg-gray-800">
+              <div className="flex justify-center">{card.icon}</div>
+              <h4 className="font-ceramon text-xl font-semibold mb-2 text-white">
+                {card.title}
+              </h4>
+              <p className="font-poppins text-gray-400">{card.desc}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
