@@ -22,8 +22,12 @@ export function LoginForm({
     const user = new UserLoginInfoClass(userName,password)
     const userLoginInfo = await LoginAuth(user)
     const userLoginID = userLoginInfo.userID
+    if(userLoginInfo.status != "error"){
+      navigate(`/user/${userLoginID}`)      
+    }else{
+      console.log("Error Login")
+    }
     console.log(userLoginInfo)
-    navigate(`/user/${userLoginID}`)
   }
   
   return (
