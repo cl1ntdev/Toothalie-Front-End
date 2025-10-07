@@ -83,13 +83,10 @@ export default function NavigationComp({onChangeNewSection}:SectionStateProps) {
         <div className="flex items-center space-x-3 sm:space-x-4">
           <Link
             to="/login"
-            className="font-poppins text-black/90 hover:text-blue-600 transition-colors text-base sm:text-lg"
+            className="font-poppins text-blue-900 hover:text-blue-600 transition-colors text-base sm:text-lg"
           >
             Log in
           </Link>
-          <button className="hidden sm:block font-poppins bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-xl text-base sm:text-lg shadow transition-colors">
-            Sign up
-          </button>
 
           {/* Mobile menu button */}
           <button className="md:hidden text-blue-900 hover:text-blue-600">
