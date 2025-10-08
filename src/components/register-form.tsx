@@ -87,17 +87,6 @@ export function RegisterForm({
           />
         </div>
     
-        {/* Role */}
-        <div className="grid gap-3">
-          <Label htmlFor="role">Role</Label>
-          <Input
-            id="role"
-            type="text"
-            placeholder="Patient / Admin / Doctor"
-            onChange={(e) => setRole(e.target.value)}
-            required
-          />
-        </div>
     
         {/* Contact Number */}
         <div className="grid gap-3">
