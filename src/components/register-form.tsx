@@ -4,9 +4,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate} from "react-router-dom"
 import { useState } from "react"
-import { UserLoginInfoClass } from "@/Classes/UserLogin"
 import LoginAuth from "@/API/LoginAuth"
-
+import Patient from "@/Classes/Authenticated/Patient"
 export function RegisterForm({
   className,
   ...props
@@ -14,12 +13,17 @@ export function RegisterForm({
   const [userName,setUsername] = useState<string>("")
   const [password,setPassword] = useState<string>("")
   const [confPassword,setConfPassword] = useState<string>("")
+  const [firstName,setFirstName] = useState<string>("")
+  const [lastName,setLastName] = useState<string>("")
+  const [contactNo,setContactNo] = useState<string>("")
+  const [email,setEmail] = useState<string>("")
+  
   const navigate = useNavigate()
   
-  const handleLogin = async() =>{
+  const handleRegister = async() =>{
     console.log('working')
     if(password.trim() == confPassword.trim()){
-      const user = new UserLoginInfoClass(userName,password)
+      const user = new Patient(userName,firstName,lastName,password,contactNo,email)
       const UserLoginData = await LoginAuth(user)
       console.log("userlogininfo," + UserLoginData)
       if(UserLoginData){
@@ -32,38 +36,126 @@ export function RegisterForm({
   }
   
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <form className={cn("flex flex-col gap-6", className)}
+     onSubmit={(e)=>{
+       e.preventDefault()
+       handleRegister()
+     }}
+      {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
         <h1 className="text-2xl font-bold">Create your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
-          Enter your email below to Register to your account
+          Fill out the details below to register your account
         </p>
       </div>
+    
       <div className="grid gap-6">
+    
+        {/* Username */}
         <div className="grid gap-3">
-          <Label htmlFor="username">Email</Label>
-          <Input onChange={(e)=>setUsername(e.target.value)} id="username" type="text" placeholder="m@example.com" required />
+          <Label htmlFor="username">Username</Label>
+          <Input
+            id="username"
+            type="text"
+            placeholder="Enter username"
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
         </div>
+    
+        {/* First Name */}
         <div className="grid gap-3">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
-          </div>
-          <Input onChange={(e)=>setPassword(e.target.value)} id="password" type="password" required />
+          <Label htmlFor="first_name">First Name</Label>
+          <Input
+            id="first_name"
+            type="text"
+            placeholder="Enter your first name"
+            onChange={(e) => setFirstName(e.target.value)}
+            required
+          />
         </div>
+    
+        {/* Last Name */}
         <div className="grid gap-3">
-          <div className="flex items-center">
-            <Label htmlFor="conf-password">Confirm Password</Label>
-          </div>
-          <Input onChange={(e)=>setConfPassword(e.target.value)} id="conf-password" type="password" required />
+          <Label htmlFor="last_name">Last Name</Label>
+          <Input
+            id="last_name"
+            type="text"
+            placeholder="Enter your last name"
+            onChange={(e) => setLastName(e.target.value)}
+            required
+          />
         </div>
-        <Button onClick={()=>handleLogin()} type="submit" className="w-full">
+    
+        {/* Role */}
+        <div className="grid gap-3">
+          <Label htmlFor="role">Role</Label>
+          <Input
+            id="role"
+            type="text"
+            placeholder="Patient / Admin / Doctor"
+            onChange={(e) => setRole(e.target.value)}
+            required
+          />
+        </div>
+    
+        {/* Contact Number */}
+        <div className="grid gap-3">
+          <Label htmlFor="contact_no">Contact Number</Label>
+          <Input
+            id="contact_no"
+            type="text"
+            placeholder="e.g. 09XXXXXXXXX"
+            onChange={(e) => setContactNo(e.target.value)}
+            required
+          />
+        </div>
+    
+        {/* Email */}
+        <div className="grid gap-3">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+    
+        {/* Password */}
+        <div className="grid gap-3">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+    
+        {/* Confirm Password */}
+        <div className="grid gap-3">
+          <Label htmlFor="conf-password">Confirm Password</Label>
+          <Input
+            id="conf-password"
+            type="password"
+            onChange={(e) => setConfPassword(e.target.value)}
+            required
+          />
+        </div>
+    
+        
+        <Button type="submit" className="w-full">
           Register
         </Button>
+    
         <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
           <span className="bg-background text-muted-foreground relative z-10 px-2">
             Or continue with
           </span>
         </div>
+    
         <Button variant="outline" className="w-full text-white">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
             <path
@@ -74,11 +166,14 @@ export function RegisterForm({
           Login with GitHub
         </Button>
       </div>
+    
       <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
-        
-        <Link to="/login" className="underline underline-offset-4">Login</Link>
+        Already have an account?{" "}
+        <Link to="/login" className="underline underline-offset-4">
+          Login
+        </Link>
       </div>
-    </div>
+    </form>
+
   )
 }

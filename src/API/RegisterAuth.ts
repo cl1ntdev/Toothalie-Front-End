@@ -1,5 +1,5 @@
-// import { UserLoginInfo } from "@/Classes/UserLogin";
-export default async function LoginAuth(value:string) {
+import Patient from "@/Classes/Authenticated/Patient";
+export default async function LoginAuth(value:Patient) {
   const userInfo = value;
 
   const response = await fetch("http://127.0.0.1:8000/api/reg-check-user", {
