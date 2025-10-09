@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FetchAppointment from '@/API/Authenticated/appointment/FetchAppointment';
-import { Pencil, Trash2, Calendar, Clock, User } from 'lucide-react';
+import { Pencil, Trash2, Calendar, Clock, User, CheckCircle, XCircle, ClockIcon } from 'lucide-react';
 import DeleteAppointmentModal from './DeleteAppointmentModal';
 import EditModal from './EditModal';
 
@@ -69,6 +69,30 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
     setIsUpdate(true);
   };
 
+  const getStatusConfig = (status: string) => {
+    const config = {
+      Pending: {
+        icon: ClockIcon,
+        color: 'text-yellow-600',
+        bgColor: 'bg-yellow-50',
+        borderColor: 'border-yellow-200'
+      },
+      Approved: {
+        icon: CheckCircle,
+        color: 'text-green-600',
+        bgColor: 'bg-green-50',
+        borderColor: 'border-green-200'
+      },
+      Rejected: {
+        icon: XCircle,
+        color: 'text-red-600',
+        bgColor: 'bg-red-50',
+        borderColor: 'border-red-200'
+      }
+    };
+    return config[status as keyof typeof config] || config.Pending;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -100,7 +124,14 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
       {appointmentsData.map((appointmentData, index) => {
         const { appointment, dentist, schedules } = appointmentData;
         const schedule = schedules.find((s) => s.scheduleID === appointment.schedule_id);
-        const appointmentDate = new Date(appointment.appointment_date);
+        const appointmentDate = new Date(appointment.user_set_date).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        });
+        
+        const statusConfig = getStatusConfig(appointment.status);
+        const StatusIcon = statusConfig.icon;
 
         return (
           <div
@@ -109,28 +140,32 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="bg-blue-50 p-2 rounded-lg">
-                    <User className="h-4 w-4 text-blue-600" />
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    <div className="bg-blue-50 p-2 rounded-lg">
+                      <User className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">
+                        {dentist?.name || 'Unknown Dentist'}
+                      </h3>
+                      <p className="text-sm text-gray-500">{dentist?.specialty || 'General Dentistry'}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">
-                      {dentist?.name || 'Unknown Dentist'}
-                    </h3>
-                    <p className="text-sm text-gray-500">{dentist?.specialty || 'General Dentistry'}</p>
+                  
+                  {/* Status Badge */}
+                  <div className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full border ${statusConfig.bgColor} ${statusConfig.borderColor}`}>
+                    <StatusIcon className={`h-3 w-3 ${statusConfig.color}`} />
+                    <span className={`text-xs font-medium ${statusConfig.color}`}>
+                      {appointment.status}
+                    </span>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-4 text-sm text-gray-600">
                   <div className="flex items-center space-x-2">
                     <Calendar className="h-4 w-4 text-gray-400" />
-                    <span>
-                      {appointmentDate.toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric'
-                      })}
-                    </span>
+                    <span>{appointmentDate}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Clock className="h-4 w-4 text-gray-400" />
