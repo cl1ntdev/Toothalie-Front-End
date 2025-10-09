@@ -1,13 +1,15 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import AppointmentModal from "./AppointmentModal";
 import UpcomingAppointment from "./UpcomingAppointment";
 import {
-  CalendarDays,
-  ClipboardList,
+  Calendar,
+  History,
   Bell,
-  Settings,
   LogOut,
-  UserCircle,
+  User,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 type PatientPanelProps = {
@@ -19,119 +21,134 @@ type PatientPanelProps = {
 
 export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
   const user = userLoginedInfo ?? { name: "Guest", email: "guest@email.com" };
-  const [pressedDashboardButton,setPressedDashboardButton] = useState<string>("")
-  const [isDashboardButPressed,setIsDashboardButPressed] = useState<boolean>(false)
-  const [isFetchNewAppointment, setFetchNewAppointment] = useState<boolean>(false)
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [fetchNewAppointment, setFetchNewAppointment] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   
+  const handleCloseModal = () => {
+    setShowAppointmentModal(false);
+  };
   
-  const pressedActivate = () =>{
-    console.log("test")
-    setIsDashboardButPressed(true)
-    setPressedDashboardButton("Book")
-  }
-  
-  const closeModal = () =>{
-    setIsDashboardButPressed(false)
-    setPressedDashboardButton("")
-  }
-  
-  const updateAppointments = () => {
-    setFetchNewAppointment(true)
-  }
-  
-  
+  const handleUpdateAppointments = () => {
+    setFetchNewAppointment(true);
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarExpanded(!isSidebarExpanded);
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-lg flex flex-col">
-        <div className="flex items-center justify-center py-6 border-b">
-          <UserCircle className="h-10 w-10 text-blue-600" />
-          <div className="ml-3">
-            <h3 className="font-semibold">{user.name}</h3>
-            <p className="text-xs text-gray-500">{user.email}</p>
+    <div className="flex h-screen bg-gray-50">
+      {/* Toggleable Sidebar */}
+      <div className="relative">
+        <aside className={`bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ${
+          isSidebarExpanded ? "w-64" : "w-20"
+        } h-full`}>
+          {/* User Info - Only shows when expanded */}
+          {isSidebarExpanded && (
+            <div className="flex items-center px-4 py-6 border-b border-gray-200">
+              <User className="h-8 w-8 text-gray-600" />
+              <div className="ml-3">
+                <h3 className="font-medium text-gray-900">{user.name}</h3>
+                <p className="text-xs text-gray-500 truncate">{user.email}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation */}
+          <nav className="flex-1 px-4 py-6 space-y-2">
+            <button className={`flex items-center w-full p-3 rounded-lg transition-colors ${
+              isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
+            } bg-blue-50 text-blue-600`}>
+              <Calendar size={20} />
+              {isSidebarExpanded && <span>Appointments</span>}
+            </button>
+            
+            <button className={`flex items-center w-full p-3 rounded-lg transition-colors ${
+              isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
+            } text-gray-400 hover:text-gray-600 hover:bg-gray-50`}>
+              <History size={20} />
+              {isSidebarExpanded && <span>History</span>}
+            </button>
+            
+            <button className={`flex items-center w-full p-3 rounded-lg transition-colors ${
+              isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
+            } text-gray-400 hover:text-gray-600 hover:bg-gray-50`}>
+              <Bell size={20} />
+              {isSidebarExpanded && <span>Notifications</span>}
+            </button>
+          </nav>
+
+          {/* Logout */}
+          <div className="p-4 border-t border-gray-200">
+            <button className={`flex items-center w-full p-2 rounded-lg text-gray-400 hover:text-red-600 transition-colors ${
+              isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
+            }`}>
+              <LogOut size={20} />
+              {isSidebarExpanded && <span>Logout</span>}
+            </button>
           </div>
-        </div>
+        </aside>
 
-        <nav className="flex-1 px-4 py-6 space-y-4">
-          <a className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 cursor-pointer">
-            <CalendarDays size={18} />
-            <span>Appointments</span>
-          </a>
-          <a className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 cursor-pointer">
-            <ClipboardList size={18} />
-            <span>History</span>
-          </a>
-          <a className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 cursor-pointer">
-            <Bell size={18} />
-            <span>Notifications</span>
-          </a>
-          
-        </nav>
-
-        <div className="p-4 border-t">
-          <button className="flex items-center space-x-2 text-red-600 hover:text-red-800 w-full">
-            <LogOut size={18} />
-            <span>Logout</span>
-          </button>
-        </div>
-      </aside>
+        {/* Toggle Button - Fixed positioning */}
+        <button
+          onClick={toggleSidebar}
+          className="absolute top-6 -right-3 bg-white border border-gray-200 rounded-full p-1 hover:bg-gray-50 transition-colors shadow-md z-10"
+        >
+          {isSidebarExpanded ? (
+            <ChevronLeft size={16} className="text-gray-600" />
+          ) : (
+            <ChevronRight size={16} className="text-gray-600" />
+          )}
+        </button>
+      </div>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-6">
-        {isDashboardButPressed && pressedDashboardButton === "Book" && (
-          <AppointmentModal onClose={closeModal} onSuccess={updateAppointments} />
-               )}
-        {/* Header */}
-        <header className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1>
-          <div className="flex items-center space-x-4">
-            <Bell className="h-6 w-6 text-gray-600 cursor-pointer" />
-            <UserCircle className="h-8 w-8 text-gray-600 cursor-pointer" />
-          </div>
-        </header>
-
-        {/* Welcome Banner */}
-        <section className="bg-blue-600 text-white rounded-xl p-6 mb-6">
-          <h2 className="text-xl font-semibold">
-            Welcome back, {user.name} 👋
-          </h2>
-          <p className="text-sm text-blue-100">
-            Manage your appointments, records, and stay updated.
-          </p>
-        </section>
-
-        {/* Quick Actions */}
-        <section className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-          <button onClick={()=>pressedActivate()}  className="bg-blue-500 text-white p-4 rounded-xl shadow hover:bg-blue-600">
-            Book Appointment
-          </button>
-          <button className="bg-purple-500 text-white p-4 rounded-xl shadow hover:bg-purple-600">
-            Calendar
-          </button>
-          <button className="bg-purple-500 text-white p-4 rounded-xl shadow hover:bg-purple-600">
-            Support
-          </button>
-        </section>
-
-        {/* Upcoming Appointments */}
-       <UpcomingAppointment
-         fetchNewAppointment={isFetchNewAppointment}
-         onFetched={() => setFetchNewAppointment(false)} 
-       />
-
-        {/* Notifications */}
-        <section className="bg-white rounded-xl shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Notifications</h3>
-          <div className="space-y-3">
-            <div className="bg-yellow-100 text-yellow-800 p-3 rounded-lg">
-              Reminder: Your cleaning appointment is tomorrow at 10:00 AM.
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-4xl mx-auto p-6">
+          {/* Header */}
+          <header className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-2xl font-light text-gray-900">Welcome back</h1>
+              <p className="text-gray-500">Good to see you, {user.name}</p>
             </div>
-            <div className="bg-green-100 text-green-800 p-3 rounded-lg">
-              Your last checkup results are available.
+            <div className="flex items-center space-x-4">
+              <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                <Bell className="h-5 w-5 text-gray-600" />
+              </button>
+              <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
             </div>
-          </div>
-        </section>
+          </header>
+
+          {/* Quick Action */}
+          <section className="mb-8">
+            <button 
+              onClick={() => setShowAppointmentModal(true)}
+              className="flex items-center space-x-2 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:border-blue-500 transition-colors text-gray-700"
+            >
+              <Plus size={18} />
+              <span>New Appointment</span>
+            </button>
+          </section>
+
+          {/* Appointments Section */}
+          <section>
+            <h2 className="text-lg font-medium text-gray-900 mb-4">Upcoming Appointments</h2>
+            <UpcomingAppointment
+              fetchNewAppointment={fetchNewAppointment}
+              onFetched={() => setFetchNewAppointment(false)} 
+            />
+          </section>
+        </div>
       </main>
+
+      {/* Modal */}
+      {showAppointmentModal && (
+        <AppointmentModal 
+          onClose={handleCloseModal} 
+          onSuccess={handleUpdateAppointments} 
+        />
+      )}
     </div>
   );
 }
