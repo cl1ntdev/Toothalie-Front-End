@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import FetchAppointment from '@/API/Authenticated/appointment/FetchAppointment';
-import { Pencil, Trash2, Calendar, Clock, User, CheckCircle, XCircle, ClockIcon } from 'lucide-react';
+import { Pencil, Trash2, Calendar, Clock, User, CheckCircle, XCircle, ClockIcon, AlertTriangle, Users } from 'lucide-react';
 import DeleteAppointmentModal from './DeleteAppointmentModal';
 import EditModal from './EditModal';
 
@@ -93,6 +93,24 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
     return config[status as keyof typeof config] || config.Pending;
   };
 
+  const getAppointmentTypeConfig = (typeId: number) => {
+    const config = {
+      1: {
+        name: 'Normal Appointment',
+        icon: User,
+        color: 'text-blue-600',
+        bgColor: 'bg-blue-50'
+      },
+      2: {
+        name: 'Family Appointment',
+        icon: Users,
+        color: 'text-purple-600',
+        bgColor: 'bg-purple-50'
+      }
+    };
+    return config[typeId as keyof typeof config] || config[1];
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -132,6 +150,11 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
         
         const statusConfig = getStatusConfig(appointment.status);
         const StatusIcon = statusConfig.icon;
+        
+        const appointmentTypeConfig = getAppointmentTypeConfig(appointment.appointment_type_id);
+        const AppointmentTypeIcon = appointmentTypeConfig.icon;
+        
+        const isEmergency = appointment.emergency === 1;
 
         return (
           <div
@@ -140,6 +163,7 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
+                {/* Header with Dentist Info and Status */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center space-x-3">
                     <div className="bg-blue-50 p-2 rounded-lg">
@@ -162,7 +186,8 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
+                {/* Appointment Details */}
+                <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
                   <div className="flex items-center space-x-2">
                     <Calendar className="h-4 w-4 text-gray-400" />
                     <span>{appointmentDate}</span>
@@ -172,8 +197,28 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
                     <span>{schedule?.time_slot || 'Time not set'}</span>
                   </div>
                 </div>
+
+                {/* Emergency and Appointment Type Badges */}
+                <div className="flex items-center space-x-2">
+                  {/* Emergency Badge */}
+                  {isEmergency && (
+                    <div className="inline-flex items-center space-x-1.5 px-2 py-1 rounded-full bg-red-50 border border-red-200">
+                      <AlertTriangle className="h-3 w-3 text-red-600" />
+                      <span className="text-xs font-medium text-red-600">Emergency</span>
+                    </div>
+                  )}
+                  
+                  {/* Appointment Type Badge */}
+                  <div className={`inline-flex items-center space-x-1.5 px-2 py-1 rounded-full border ${appointmentTypeConfig.bgColor}`}>
+                    <AppointmentTypeIcon className={`h-3 w-3 ${appointmentTypeConfig.color}`} />
+                    <span className={`text-xs font-medium ${appointmentTypeConfig.color}`}>
+                      {appointmentTypeConfig.name}
+                    </span>
+                  </div>
+                </div>
               </div>
 
+              {/* Action Buttons */}
               <div className="flex items-center space-x-1 ml-4">
                 <button
                   onClick={() => handleEdit(appointment.appointment_id)}
