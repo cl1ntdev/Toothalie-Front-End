@@ -25,6 +25,7 @@ export default function AppointmentModal({ onClose, onSuccess }) {
   const [isFamilyBooking, setIsFamilyBooking] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [activePopover, setActivePopover] = useState<string | null>(null);
+  const [isDatePicked, setIsDatePicked] = useState<boolean>(false)
 
   useEffect(() => {
     const fetchDentists = async () => {
@@ -242,6 +243,7 @@ export default function AppointmentModal({ onClose, onSuccess }) {
                                     setPickDentist(dentist.dentistID);
                                     setPickDay(day);
                                     setPickTime(time);
+                                    setIsDatePicked(true)
                                     setError(null);
                                   }}
                                   className={`px-3 py-1 rounded-md text-xs border font-medium transition-all ${
@@ -260,7 +262,7 @@ export default function AppointmentModal({ onClose, onSuccess }) {
                         ))}
 
                         {/* CALENDAR PICKER */}
-                        {(pickTime !== "" || date == undefined) && (
+                        {isDatePicked && pickDentist === dentist.dentistID && (
                           <div className="flex flex-col gap-3 mt-4">
                             <Label htmlFor="date" className="px-1">
                               Select Available Date
