@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import FetchAppointment from '@/API/Authenticated/appointment/FetchAppointment';
-import { Pencil, Trash2, Calendar, Clock, User, CheckCircle, XCircle, ClockIcon, AlertTriangle, Users } from 'lucide-react';
+import {
+  Pencil,
+  Trash2,
+  Calendar,
+  Clock,
+  User,
+  CheckCircle,
+  XCircle,
+  ClockIcon,
+  AlertTriangle,
+  Users
+} from 'lucide-react';
 import DeleteAppointmentModal from './DeleteAppointmentModal';
 import EditModal from './EditModal';
 
 type appointmentProps = {
-  fetchNewAppointment: boolean
-  onFetched: () => void;  
-}
+  fetchNewAppointment: boolean;
+  onFetched: () => void;
+};
 
 export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: appointmentProps) {
   const [appointmentsData, setAppointmentsData] = useState<any[]>([]);
@@ -17,13 +28,12 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         const data = await FetchAppointment();
-        console.log('Fetched appointment data:', data);
 
         if (data && data.status === 'ok' && Array.isArray(data.appointments)) {
           setAppointmentsData(data.appointments);
@@ -121,11 +131,7 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
   }
 
   if (error) {
-    return (
-      <div className="text-center text-red-400 py-8">
-        {error}
-      </div>
-    );
+    return <div className="text-center text-red-400 py-8">{error}</div>;
   }
 
   if (!appointmentsData.length) {
@@ -142,52 +148,55 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
       {appointmentsData.map((appointmentData, index) => {
         const { appointment, dentist, schedules } = appointmentData;
         const schedule = schedules.find((s) => s.scheduleID === appointment.schedule_id);
-        const appointmentDate = new Date(appointment.user_set_date).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric"
+        const appointmentDate = new Date(appointment.user_set_date).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
         });
-        
+
         const statusConfig = getStatusConfig(appointment.status);
         const StatusIcon = statusConfig.icon;
-        
+
         const appointmentTypeConfig = getAppointmentTypeConfig(appointment.appointment_type_id);
         const AppointmentTypeIcon = appointmentTypeConfig.icon;
-        
+
         const isEmergency = appointment.emergency === 1;
 
         return (
           <div
             key={appointment.appointment_id || index}
-            className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors"
+            className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors shadow-sm"
           >
-            <div className="flex items-start justify-between">
+            {/* Mobile responsive flex container */}
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div className="flex-1">
                 {/* Header with Dentist Info and Status */}
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 gap-3">
                   <div className="flex items-center space-x-3">
                     <div className="bg-blue-50 p-2 rounded-lg">
-                      <User className="h-4 w-4 text-blue-600" />
+                      <User className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-medium text-gray-900">
+                      <h3 className="font-medium text-gray-900 text-sm sm:text-base">
                         {dentist?.name || 'Unknown Dentist'}
                       </h3>
-                      <p className="text-sm text-gray-500">{dentist?.specialty || 'General Dentistry'}</p>
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        {dentist?.specialty || 'General Dentistry'}
+                      </p>
                     </div>
                   </div>
-                  
+
                   {/* Status Badge */}
-                  <div className={`inline-flex items-center space-x-1.5 px-3 py-1 rounded-full border ${statusConfig.bgColor} ${statusConfig.borderColor}`}>
+                  <div
+                    className={`inline-flex items-center justify-center self-start sm:self-auto space-x-1.5 px-3 py-1 rounded-full border text-xs sm:text-sm ${statusConfig.bgColor} ${statusConfig.borderColor}`}
+                  >
                     <StatusIcon className={`h-3 w-3 ${statusConfig.color}`} />
-                    <span className={`text-xs font-medium ${statusConfig.color}`}>
-                      {appointment.status}
-                    </span>
+                    <span className={`font-medium ${statusConfig.color}`}>{appointment.status}</span>
                   </div>
                 </div>
 
                 {/* Appointment Details */}
-                <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
+                <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-gray-600 mb-3">
                   <div className="flex items-center space-x-2">
                     <Calendar className="h-4 w-4 text-gray-400" />
                     <span>{appointmentDate}</span>
@@ -199,19 +208,19 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
                 </div>
 
                 {/* Emergency and Appointment Type Badges */}
-                <div className="flex items-center space-x-2">
-                  {/* Emergency Badge */}
+                <div className="flex flex-wrap items-center gap-2">
                   {isEmergency && (
-                    <div className="inline-flex items-center space-x-1.5 px-2 py-1 rounded-full bg-red-50 border border-red-200">
+                    <div className="inline-flex items-center space-x-1.5 px-2 py-1 rounded-full bg-red-50 border border-red-200 text-xs sm:text-sm">
                       <AlertTriangle className="h-3 w-3 text-red-600" />
-                      <span className="text-xs font-medium text-red-600">Emergency</span>
+                      <span className="font-medium text-red-600">Emergency</span>
                     </div>
                   )}
-                  
-                  {/* Appointment Type Badge */}
-                  <div className={`inline-flex items-center space-x-1.5 px-2 py-1 rounded-full border ${appointmentTypeConfig.bgColor}`}>
+
+                  <div
+                    className={`inline-flex items-center space-x-1.5 px-2 py-1 rounded-full border text-xs sm:text-sm ${appointmentTypeConfig.bgColor}`}
+                  >
                     <AppointmentTypeIcon className={`h-3 w-3 ${appointmentTypeConfig.color}`} />
-                    <span className={`text-xs font-medium ${appointmentTypeConfig.color}`}>
+                    <span className={`font-medium ${appointmentTypeConfig.color}`}>
                       {appointmentTypeConfig.name}
                     </span>
                   </div>
@@ -219,7 +228,7 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center space-x-1 ml-4">
+              <div className="flex items-center justify-end sm:justify-start space-x-1">
                 <button
                   onClick={() => handleEdit(appointment.appointment_id)}
                   className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
@@ -244,19 +253,19 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
         <DeleteAppointmentModal
           appointmentID={selectedAppointmentId}
           onClose={handleCloseModal}
-          onDeleteSuccess={handleDeleteSuccess} 
-          deleteSuccess={triggerDelete}    
+          onDeleteSuccess={handleDeleteSuccess}
+          deleteSuccess={triggerDelete}
         />
       )}
-      
+
       {editModalOpen && (
-        <EditModal 
+        <EditModal
           appointmentID={selectedAppointmentId}
           onClose={() => {
             setEditModalOpen(false);
             setSelectedAppointmentId(null);
           }}
-          onSuccess={() => setIsUpdate(prev => !prev)}
+          onSuccess={() => setIsUpdate((prev) => !prev)}
         />
       )}
     </div>
