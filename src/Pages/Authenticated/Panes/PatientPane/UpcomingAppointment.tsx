@@ -85,19 +85,22 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
         icon: ClockIcon,
         color: 'text-yellow-600',
         bgColor: 'bg-yellow-50',
-        borderColor: 'border-yellow-200'
+        borderColor: 'border-yellow-200',
+        function:"none"
       },
       Approved: {
         icon: CheckCircle,
         color: 'text-green-600',
         bgColor: 'bg-green-50',
-        borderColor: 'border-green-200'
+        borderColor: 'border-green-200',
+        function:"disable"
       },
       Rejected: {
         icon: XCircle,
         color: 'text-red-600',
         bgColor: 'bg-red-50',
-        borderColor: 'border-red-200'
+        borderColor: 'border-red-200',
+        function:"none",
       }
     };
     return config[status as keyof typeof config] || config.Pending;
@@ -228,22 +231,26 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-end sm:justify-start space-x-1">
-                <button
-                  onClick={() => handleEdit(appointment.appointment_id)}
-                  className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
-                  aria-label="Edit appointment"
-                >
-                  <Pencil className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => handleDelete(appointment.appointment_id)}
-                  className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                  aria-label="Delete appointment"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
+              {appointment.status != "Approved" && (
+                <div className={`flex items-center justify-end sm:justify-start space-x-1`} >
+                  <button
+                    onClick={() => handleEdit(appointment.appointment_id)}
+                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                    aria-label="Edit appointment"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(appointment.appointment_id)}
+                    className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                    aria-label="Delete appointment"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
+              
+              
             </div>
           </div>
         );
