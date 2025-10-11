@@ -5,7 +5,8 @@ export default async function SubmitAppointment(
   time:string,
   emergency:boolean,
   familyBooking:boolean,
-  date:string | null
+  date:string | null,
+  message:string
 
 ){
   console.log(patientID)
@@ -25,7 +26,8 @@ export default async function SubmitAppointment(
       time,
       emergency,
       familyBooking,
-      date
+      date,
+      message
     })
   })
   

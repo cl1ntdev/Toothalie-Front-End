@@ -26,7 +26,9 @@ export default function AppointmentModal({ onClose, onSuccess }) {
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [activePopover, setActivePopover] = useState<string | null>(null);
   const [isDatePicked, setIsDatePicked] = useState<boolean>(false);
-
+  const [message,setMessage] = useState<string>("")
+  
+  
   useEffect(() => {
     const fetchDentists = async () => {
       try {
@@ -85,7 +87,8 @@ export default function AppointmentModal({ onClose, onSuccess }) {
       pickTime,
       isEmergency,
       isFamilyBooking,
-      formattedDate
+      formattedDate,
+      message
     );
 
     if (response.ok === true) {
@@ -218,9 +221,10 @@ export default function AppointmentModal({ onClose, onSuccess }) {
                           </div>
                         ))}
 
-                        {/* Calendar Picker */}
+                        {/* Calendar Picker and Message */}
                         {isDatePicked && pickDentist === dentist.dentistID && (
                           <div className="space-y-2 mt-3">
+                            
                             <Label className="text-sm">Select Date</Label>
                             <Popover
                               open={activePopover === dentist.dentistID}
@@ -246,6 +250,15 @@ export default function AppointmentModal({ onClose, onSuccess }) {
                                 />
                               </PopoverContent>
                             </Popover>
+                            <div className="space-y-1">
+                              <label className="text-xs text-gray-600 block">Message</label>
+                              <input 
+                                placeholder="What's the issue?"
+                                onChange={(e) => setMessage(e.target.value)}
+                                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                              />
+                              <p className="text-xs text-gray-400">This message will be sent to the dentist</p>
+                            </div>
                           </div>
                         )}
                       </div>
