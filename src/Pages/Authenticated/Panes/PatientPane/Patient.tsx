@@ -159,7 +159,7 @@ export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
   
             {/* Appointments Section */}
             <section>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Upcoming Appointments</h2>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Your Appointments</h2>
               <UpcomingAppointment
                 fetchNewAppointment={fetchNewAppointment}
                 onFetched={() => setFetchNewAppointment(false)} 
