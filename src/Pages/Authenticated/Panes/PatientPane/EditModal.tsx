@@ -45,7 +45,7 @@ export default function EditModal({
   const [isFamilyBooking, setIsFamilyBooking] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
   const [day, setDay] = useState("");
-  const [previousDatePicked,setPreviousDatePicked] = useState("")
+  const [message,setMessage] = useState<string>("")
 
   useEffect(()=>{
     console.log(appointmentInfo)
@@ -64,7 +64,6 @@ export default function EditModal({
           new Date(data.appointment.user_set_date)
         )
        
-        setPreviousDatePicked(data.appointment.user_set_date)
         setDay(data.appointment.day_of_week)
         if(data.appointment){
           console.log(data.appointment.emergency)
@@ -73,6 +72,7 @@ export default function EditModal({
           const bookingTypeCheck = data.appointment.appointment_type_id === 2 
           setIsEmergency(emergencyCheck)
           setIsFamilyBooking(bookingTypeCheck)  
+          setMessage(data.appointment.message != null ? data.appointment.message : "No message" )
         }
         
         setAppointmentInfo(data);
@@ -108,15 +108,15 @@ export default function EditModal({
 
   const handleSave = async () => {
     console.log(date)
-    // if (!appointmentID || !selectedSchedule || !date) return;
+    if (!appointmentID || !selectedSchedule || !date) return;
 
-    // try {
-    //   await UpdateAppointment(appointmentID, selectedSchedule);
-    //   onSuccess();
-    //   onClose();
-    // } catch (error) {
-    //   console.error("Error updating appointment:", error);
-    // }
+    try {
+      await UpdateAppointment(appointmentID, selectedSchedule);
+      onSuccess();
+      onClose();
+    } catch (error) {
+      console.error("Error updating appointment:", error);
+    }
   };
 
   if (loading) {
@@ -259,6 +259,16 @@ export default function EditModal({
                 />
               </PopoverContent>
             </Popover>
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs text-gray-600 block">Message</label>
+            <input 
+              value={message}
+              placeholder="What's the issue?"
+              onChange={(e) => setMessage(e.target.value)}
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <p className="text-xs text-gray-400">This message will be sent to the dentist</p>
           </div>
         </div>
 
