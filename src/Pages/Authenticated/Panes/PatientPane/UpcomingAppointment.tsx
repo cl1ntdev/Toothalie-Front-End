@@ -231,8 +231,9 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
               </div>
 
               {/* Action Buttons */}
-              {appointment.status != "Approved" && (
+             
                 <div className={`flex items-center justify-end sm:justify-start space-x-1`} >
+                {appointment.status == "Pending" && (
                   <button
                     onClick={() => handleEdit(appointment.appointment_id)}
                     className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
@@ -240,6 +241,8 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
+                )}
+                {(appointment.status == "Pending" || appointment.status == "Rejected") && (
                   <button
                     onClick={() => handleDelete(appointment.appointment_id)}
                     className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
@@ -247,8 +250,10 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
+                )}
+                
+                 
                 </div>
-              )}
               
               
             </div>
@@ -275,6 +280,6 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
           onSuccess={() => setIsUpdate((prev) => !prev)}
         />
       )}
-    </div>
+      </div>
   );
 }
