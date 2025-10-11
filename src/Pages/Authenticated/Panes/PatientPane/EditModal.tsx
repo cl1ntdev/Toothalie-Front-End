@@ -43,7 +43,7 @@ export default function EditModal({
   const [selectedSchedule, setSelectedSchedule] = useState<string>("");
   const [isEmergency, setIsEmergency] = useState(false);
   const [isFamilyBooking, setIsFamilyBooking] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date>();
   const [day, setDay] = useState("");
   const [message,setMessage] = useState<string>("")
 
@@ -107,11 +107,12 @@ export default function EditModal({
   };
 
   const handleSave = async () => {
-    console.log(date)
-    if (!appointmentID || !selectedSchedule || !date) return;
+    console.log(appointmentID, selectedSchedule,date,isEmergency,isFamilyBooking,message)
+  
+    // if (!appointmentID || !selectedSchedule || !date || !isEmergency || !isFamilyBooking || !message) return;
 
     try {
-      await UpdateAppointment(appointmentID, selectedSchedule);
+      await UpdateAppointment(appointmentID, selectedSchedule,date,isEmergency,isFamilyBooking,message);
       onSuccess();
       onClose();
     } catch (error) {
