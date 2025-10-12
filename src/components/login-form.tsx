@@ -27,7 +27,7 @@ export function LoginForm({
     const userLoginInfo = await LoginAuth(user)
     const userLoginID = userLoginInfo.userID
     if(userLoginInfo.status != "error"){
-      navigate(`/user/${userLoginID}`)      
+      navigate(`/patient/${userLoginID}`)      
     }else{
       console.log("Error Login")
       setIsWrong(true)
