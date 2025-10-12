@@ -168,12 +168,10 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
         return (
           <div
             key={appointment.appointment_id || index}
-            className="bg-white border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors shadow-sm"
+            className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md hover:border-gray-300 transition-colors shadow-sm"
           >
-            {/* Mobile responsive flex container */}
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div className="flex-1">
-                {/* Header with Dentist Info and Status */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 gap-3">
                   <div className="flex items-center space-x-3">
                     <div className="bg-blue-50 p-2 rounded-lg">
@@ -189,7 +187,6 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
                     </div>
                   </div>
 
-                  {/* Status Badge */}
                   <div
                     className={`inline-flex items-center justify-center self-start sm:self-auto space-x-1.5 px-3 py-1 rounded-full border text-xs sm:text-sm ${statusConfig.bgColor} ${statusConfig.borderColor}`}
                   >
@@ -198,7 +195,6 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
                   </div>
                 </div>
 
-                {/* Appointment Details */}
                 <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm text-gray-600 mb-3">
                   <div className="flex items-center space-x-2">
                     <Calendar className="h-4 w-4 text-gray-400" />
@@ -210,7 +206,6 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
                   </div>
                 </div>
 
-                {/* Emergency and Appointment Type Badges */}
                 <div className="flex flex-wrap items-center gap-2">
                   {isEmergency && (
                     <div className="inline-flex items-center space-x-1.5 px-2 py-1 rounded-full bg-red-50 border border-red-200 text-xs sm:text-sm">
@@ -230,7 +225,6 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
                 </div>
               </div>
 
-              {/* Action Buttons */}
              
                 <div className={`flex items-center justify-end sm:justify-start space-x-1`} >
                 {appointment.status == "Pending" && (
