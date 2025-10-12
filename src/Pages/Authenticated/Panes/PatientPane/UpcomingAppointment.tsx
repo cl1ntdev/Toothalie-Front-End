@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import FetchAppointment from '@/API/Authenticated/appointment/FetchAppointment';
+import { FetchAppointment, fetchAppointmentDentist } from '@/API/Authenticated/appointment/FetchAppointment';
 import {
   Pencil,
   Trash2,
