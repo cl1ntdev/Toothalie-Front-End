@@ -20,7 +20,7 @@ type PatientPanelProps = {
   };
 };
 
-export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
+export default function PatientPanel() {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [fetchNewAppointment, setFetchNewAppointment] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -31,7 +31,7 @@ export default function PatientPanel({ userLoginedInfo }: PatientPanelProps) {
   
   useEffect(()=>{
     const getUserInfo = async() => {
-      const userBase = await GetUserInfo(id)
+      const userBase = await GetUserInfo(id)  
       setUser(userBase)
       console.log(user)
       setIsLoading(false)

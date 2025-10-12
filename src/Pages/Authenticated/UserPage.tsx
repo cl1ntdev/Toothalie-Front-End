@@ -19,6 +19,7 @@ export default function UserPage(){
   const [userInfo, setUserInfo] = useState<LoginedUserClass>()
   useEffect(()=>{
     
+    //  >>>  >>>  THIS HAS NO USE  <<<  <<< 
     // 
     // 
     // DEBUGGING PURPOSES 
@@ -29,6 +30,8 @@ export default function UserPage(){
     // 
     // 
     // 
+    //  >>>  >>>  THIS HAS NO USE  <<<  <<< 
+    
     
     const getUserFunc = async(id:string)=>{
       const userInfo = await GetLoginUser(id);  
@@ -75,7 +78,7 @@ export default function UserPage(){
         userInfo?.role == "Dentist" ? (
           <DentistPanel userLoginedInfo={userInfo} />
         ):(
-          <PatientPanel userLoginedInfo={userInfo} />
+          <PatientPanel />
         )
       )}
     </>
