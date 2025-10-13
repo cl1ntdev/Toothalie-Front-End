@@ -49,9 +49,16 @@ export default function PatientPanel() {
     setShowAppointmentModal(false);
   };
   
-  const handleUpdateAppointments = () => {
-    setFetchNewAppointment(true);
-  };
+  // const handleUpdateAppointments = () => {
+  //   setFetchNewAppointment(true);
+  // };
+  
+  const handleAppointmentSuccess = () =>{
+    console.log('working')
+    setShowAppointmentModal(false)
+    setFetchNewAppointment(true)
+    
+  }
 
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
@@ -165,17 +172,18 @@ export default function PatientPanel() {
               <h2 className="text-lg font-medium text-gray-900 mb-4">Your Appointments</h2>
               <UpcomingAppointment
                 fetchNewAppointment={fetchNewAppointment}
-                onFetched={() => setFetchNewAppointment(false)} 
+                // onFetched={() => setFetchNewAppointment(false)} 
               />
             </section>
           </div>
         </main>
   
-        {/* Modal */}
+        {/* New appointment modal */}
         {showAppointmentModal && (
           <AppointmentModal 
             onClose={handleCloseModal} 
-            onSuccess={handleUpdateAppointments} 
+            // onSuccess={handleUpdateAppointments} 
+            appointmentSuccess={handleAppointmentSuccess}
           />
         )}
       </div>
