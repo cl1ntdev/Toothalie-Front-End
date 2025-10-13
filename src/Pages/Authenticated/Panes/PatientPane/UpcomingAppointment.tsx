@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FetchAppointment, fetchAppointmentDentist } from '@/API/Authenticated/appointment/FetchAppointment';
+import AppointmentModal from './AppointmentModal';
 import {
   Pencil,
   Trash2,
@@ -16,12 +17,7 @@ import {
 import DeleteAppointmentModal from './DeleteAppointmentModal';
 import EditModal from './EditModal';
 
-type appointmentProps = {
-  fetchNewAppointment: boolean;
-  onFetched: () => void;
-};
-
-export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: appointmentProps) {
+export default function UpcomingAppointment() {
   const [appointmentsData, setAppointmentsData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +25,7 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,18 +43,29 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
         setError('Failed to load appointments.');
       } finally {
         setLoading(false);
-        onFetched();
+        // onFetched();
       }
     };
     setIsUpdate(false);
     fetchData();
-  }, [fetchNewAppointment,isUpdate]);
+  }, [isUpdate]);
 
   const handleDelete = (appointmentId: string) => {
     setSelectedAppointmentId(appointmentId);
     setDeleteModalOpen(true);
   };
 
+
+  const handleCloseModal = () => {
+    setShowAppointmentModal(false);
+  };
+
+  
+  const handleAppointmentSuccess = () =>{
+    console.log('working')
+    setShowAppointmentModal(false)
+    setIsUpdate(true)    
+  }
 
   const handleCloseDeleteModal = () => {
     setDeleteModalOpen(false);
@@ -284,6 +292,13 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
           appointmentID={selectedAppointmentId}
           onClose={ handleCloseEditModal }
           onSuccessEdit={() => setIsUpdate((prev) => !prev)}
+        />
+      )}
+      {showAppointmentModal && (
+        <AppointmentModal 
+          onClose={handleCloseModal} 
+          // onSuccess={handleUpdateAppointments} 
+          appointmentSuccess={handleAppointmentSuccess}
         />
       )}
       </div>
