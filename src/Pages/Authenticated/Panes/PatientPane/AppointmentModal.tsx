@@ -14,7 +14,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-export default function AppointmentModal({ onClose, onSuccess }) {
+type AppointmentProps = {
+  onClose: () => void;
+  // onSuccess: () => void;
+  appointmentSuccess: () => void
+}
+
+export default function AppointmentModal({ onClose, appointmentSuccess }: AppointmentProps) {
   const [dentists, setDentists] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pickDentist, setPickDentist] = useState("");
@@ -93,7 +99,7 @@ export default function AppointmentModal({ onClose, onSuccess }) {
 
     if (response.ok === true) {
       onClose();
-      onSuccess();
+      appointmentSuccess()
     } else {
       setError("Failed to submit appointment. Please try again.");
     }
@@ -102,7 +108,7 @@ export default function AppointmentModal({ onClose, onSuccess }) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-        {/* Header */}
+        {/* Header section */}
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-lg font-medium">Book Appointment</h2>
           <button
@@ -113,7 +119,7 @@ export default function AppointmentModal({ onClose, onSuccess }) {
           </button>
         </div>
 
-        {/* Booking type */}
+        {/* Booking types */}
         <div className="p-4 space-y-3 border-b">
           <div className="flex items-center gap-2">
             <Checkbox
@@ -155,6 +161,7 @@ export default function AppointmentModal({ onClose, onSuccess }) {
               No dentists available.
             </div>
           ) : (
+            // Map all the dentist and give there schedule as choices
             <div className="space-y-4">
               {dentists.map((dentist) => (
                 <div
@@ -175,8 +182,10 @@ export default function AppointmentModal({ onClose, onSuccess }) {
                   {/* Schedule */}
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium">Available Schedule:</h4>
+                    {/* check fi there are schedules */}
                     {dentist.schedule && Object.keys(dentist.schedule).length > 0 ? (
                       <div className="space-y-2">
+                        {/* map the keys and there ability time */}
                         {Object.keys(dentist.schedule).map((day) => (
                           <div key={day}>
                             <button
@@ -221,7 +230,7 @@ export default function AppointmentModal({ onClose, onSuccess }) {
                           </div>
                         ))}
 
-                        {/* Calendar Picker and Message */}
+                        {/* Calendar Picker and Message of the user */}
                         {isDatePicked && pickDentist === dentist.dentistID && (
                           <div className="space-y-2 mt-3">
                             
