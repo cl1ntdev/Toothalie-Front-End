@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchAppointmentDentist } from "@/API/Authenticated/appointment/FetchAppointment";
+import { UpdateDentistAppointment } from "@/API/Authenticated/appointment/EditAppointmentAPI";
 import { useParams } from "react-router-dom";
 import {
   Calendar,
@@ -91,24 +92,27 @@ export default function Appointments() {
       setIsUpdating(true);
       console.log(`Updating appointment ${appointmentId} to ${newStatus}`);
       
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const updateStatus = await UpdateDentistAppointment(appointmentId, newStatus);
       
-      setAppointmentsData(prev => 
-        prev.map(appt => 
-          appt.appointment_id === appointmentId 
-            ? { ...appt, status: newStatus }
-            : appt
-        )
-      );
-      
-      if (viewAppointment?.appointment_id === appointmentId) {
-        setViewAppointment(prev => ({ ...prev, status: newStatus }));
+      if (updateStatus.status === "ok") {
+        setAppointmentsData(prev => 
+          prev.map(appt => 
+            appt.appointment_id === appointmentId 
+              ? { ...appt, status: newStatus }
+              : appt
+          )
+        );
+        
+        setViewAppointment(null); // close after appointment success
+        
+        console.log(`Appointment ${appointmentId} successfully updated to ${newStatus}`);
+      } else {
+        throw new Error(updateStatus.message || "Failed to update appointment");
       }
       
-      console.log(`Appointment ${appointmentId} updated to ${newStatus}`);
     } catch (err) {
       console.error("Error updating appointment:", err);
-      alert("Failed to update appointment status.");
+      alert("Failed to update appointment status. Please try again.");
     } finally {
       setIsUpdating(false);
     }
@@ -196,11 +200,6 @@ export default function Appointments() {
   return (
     <>
       <div className="p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Appointments</h1>
-          <p className="text-gray-600 mt-1">Manage and view all patient appointments</p>
-        </div>
-
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {appointmentsData.map((appointment, index) => {
             const statusConfig = getStatusConfig(appointment.status);
@@ -310,7 +309,7 @@ export default function Appointments() {
               </div>
 
               <div className="space-y-4">
-                {/* Patient Information */}
+                {/* Patient Information according to appointment */}
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h4 className="font-medium text-gray-900 mb-3 flex items-center space-x-2">
                     <User className="h-4 w-4" />
@@ -364,7 +363,7 @@ export default function Appointments() {
                   </div>
                 </div>
 
-                {/* Message from patient */}
+                {/* Messages from patient */}
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h4 className="font-medium text-gray-900 mb-2 flex items-center space-x-2">
                     <MessageSquare className="h-4 w-4" />
@@ -382,38 +381,36 @@ export default function Appointments() {
                 </div>
               </div>
 
-              {/* Approve/Rejectw*/}
-              {viewAppointment.status === "Pending" && (
-                <div className="mt-6 pt-4 border-t">
-                  <h4 className="font-medium text-gray-900 mb-3">Update Status</h4>
-                  <div className="flex space-x-3">
-                    <button
-                      onClick={() => handleStatusUpdate(viewAppointment.appointment_id, "Approved")}
-                      disabled={isUpdating}
-                      className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                    >
-                      {isUpdating ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      ) : (
-                        <CheckCircle className="h-4 w-4" />
-                      )}
-                      <span>Approve</span>
-                    </button>
-                    <button
-                      onClick={() => handleStatusUpdate(viewAppointment.appointment_id, "Rejected")}
-                      disabled={isUpdating}
-                      className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                    >
-                      {isUpdating ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      ) : (
-                        <XCircle className="h-4 w-4" />
-                      )}
-                      <span>Reject</span>
-                    </button>
-                  </div>
+              {/* Button choices  */}
+              <div className="mt-6 pt-4 border-t">
+                <h4 className="font-medium text-gray-900 mb-3">Update Status</h4>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => handleStatusUpdate(viewAppointment.appointment_id, "Approved")}
+                    disabled={isUpdating}
+                    className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  >
+                    {isUpdating ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      <CheckCircle className="h-4 w-4" />
+                    )}
+                    <span>Approve</span>
+                  </button>
+                  <button
+                    onClick={() => handleStatusUpdate(viewAppointment.appointment_id, "Rejected")}
+                    disabled={isUpdating}
+                    className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                  >
+                    {isUpdating ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      <XCircle className="h-4 w-4" />
+                    )}
+                    <span>Reject</span>
+                  </button>
                 </div>
-              )}
+              </div>
 
               <div className="flex justify-end mt-4">
                 <button
