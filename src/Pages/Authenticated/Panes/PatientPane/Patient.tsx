@@ -96,7 +96,7 @@ export default function PatientPanel() {
               </button>
             </div>
   
-            {/* Navigation */}
+            {/* Left navigation Section */}
             <nav className="flex-1 px-4 py-6 space-y-2">
               <button className={`flex items-center w-full p-3 rounded-lg transition-colors ${
                 isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
@@ -132,7 +132,7 @@ export default function PatientPanel() {
           </aside>
         </div>
   
-        {/* Main Content */}
+        {/* Main Content (Right side) */}
         <main className="flex-1 overflow-y-auto">
           <div className="max-w-4xl mx-auto p-6">
             {/* Header */}
@@ -149,7 +149,7 @@ export default function PatientPanel() {
               </div>
             </header>
   
-            {/* Quick Action */}
+            {/* Function BUttons (TOp) */}
             <section className="mb-8">
               <button 
                 onClick={() => setShowAppointmentModal(true)}
@@ -160,7 +160,7 @@ export default function PatientPanel() {
               </button>
             </section>
   
-            {/* Appointments Section */}
+            {/* shows upcoming appointmets */}
             <section>
               <h2 className="text-lg font-medium text-gray-900 mb-4">Your Appointments</h2>
               <UpcomingAppointment
