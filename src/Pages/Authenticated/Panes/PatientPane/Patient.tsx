@@ -2,6 +2,7 @@ import React, { useState,useEffect } from "react";
 import AppointmentModal from "./AppointmentModal";
 import UpcomingAppointment from "./UpcomingAppointment";
 import GetUserInfo from "@/API/Authenticated/GetUserInfoAPI";
+import HistoryPane from "./History";
 import {
   Calendar,
   History,
@@ -20,12 +21,15 @@ type PatientPanelProps = {
   };
 };
 
+
+
 export default function PatientPanel() {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [fetchNewAppointment, setFetchNewAppointment] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isLoading,setIsLoading] = useState(true)
   const [user,setUser] = useState(null)
+  const [currentPane,setCurrentPane] = useState<string>("Home")
   const id = localStorage.getItem("userID")
   console.log(id)
   
@@ -44,6 +48,20 @@ export default function PatientPanel() {
     console.log(user)
   },[user])
  
+  const PaneSelect = (PaneName:string) => {
+    console.log(PaneName)
+    switch(PaneName){
+      case "History":
+        return <HistoryPane />
+      case "Reminder":
+        return null
+      case "Home":
+      return <UpcomingAppointment
+        fetchNewAppointment={fetchNewAppointment}
+        onFetched={() => setFetchNewAppointment(false)} 
+      />
+    }
+  }
   
   const handleCloseModal = () => {
     setShowAppointmentModal(false);
@@ -78,7 +96,7 @@ export default function PatientPanel() {
           } h-full`}>
             {/* Header with Toggle Button */}
             <div className="flex items-center justify-between px-4 py-6 border-b border-gray-200">
-              {/* User Info - Only shows when expanded */}
+              {/* User Info - only shows when expanded */}
               {isSidebarExpanded && (
                 <div className="flex items-center">
                   <User className="h-8 w-8 text-gray-600" />
@@ -104,25 +122,29 @@ export default function PatientPanel() {
   
             {/* Left navigation Section */}
             <nav className="flex-1 px-4 py-6 space-y-2">
-              <button className={`flex items-center w-full p-3 rounded-lg transition-colors ${
-                isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
-              } bg-blue-50 text-blue-600`}>
+                <button className={`flex items-center w-full p-3 rounded-lg transition-colors ${isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
+                  } bg-blue-50 text-blue-600`} onClick={() => setCurrentPane("Home")} >
                 <Calendar size={20} />
                 {isSidebarExpanded && <span>Appointments</span>}
               </button>
               
               <button className={`flex items-center w-full p-3 rounded-lg transition-colors ${
                 isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
-              } text-gray-400 hover:text-gray-600 hover:bg-gray-50`}>
+                } text-gray-400 hover:text-gray-600 hover:bg-gray-50`}
+              onClick={()=>setCurrentPane("History")}
+              
+              >
                 <History size={20} />
                 {isSidebarExpanded && <span>History</span>}
               </button>
               
               <button className={`flex items-center w-full p-3 rounded-lg transition-colors ${
                 isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
-              } text-gray-400 hover:text-gray-600 hover:bg-gray-50`}>
+              } text-gray-400 hover:text-gray-600 hover:bg-gray-50`}
+              onClick={()=>setCurrentPane("Reminder")}
+              >
                 <Bell size={20} />
-                {isSidebarExpanded && <span>Notifications</span>}
+                {isSidebarExpanded && <span>Reminders</span>}
               </button>
             </nav>
   
@@ -155,24 +177,12 @@ export default function PatientPanel() {
               </div>
             </header>
   
-            {/* Function BUttons (TOp) */}
-            <section className="mb-8">
-              <button 
-                onClick={() => setShowAppointmentModal(true)}
-                className="flex items-center space-x-2 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:border-blue-500 transition-colors text-gray-700"
-              >
-                <Plus size={18} />
-                <span>New Appointment</span>
-              </button>
-            </section>
+            
   
             {/* shows upcoming appointmets */}
             <section>
               <h2 className="text-lg font-medium text-gray-900 mb-4">Your Appointments</h2>
-              <UpcomingAppointment
-                fetchNewAppointment={fetchNewAppointment}
-                onFetched={() => setFetchNewAppointment(false)} 
-              />
+                {PaneSelect(currentPane)}
             </section>
           </div>
         </main>
