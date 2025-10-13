@@ -17,10 +17,10 @@ import EditModal from './EditModal';
 
 type appointmentProps = {
   fetchNewAppointment: boolean;
-  onFetched: () => void;
+  // onFetched: () => void;
 };
 
-export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: appointmentProps) {
+export default function UpcomingAppointment({ fetchNewAppointment }: appointmentProps) {
   const [appointmentsData, setAppointmentsData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,12 +45,12 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
         setError('Failed to load appointments.');
       } finally {
         setLoading(false);
-        onFetched();
+        // onFetched();
       }
     };
     setIsUpdate(false);
     fetchData();
-  }, [fetchNewAppointment, onFetched]);
+  }, [fetchNewAppointment]);
 
   const handleDelete = (appointmentId: string) => {
     setSelectedAppointmentId(appointmentId);
