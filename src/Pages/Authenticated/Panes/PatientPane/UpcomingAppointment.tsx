@@ -10,7 +10,8 @@ import {
   XCircle,
   ClockIcon,
   AlertTriangle,
-  Users
+  Users,
+  Plus
 } from 'lucide-react';
 import DeleteAppointmentModal from './DeleteAppointmentModal';
 import EditModal from './EditModal';
@@ -152,6 +153,16 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
 
   return (
     <div className="space-y-4">
+      {/* Function BUttons (TOp) */}
+      <section className="mb-8">
+        <button 
+          onClick={() => setShowAppointmentModal(true)}
+          className="flex items-center space-x-2 px-4 py-3 bg-white border border-gray-200 rounded-lg hover:border-blue-500 transition-colors text-gray-700"
+        >
+          <Plus size={18} />
+          <span>New Appointment</span>
+        </button>
+      </section>
       {appointmentsData.map((appointmentData, index) => {
         const { appointment, dentist, schedules } = appointmentData;
         const schedule = schedules.find((s) => s.scheduleID === appointment.schedule_id);
