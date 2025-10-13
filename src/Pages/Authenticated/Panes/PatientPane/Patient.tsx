@@ -24,7 +24,6 @@ type PatientPanelProps = {
 
 
 export default function PatientPanel() {
-  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [fetchNewAppointment, setFetchNewAppointment] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isLoading,setIsLoading] = useState(true)
@@ -56,27 +55,10 @@ export default function PatientPanel() {
       case "Reminder":
         return null
       case "Home":
-      return <UpcomingAppointment
-        fetchNewAppointment={fetchNewAppointment}
-        onFetched={() => setFetchNewAppointment(false)} 
-      />
+      return <UpcomingAppointment/>
     }
   }
   
-  const handleCloseModal = () => {
-    setShowAppointmentModal(false);
-  };
-  
-  // const handleUpdateAppointments = () => {
-  //   setFetchNewAppointment(true);
-  // };
-  
-  const handleAppointmentSuccess = () =>{
-    console.log('working')
-    setShowAppointmentModal(false)
-    setFetchNewAppointment(true)    
-  }
-
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
@@ -188,13 +170,7 @@ export default function PatientPanel() {
         </main>
   
         {/* New appointment modal */}
-        {showAppointmentModal && (
-          <AppointmentModal 
-            onClose={handleCloseModal} 
-            // onSuccess={handleUpdateAppointments} 
-            appointmentSuccess={handleAppointmentSuccess}
-          />
-        )}
+       
       </div>
     )
    
