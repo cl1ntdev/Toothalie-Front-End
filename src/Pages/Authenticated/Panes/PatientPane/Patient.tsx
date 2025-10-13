@@ -56,8 +56,7 @@ export default function PatientPanel() {
   const handleAppointmentSuccess = () =>{
     console.log('working')
     setShowAppointmentModal(false)
-    setFetchNewAppointment(true)
-    
+    setFetchNewAppointment(true)    
   }
 
   const toggleSidebar = () => {
@@ -172,7 +171,7 @@ export default function PatientPanel() {
               <h2 className="text-lg font-medium text-gray-900 mb-4">Your Appointments</h2>
               <UpcomingAppointment
                 fetchNewAppointment={fetchNewAppointment}
-                // onFetched={() => setFetchNewAppointment(false)} 
+                onFetched={() => setFetchNewAppointment(false)} 
               />
             </section>
           </div>
