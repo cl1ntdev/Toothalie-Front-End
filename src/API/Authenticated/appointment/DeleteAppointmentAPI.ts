@@ -1,4 +1,4 @@
-export default async function DeleteAppointmentAPI(appointmentID:string){
+export default async function DeleteAppointmentAPI(appointmentID:string | null){
   
   console.log('Appointment id is: '+ appointmentID)
   if(appointmentID){
