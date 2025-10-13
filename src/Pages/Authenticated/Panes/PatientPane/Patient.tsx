@@ -3,6 +3,7 @@ import AppointmentModal from "./AppointmentModal";
 import UpcomingAppointment from "./UpcomingAppointment";
 import GetUserInfo from "@/API/Authenticated/GetUserInfoAPI";
 import HistoryPane from "./History";
+import ReminderPane from "./Reminder";
 import {
   Calendar,
   History,
@@ -53,9 +54,9 @@ export default function PatientPanel() {
       case "History":
         return <HistoryPane />
       case "Reminder":
-        return null
+        return <ReminderPane />
       case "Home":
-      return <UpcomingAppointment/>
+        return <UpcomingAppointment/>
     }
   }
   
@@ -105,7 +106,8 @@ export default function PatientPanel() {
             {/* Left navigation Section */}
             <nav className="flex-1 px-4 py-6 space-y-2">
                 <button className={`flex items-center w-full p-3 rounded-lg transition-colors ${isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
-                  } bg-blue-50 text-blue-600`} onClick={() => setCurrentPane("Home")} >
+                  } text-gray-400 hover:text-gray-600 hover:bg-gray-50 `
+                } onClick={() => setCurrentPane("Home")} >
                 <Calendar size={20} />
                 {isSidebarExpanded && <span>Appointments</span>}
               </button>
