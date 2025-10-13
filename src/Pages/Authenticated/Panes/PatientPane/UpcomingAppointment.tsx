@@ -50,7 +50,7 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
     };
     setIsUpdate(false);
     fetchData();
-  }, [fetchNewAppointment]);
+  }, [fetchNewAppointment,isUpdate]);
 
   const handleDelete = (appointmentId: string) => {
     setSelectedAppointmentId(appointmentId);
