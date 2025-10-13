@@ -161,6 +161,7 @@ export default function UpcomingAppointment() {
 
   return (
     <div className="space-y-4">
+      <h2 className="text-lg font-medium text-gray-900 mb-4">Your Appointments</h2>
       {/* Function BUttons (TOp) */}
       <section className="mb-8">
         <button 

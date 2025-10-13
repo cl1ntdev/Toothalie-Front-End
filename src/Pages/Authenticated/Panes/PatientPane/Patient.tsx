@@ -165,7 +165,6 @@ export default function PatientPanel() {
   
             {/* shows upcoming appointmets */}
             <section>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Your Appointments</h2>
                 {PaneSelect(currentPane)}
             </section>
           </div>
