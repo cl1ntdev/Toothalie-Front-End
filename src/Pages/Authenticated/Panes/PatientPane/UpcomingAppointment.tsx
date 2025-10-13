@@ -58,7 +58,7 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
   };
 
 
-  const handleCloseModal = () => {
+  const handleCloseDeleteModal = () => {
     setDeleteModalOpen(false);
     setSelectedAppointmentId(null);
   };
@@ -256,7 +256,7 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
       {deleteModalOpen && (
         <DeleteAppointmentModal
           appointmentID={selectedAppointmentId}
-          onClose={handleCloseModal}
+          onClose={handleCloseDeleteModal}
           // onDeleteSuccess={handleDeleteSuccess}
           deleteSuccess={triggerDelete}
         />
