@@ -17,7 +17,7 @@ import {
 type EditModalProps = {
   appointmentID: string | null;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccessEdit: () => void;
 };
 
 const getDayIndex = (day: string) => {
@@ -35,7 +35,7 @@ const getDayIndex = (day: string) => {
 
 export default function EditModal({
   onClose,
-  onSuccess,
+  onSuccessEdit,
   appointmentID,
 }: EditModalProps) {
   const [loading, setLoading] = useState(true);
@@ -112,9 +112,11 @@ export default function EditModal({
     // if (!appointmentID || !selectedSchedule || !date || !isEmergency || !isFamilyBooking || !message) return;
 
     try {
-      await UpdateAppointment(appointmentID, selectedSchedule,date,isEmergency,isFamilyBooking,message);
-      onSuccess();
-      onClose();
+      const res = await UpdateAppointment(appointmentID, selectedSchedule,date,isEmergency,isFamilyBooking,message);
+      if (res.status == 'ok') { 
+        onSuccessEdit();
+        onClose();
+      }
     } catch (error) {
       console.error("Error updating appointment:", error);
     }
@@ -136,7 +138,6 @@ export default function EditModal({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-sm">
-        {/* Header */}
         <div className="p-4 border-b">
           <h2 className="text-lg font-medium text-gray-900">
             Reschedule Appointment
@@ -157,7 +158,7 @@ export default function EditModal({
             </div>
           </div>
 
-          {/* Appointment Type */}
+          {/* Appointment Type choices */}
           <div>
             <Label className="text-sm text-gray-700 mb-2 block">Type</Label>
             <div className="flex gap-4">
@@ -194,7 +195,7 @@ export default function EditModal({
             </div>
           </div>
 
-          {/* Time Slots */}
+          {/* time slot for the specific dentist */}
           <div>
             <Label className="text-sm text-gray-700 mb-2 block">
               Available Times
@@ -235,7 +236,7 @@ export default function EditModal({
             </div>
           </div>
 
-          {/* Date Picker */}
+          {/* date picker section */}
           <div>
             <Label className="text-sm text-gray-700 mb-1 block">Date</Label>
             <Popover>

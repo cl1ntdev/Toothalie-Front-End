@@ -272,7 +272,7 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
         <EditModal
           appointmentID={selectedAppointmentId}
           onClose={ handleCloseEditModal }
-          onSuccess={() => setIsUpdate((prev) => !prev)}
+          onSuccessEdit={() => setIsUpdate((prev) => !prev)}
         />
       )}
       </div>
