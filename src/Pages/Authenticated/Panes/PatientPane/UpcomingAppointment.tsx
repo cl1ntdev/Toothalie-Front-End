@@ -50,20 +50,13 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
     };
     setIsUpdate(false);
     fetchData();
-  }, [fetchNewAppointment, isUpdate]);
+  }, [fetchNewAppointment, onFetched]);
 
   const handleDelete = (appointmentId: string) => {
     setSelectedAppointmentId(appointmentId);
     setDeleteModalOpen(true);
   };
 
-  const handleDeleteSuccess = () => {
-    setAppointmentsData((prev) =>
-      prev.filter((appt) => appt.appointment.appointment_id !== selectedAppointmentId)
-    );
-    setDeleteModalOpen(false);
-    setSelectedAppointmentId(null);
-  };
 
   const handleCloseModal = () => {
     setDeleteModalOpen(false);
@@ -77,6 +70,11 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
 
   const triggerDelete = () => {
     setIsUpdate(true);
+    setAppointmentsData((prev) =>
+      prev.filter((appt) => appt.appointment.appointment_id !== selectedAppointmentId)
+    );
+    setDeleteModalOpen(false);
+    setSelectedAppointmentId(null);
   };
 
   const getStatusConfig = (status: string) => {
@@ -259,7 +257,7 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
         <DeleteAppointmentModal
           appointmentID={selectedAppointmentId}
           onClose={handleCloseModal}
-          onDeleteSuccess={handleDeleteSuccess}
+          // onDeleteSuccess={handleDeleteSuccess}
           deleteSuccess={triggerDelete}
         />
       )}

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import DeleteAppointmentAPI from '@/API/Authenticated/appointment/DeleteAppointmentAPI';
 type AppointmentProps = {
-  appointmentID: string;
+  appointmentID: string | null;
   onClose: () => void;
-  onDeleteSuccess: () => void;
+  // onDeleteSuccess: () => void;
   deleteSuccess: () => void;
 };
 
-export default function DeleteAppointmentModal({ appointmentID, onClose, deleteSuccess,onDeleteSuccess }: AppointmentProps) {
+export default function DeleteAppointmentModal({ appointmentID, onClose, deleteSuccess }: AppointmentProps) {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isDelete,setIsDelete] = useState<boolean>(true)
@@ -17,7 +17,7 @@ export default function DeleteAppointmentModal({ appointmentID, onClose, deleteS
     setError(null);
     const delStatus = await DeleteAppointmentAPI(appointmentID)
     if(delStatus.status == "ok"){
-      onDeleteSuccess()
+      // onDeleteSuccess()
       deleteSuccess()
       onClose()
     }
