@@ -62,6 +62,12 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
     setDeleteModalOpen(false);
     setSelectedAppointmentId(null);
   };
+  
+  const handleCloseEditModal = () => {
+    setEditModalOpen(false);
+    setSelectedAppointmentId(null);
+      
+  }
 
   const handleEdit = (appointmentId: string) => {
     setSelectedAppointmentId(appointmentId);
@@ -265,10 +271,7 @@ export default function UpcomingAppointment({ fetchNewAppointment, onFetched }: 
       {editModalOpen && (
         <EditModal
           appointmentID={selectedAppointmentId}
-          onClose={() => {
-            setEditModalOpen(false);
-            setSelectedAppointmentId(null);
-          }}
+          onClose={ handleCloseEditModal }
           onSuccess={() => setIsUpdate((prev) => !prev)}
         />
       )}
