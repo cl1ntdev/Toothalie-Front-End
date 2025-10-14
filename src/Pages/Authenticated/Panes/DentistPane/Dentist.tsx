@@ -66,7 +66,7 @@ export default function DentistPanel() {
           <button
             className={`flex items-center w-full p-3 rounded-lg transition-colors ${
               isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
-            }`}
+            } text-gray-400 `}
             onClick={()=>setPane("Appointment")}
             
           >
