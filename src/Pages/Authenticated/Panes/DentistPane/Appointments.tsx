@@ -47,11 +47,12 @@ export default function Appointments() {
           const formattedAppointments = appointmentsArray.map((item: any) => {
             const appointment = item.appointment || item;
             const patients = item.patients || {};
-            
+            const schedule = item.schedule
             return {
               appointment_id: appointment.appointment_id,
               date: appointment.appointment_date?.split(" ")[0],
               time: appointment.appointment_date?.split(" ")[1],
+              time_slot: schedule.time_slot,
               status: appointment.status || "Pending", // Default to Pending if null
               appointment_type_id: appointment.appointment_type_id,
               patient_name: patients.first_name && patients.last_name 
@@ -252,7 +253,7 @@ export default function Appointments() {
                     </div>
                     <div className="flex items-center space-x-2 text-sm text-gray-700">
                       <Clock className="h-4 w-4 text-gray-500" />
-                      <span className="font-medium">{appointment.time || "No time"}</span>
+                      <span className="font-medium">{appointment.time_slot || "No time"}</span>
                     </div>
                   </div>
 
