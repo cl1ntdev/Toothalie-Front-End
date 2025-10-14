@@ -18,6 +18,14 @@ const AlertLists = [
     border: "border-green-300",
     ok: true,
   },
+  {
+    status: "ok_stat_2",
+    message: "Saved Changes",
+    description: "You have successfully saved changes.",
+    color: "text-green-600",
+    border: "border-green-300",
+    ok: true,
+  },
 ]
 
 type AlertProps = {
