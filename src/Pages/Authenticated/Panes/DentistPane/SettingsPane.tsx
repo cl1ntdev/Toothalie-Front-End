@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getDentistData } from "@/API/Authenticated/GetDentist";
-import { Plus, Save, Trash2, RefreshCw, Calendar, Clock } from "lucide-react";
+import { Plus, Save, Trash2, RefreshCw, Calendar, Clock, X } from "lucide-react";
 
 export function SettingsPane() {
   const [dentistInfo, setDentistInfo] = useState<any>(null);
@@ -10,15 +10,90 @@ export function SettingsPane() {
   const [schedules, setSchedules] = useState<any[]>([]);
   const { id } = useParams();
 
+  // map response multiple days ex. 2 mondays 5 timeslot -> 1 monday 5 timeslot
+ //  {
+	// "schedule": [
+	// 	{
+	// 		"scheduleID": 1,
+	// 		"day_of_week": "Monday",
+	// 		"time_slot": "09:00 - 10:00 AM",
+	// 		"dentistID": 1
+	// 	},
+	// 	{
+	// 		"scheduleID": 2,
+	// 		"day_of_week": "Monday",
+	// 		"time_slot": "10:00 - 11:00 AM",
+	// 		"dentistID": 1
+	// 	}
+	// ]
+ //  }
+ 
+ // CONVERTED TO
+ 
+ // 0: Object { scheduleID: "day-Monday", day_of_week: "Monday", dentistID: 1, … }
+ // day_of_week: "Monday"
+ // time_slots: Array [ {…}, {…} ] ​​​
+ // 0: Object { id: 1, scheduleID: 1, time: "09:00 - 10:00 AM" }
+ // 1: Object { id: 2, scheduleID: 2, time: "10:00 - 11:00 AM" }
+ // length: 2
+ 
+  const transformScheduleData = (apiSchedules: any[]) => {
+    const groupedByDay: { [key: string]: any } = {};
+    
+    apiSchedules.forEach((schedule) => {
+      const day = schedule.day_of_week;
+      if (!groupedByDay[day]) {
+        groupedByDay[day] = {
+          day_of_week: day,
+          dentistID: schedule.dentistID,
+          time_slots: []
+        };
+      }
+      
+      groupedByDay[day].time_slots.push({
+        id: schedule.scheduleID,
+        scheduleID: schedule.scheduleID,
+        time: schedule.time_slot,
+        // originalData: schedule
+      });
+    });
+    
+    return Object.values(groupedByDay);
+  };
+
+  // convert modified scheulde to the api format ex. 1 monday 5 timeslot -> 2(original) monday 5 timeslot
+  const convertToApiFormat = (groupedSchedules: any[]) => {
+    const apiSchedules: any[] = [];
+    
+    groupedSchedules.forEach((daySchedule) => {
+      daySchedule.time_slots.forEach((timeSlot: any) => {
+        apiSchedules.push({
+          scheduleID: timeSlot.scheduleID || timeSlot.id,
+          day_of_week: daySchedule.day_of_week,
+          time_slot: timeSlot.time,
+          dentistID: daySchedule.dentistID
+        });
+      });
+    });
+    
+    return apiSchedules;
+  };
+
   const fetchDentist = async (forceRefresh = false) => {
     try {
       setLoading(true);
       if (forceRefresh) setRefreshing(true);
 
-      const result = await getDentistData(id);
+      const result = await getDentistData(`${id}?t=${Date.now()}`);
       if (result?.status === "ok") {
+        console.log("API Response:", result);
         setDentistInfo(result.dentist);
-        setSchedules(result.schedule);
+        
+        // transform the schedule data to group by day
+        const transformedSchedules = transformScheduleData(result.schedule || []);
+        console.log("Transformed Schedules:", transformedSchedules);
+        
+        setSchedules(transformedSchedules);
         localStorage.setItem("loginedDentist", JSON.stringify(result));
       }
     } catch (err) {
@@ -34,25 +109,74 @@ export function SettingsPane() {
     if (cached) {
       const parsed = JSON.parse(cached);
       setDentistInfo(parsed.dentist);
-      setSchedules(parsed.schedule);
+      
+      // transform cached data as well base on system
+      const transformedSchedules = transformScheduleData(parsed.schedule || []);
+      setSchedules(transformedSchedules);
       setLoading(false);
     } else {
       fetchDentist();
     }
   }, [id]);
 
-  const handleEditSchedule = (index: number, field: string, value: string) => {
+  const handleEditDay = (index: number, day: string) => {
     const updated = [...schedules];
-    updated[index][field] = value;
+    updated[index].day_of_week = day;
+    setSchedules(updated);
+  };
+
+  const handleAddTimeSlot = (dayIndex: number) => {
+    const updated = [...schedules];
+    if (!updated[dayIndex].time_slots) {
+      updated[dayIndex].time_slots = [];
+    }
+    updated[dayIndex].time_slots.push({
+      id: Date.now() + Math.random(),
+      time: "09:00 - 10:00 AM"
+    });
+    setSchedules(updated);
+  };
+
+  const handleEditTimeSlot = (dayIndex: number, timeIndex: number, value: string) => {
+    const updated = [...schedules];
+    updated[dayIndex].time_slots[timeIndex].time = value;
+    setSchedules(updated);
+  };
+
+  const handleDeleteTimeSlot = (dayIndex: number, timeIndex: number) => {
+    const updated = [...schedules];
+    updated[dayIndex].time_slots.splice(timeIndex, 1);
+    
+    // If no time slots left, remove the entire day
+    if (updated[dayIndex].time_slots.length === 0) {
+      updated.splice(dayIndex, 1);
+    }
+    
     setSchedules(updated);
   };
 
   const handleAddSchedule = () => {
+    // search for available days to add
+    const allDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const existingDays = schedules.map(s => s.day_of_week);
+    const availableDays = allDays.filter(day => !existingDays.includes(day));
+    
+    if (availableDays.length === 0) {
+      alert("All days of the week already have schedules!");
+      return;
+    }
+
+    // default schedule to be added
     const newSchedule = {
-      scheduleID: Date.now(),
+      scheduleID: `new-day-${Date.now()}`,
       dentistID: dentistInfo?.dentistID,
-      day_of_week: "Saturday",
-      time_slot: "09:00 - 10:00 AM",
+      day_of_week: availableDays[0],
+      time_slots: [
+        {
+          id: Date.now(),
+          time: "09:00 - 10:00 AM"
+        }
+      ]
     };
     setSchedules([...schedules, newSchedule]);
   };
@@ -63,9 +187,19 @@ export function SettingsPane() {
   };
 
   const handleSaveChanges = async () => {
-    // TODO: Add backend API call here
-    console.log("Saving schedules:", schedules);
-    alert("Schedules updated (not yet saved to backend)");
+    try {
+      // Convert back to API format
+      const apiFormat = convertToApiFormat(schedules);
+      console.log("Saving schedules in API format:", apiFormat);
+      
+      // TODO: Add backend API call here with apiFormat
+      // Example: await updateDentistSchedule(id, apiFormat);
+      
+      alert("Schedules updated successfully!");
+    } catch (error) {
+      console.error("Error saving schedules:", error);
+      alert("Error saving schedules");
+    }
   };
 
   const handleRefresh = async () => {
@@ -89,7 +223,7 @@ export function SettingsPane() {
         <div className="w-12 h-0.5 bg-gray-200"></div>
       </div>
 
-      {/* dentist informtiaon  */}
+      {/* dentist information */}
       {dentistInfo && (
         <div className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200">
           <h2 className="text-lg font-medium text-gray-900 mb-3">{dentistInfo.name}</h2>
@@ -101,7 +235,7 @@ export function SettingsPane() {
         </div>
       )}
 
-      {/* Dentist schedule */}
+      {/* dentist schedule adding section */}
       <div className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
           <h2 className="text-lg font-medium text-gray-900">Schedules</h2>
@@ -120,76 +254,113 @@ export function SettingsPane() {
               className="flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg border border-blue-200 transition-colors"
             >
               <Plus className="w-4 h-4" />
-              <span className="sm:block hidden">Add Schedule</span>
-              <span className="sm:hidden block">Add</span>
+              <span className="sm:block hidden">Add Day</span>
+              <span className="sm:hidden block">Add Day</span>
             </button>
           </div>
         </div>
 
         {schedules.length === 0 && (
-          <p className="text-gray-400 text-sm text-center py-8">No schedules found</p>
+          <p className="text-gray-400 text-sm text-center py-8">No schedules found. Click "Add Day" to create a schedule.</p>
         )}
 
-        {/* Add schedule */}
-        <div className="space-y-3">
-          {schedules.map((sched, index) => (
+        {/* add schedule days */}
+        <div className="space-y-4">
+          {schedules.map((sched, dayIndex) => (
             <div
               key={sched.scheduleID}
-              className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+              className="border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
             >
-              <div className="flex items-center gap-2 flex-1">
-                <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                <select
-                  value={sched.day_of_week}
-                  onChange={(e) =>
-                    handleEditSchedule(index, "day_of_week", e.target.value)
-                  }
-                  className="w-full border-none bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 rounded py-1"
-                >
-                  {[
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday",
-                    "Saturday",
-                    "Sunday",
-                  ].map((day) => (
-                    <option key={day} value={day}>
-                      {day}
-                    </option>
-                  ))}
-                </select>
+              {/* Day Header */}
+              <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
+                <div className="flex items-center gap-2 flex-1">
+                  <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                  <select
+                    value={sched.day_of_week}
+                    onChange={(e) => handleEditDay(dayIndex, e.target.value)}
+                    className="border-none bg-transparent text-sm font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 rounded py-1"
+                  >
+                    {[
+                      "Monday",
+                      "Tuesday",
+                      "Wednesday",
+                      "Thursday",
+                      "Friday",
+                      "Saturday",
+                      "Sunday",
+                    ].map((day) => (
+                      <option 
+                        key={day} 
+                        value={day}
+                        disabled={schedules.some((s, i) => i !== dayIndex && s.day_of_week === day)}
+                      >
+                        {day}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleAddTimeSlot(dayIndex)}
+                    className="flex items-center gap-2 px-3 py-1 text-xs text-green-600 hover:bg-green-50 rounded-lg border border-green-200 transition-colors"
+                  >
+                    <Plus className="w-3 h-3" />
+                    Add Time
+                  </button>
+                  
+                  <button
+                    onClick={() => handleDeleteSchedule(dayIndex)}
+                    className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                    aria-label="Delete day"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              <div className="flex items-center gap-2 flex-1">
-                <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                <input
-                  type="text"
-                  value={sched.time_slot}
-                  onChange={(e) =>
-                    handleEditSchedule(index, "time_slot", e.target.value)
-                  }
-                  className="w-full border-none bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-2 py-1"
-                  placeholder="09:00 - 10:00 AM"
-                />
-              </div>
+              {/* add time slot while mapping previous existing schedule */}
+              <div className="p-4 space-y-3">
+                {sched.time_slots?.map((timeSlot: any, timeIndex: number) => (
+                  <div
+                    key={timeSlot.id}
+                    className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                  >
+                    <div className="flex items-center gap-2 flex-1">
+                      <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <input
+                        type="text"
+                        value={timeSlot.time}
+                        onChange={(e) => handleEditTimeSlot(dayIndex, timeIndex, e.target.value)}
+                        className="w-full border-none bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-2 py-1 border border-gray-200"
+                        placeholder="09:00 - 10:00 AM"
+                      />
+                    </div>
 
-              <div className="flex justify-end sm:justify-center sm:w-10">
-                <button
-                  onClick={() => handleDeleteSchedule(index)}
-                  className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                  aria-label="Delete schedule"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
+                    <div className="flex justify-end sm:justify-center">
+                      <button
+                        onClick={() => handleDeleteTimeSlot(dayIndex, timeIndex)}
+                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                        aria-label="Delete time slot"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                
+                {(!sched.time_slots || sched.time_slots.length === 0) && (
+                  <p className="text-gray-400 text-sm text-center py-2">
+                    No time slots added. Click "Add Time" to add availability.
+                  </p>
+                )}
               </div>
             </div>
           ))}
         </div>
 
         {schedules.length > 0 && (
-          <div className="flex justify-end mt-4 pt-4 border-t border-gray-200">
+          <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
             <button
               onClick={handleSaveChanges}
               className="flex items-center gap-2 px-4 py-2 text-sm bg-gray-900 text-white hover:bg-gray-800 rounded-lg transition-colors w-full sm:w-auto justify-center"
