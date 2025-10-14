@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Appointments from "./Appointments";
 import { SettingsPane } from "./SettingsPane";
+import ReminderPaneDentist from "./Reminder";
+import HistoryPaneDentist from "./History";
 import {
   Calendar,
   History,
@@ -23,6 +25,10 @@ export default function DentistPanel() {
         return <Appointments />
       case "Settings":
         return <SettingsPane />
+      case "Reminder":
+        return <ReminderPaneDentist />
+      case "History":
+        return <HistoryPaneDentist />
         
     }
   }
@@ -88,7 +94,7 @@ export default function DentistPanel() {
             className={`flex items-center w-full p-3 rounded-lg transition-colors ${
               isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
             } text-gray-400 hover:text-gray-600 hover:bg-gray-50`}
-            onClick={()=>setPane("")}
+            onClick={()=>setPane("Reminder")}
           >
             <Bell size={20} />
             {isSidebarExpanded && <span>Notifications</span>}
