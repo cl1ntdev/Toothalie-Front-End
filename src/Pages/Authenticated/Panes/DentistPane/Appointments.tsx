@@ -50,7 +50,7 @@ export default function Appointments() {
             const schedule = item.schedule
             return {
               appointment_id: appointment.appointment_id,
-              date: appointment.appointment_date?.split(" ")[0],
+              date: appointment.user_set_date,
               time: appointment.appointment_date?.split(" ")[1],
               time_slot: schedule.time_slot,
               status: appointment.status || "Pending", // Default to Pending if null
