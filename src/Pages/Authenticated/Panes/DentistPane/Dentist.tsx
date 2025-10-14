@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Appointments from "./Appointments";
+import { SettingsPane } from "./SettingsPane";
 import {
   Calendar,
   History,
@@ -8,11 +9,24 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  Settings,
 } from "lucide-react";
 
 export default function DentistPanel() {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-
+  const [pane,setPane] = useState<string>("Appointment")
+  
+  const PaneSelect = (SelectedPane:string) => {
+    console.log("Pane Select: ",SelectedPane)
+    switch(SelectedPane){
+      case "Appointment":
+        return <Appointments />
+      case "Settings":
+        return <SettingsPane />
+        
+    }
+  }
+  
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);
   };
@@ -52,7 +66,9 @@ export default function DentistPanel() {
           <button
             className={`flex items-center w-full p-3 rounded-lg transition-colors ${
               isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
-            } bg-blue-50 text-blue-600`}
+            }`}
+            onClick={()=>setPane("Appointment")}
+            
           >
             <Calendar size={20} />
             {isSidebarExpanded && <span>Appointments</span>}
@@ -62,6 +78,7 @@ export default function DentistPanel() {
             className={`flex items-center w-full p-3 rounded-lg transition-colors ${
               isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
             } text-gray-400 hover:text-gray-600 hover:bg-gray-50`}
+            onClick={()=>setPane("History")}
           >
             <History size={20} />
             {isSidebarExpanded && <span>History</span>}
@@ -71,8 +88,18 @@ export default function DentistPanel() {
             className={`flex items-center w-full p-3 rounded-lg transition-colors ${
               isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
             } text-gray-400 hover:text-gray-600 hover:bg-gray-50`}
+            onClick={()=>setPane("")}
           >
             <Bell size={20} />
+            {isSidebarExpanded && <span>Notifications</span>}
+          </button>
+          <button
+            className={`flex items-center w-full p-3 rounded-lg transition-colors ${
+              isSidebarExpanded ? "justify-start space-x-3" : "justify-center"
+            } text-gray-400 hover:text-gray-600 hover:bg-gray-50`}
+            onClick={()=>setPane("Settings")}
+          >
+            <Settings size={20} />
             {isSidebarExpanded && <span>Notifications</span>}
           </button>
         </nav>
@@ -102,7 +129,7 @@ export default function DentistPanel() {
 
           {/* Appointments Section */}
           <div className="">
-            <Appointments />
+            {PaneSelect(pane)}
           </div>
         </div>
       </main>
