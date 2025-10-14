@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import getAllDentist from "@/API/Authenticated/GetDentist";
+import { getAllDentist }  from "@/API/Authenticated/GetDentist";
 import SubmitAppointment from "@/API/Authenticated/appointment/SubmitAppointment";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronDownIcon } from "lucide-react";
