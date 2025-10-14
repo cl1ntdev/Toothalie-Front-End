@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getDentistData } from "@/API/Authenticated/GetDentist";
 import { Plus, Save, Trash2, RefreshCw, Calendar, Clock, X } from "lucide-react";
 import { updateSettingsDentist } from "@/API/Authenticated/Dentist/SettingsApi";
+import Alert from "@/components/_myComp/Alerts";
 export function SettingsPane() {
   const [dentistInfo, setDentistInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -191,9 +192,12 @@ export function SettingsPane() {
       // Convert back to API format
       const apiFormat = convertToApiFormat(schedules);
       console.log("Saving schedules in API format:", apiFormat);
-      
        const res = await updateSettingsDentist(schedules); 
-       console.log(res)
+       if(res.status == 'ok'){
+         console.log('saved changes')
+         alert("saved changes")
+       }
+       console.log(res) 
     } catch (error) {
       console.error("Error saving schedules:", error);
     }
