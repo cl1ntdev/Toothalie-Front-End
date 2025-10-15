@@ -149,14 +149,14 @@ export default function Appointments() {
   const getAppointmentTypeConfig = (typeId: number) => {
     const config = {
       1: { 
-        name: "Normal Appointment", 
+        name: "Normal", 
         icon: User, 
         color: "text-blue-600", 
         bgColor: "bg-blue-50",
         borderColor: "border-blue-200"
       },
       2: { 
-        name: "Family Appointment", 
+        name: "Family", 
         icon: Users, 
         color: "text-purple-600", 
         bgColor: "bg-purple-50",
@@ -177,7 +177,7 @@ export default function Appointments() {
 
   if (error) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12 px-4">
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
           <XCircle className="h-8 w-8 text-red-400 mx-auto mb-2" />
           <p className="text-red-600 font-medium">{error}</p>
@@ -188,7 +188,7 @@ export default function Appointments() {
 
   if (!appointmentsData.length) {
     return (
-      <div className="text-center py-12">
+      <div className="text-center py-12 px-4">
         <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
         <h3 className="text-lg font-medium text-gray-900 mb-2">No appointments found</h3>
         <p className="text-gray-500 max-w-sm mx-auto">
@@ -200,8 +200,11 @@ export default function Appointments() {
 
   return (
     <>
-      <div className="p-6">
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="p-4 sm:p-6">
+        <div className="mb-6 sm:mb-8">
+        </div>
+
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {appointmentsData.map((appointment, index) => {
             const statusConfig = getStatusConfig(appointment.status);
             const StatusIcon = statusConfig.icon;
@@ -211,15 +214,15 @@ export default function Appointments() {
             return (
               <div
                 key={appointment.appointment_id || index}
-                className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-all duration-200 hover:border-gray-300"
+                className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:shadow-md transition-all duration-200 hover:border-gray-300"
               >
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className={`p-2 rounded-lg ${appointmentTypeConfig.bgColor}`}>
+                <div className="flex flex-col gap-3 sm:gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                    <div className="flex items-center space-x-3 min-w-0">
+                      <div className={`p-2 rounded-lg ${appointmentTypeConfig.bgColor} flex-shrink-0`}>
                         <AppointmentTypeIcon className={`h-5 w-5 ${appointmentTypeConfig.color}`} />
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <h3 className="font-semibold text-gray-900 text-base truncate">
                           {appointment.patient_name}
                         </h3>
@@ -230,49 +233,60 @@ export default function Appointments() {
                     </div>
 
                     <div
-                      className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-full border text-xs font-medium ${statusConfig.bgColor} ${statusConfig.borderColor} ${statusConfig.color}`}
+                      className={`flex items-center justify-center px-2.5 py-1 rounded-full border text-xs font-medium ${statusConfig.bgColor} ${statusConfig.borderColor} ${statusConfig.color} min-w-[80px] sm:min-w-[100px]`}
                     >
-                      <div className={`w-1.5 h-1.5 rounded-full ${statusConfig.dotColor}`}></div>
-                      <span>{appointment.status}</span>
+                      <div className={`w-1.5 h-1.5 rounded-full ${statusConfig.dotColor} mr-1.5 flex-shrink-0`}></div>
+                      <span className="truncate">{appointment.status}</span>
                     </div>
+
                   </div>
 
+                  {/* contact info of the patient */}
                   {appointment.contact_no && (
                     <div className="flex items-center space-x-3 text-sm text-gray-600">
                       <div className="flex items-center space-x-1">
-                        <Phone className="h-4 w-4 text-gray-400" />
-                        <span>{appointment.contact_no}</span>
+                        <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                        <span className="truncate">{appointment.contact_no}</span>
                       </div>
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-2 text-sm text-gray-700">
-                      <Calendar className="h-4 w-4 text-gray-500" />
-                      <span className="font-medium">{appointment.date || "No date"}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-sm text-gray-700">
-                      <Clock className="h-4 w-4 text-gray-500" />
-                      <span className="font-medium">{appointment.time_slot || "No time"}</span>
+                  {/* date scheduled with time */}
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex flex-col xs:flex-row xs:items-center gap-3">
+                      <div className="flex items-center space-x-2 text-sm text-gray-700 xs:flex-1">
+                        <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                        <span className="font-medium truncate flex-1 text-sm">{appointment.date || "No date"}</span>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 text-sm text-gray-700 xs:flex-1">
+                        <Clock className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                        <span className="font-medium truncate flex-1 text-sm">{appointment.time_slot || "No time"}</span>
+                      </div>
                     </div>
                   </div>
 
+                  {/* patient message */}
                   {appointment.message && (
                     <div className="text-sm text-gray-600">
                       <div className="flex items-start space-x-2">
                         <MessageSquare className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                        <p className="truncate">{appointment.message}</p>
+                        <p className="line-clamp-2">{appointment.message}</p>
                       </div>
                     </div>
                   )}
 
+                  {/* appointment type config */}
                   <div className="flex items-center justify-between pt-2">
                     <div
                       className={`inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg border text-xs ${appointmentTypeConfig.bgColor} ${appointmentTypeConfig.borderColor}`}
                     >
-                      <AppointmentTypeIcon className={`h-3.5 w-3.5 ${appointmentTypeConfig.color}`} />
-                      <span className={`font-medium ${appointmentTypeConfig.color}`}>
+                      <AppointmentTypeIcon className={`h-3.5 w-3.5 ${appointmentTypeConfig.color} flex-shrink-0`} />
+                      <span className={`font-medium ${appointmentTypeConfig.color} hidden xs:inline`}>
                         {appointmentTypeConfig.name}
+                      </span>
+                      <span className={`font-medium ${appointmentTypeConfig.color} xs:hidden`}>
+                        {appointmentTypeConfig.name.split(" ")[0]}
                       </span>
                     </div>
 
@@ -293,11 +307,17 @@ export default function Appointments() {
         </div>
       </div>
 
-      {/* view appointment modal */}
+      {/* >>>>>>>> <<<<<<<< */}
+      {/* >>>>>>>> <<<<<<<< */}
+      {/* >> APPOINTMENT MODAL << */}
+      {/* >>>>>>>> <<<<<<<< */}
+      {/* >>>>>>>> <<<<<<<< */}
+      
+      
       {viewAppointment && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-2 sm:p-4 z-50">
+          <div className="bg-white rounded-xl w-full max-w-md max-h-[95vh] overflow-y-auto">
+            <div className="p-4 sm:p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Appointment Details</h3>
                 <button
@@ -310,21 +330,21 @@ export default function Appointments() {
               </div>
 
               <div className="space-y-4">
-                {/* Patient Information according to appointment */}
+                {/* patient Information */}
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h4 className="font-medium text-gray-900 mb-3 flex items-center space-x-2">
-                    <User className="h-4 w-4" />
+                    <User className="h-4 w-4 flex-shrink-0" />
                     <span>Patient Information</span>
                   </h4>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <div>
                       <p className="text-sm text-gray-600">Name</p>
-                      <p className="font-medium">{viewAppointment.patient_name}</p>
+                      <p className="font-medium text-base">{viewAppointment.patient_name}</p>
                     </div>
-                    <div className="flex items-center space-x-4">
+                    <div className="grid grid-cols-1 xs:grid-cols-2 gap-3">
                       <div>
                         <p className="text-sm text-gray-600">Email</p>
-                        <p className="font-medium text-sm">{viewAppointment.email || "No email provided"}</p>
+                        <p className="font-medium text-sm break-words">{viewAppointment.email || "No email provided"}</p>
                       </div>
                       {viewAppointment.contact_no && (
                         <div>
@@ -336,21 +356,21 @@ export default function Appointments() {
                   </div>
                 </div>
 
-                {/* Appointment Details */}
+                {/* appointment details */}
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h4 className="font-medium text-gray-900 mb-3">Appointment Details</h4>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <p className="text-sm text-gray-600">Date</p>
-                      <p className="font-medium">{viewAppointment.date || "No date"}</p>
+                      <p className="font-medium text-sm sm:text-base">{viewAppointment.date || "No date"}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Time</p>
-                      <p className="font-medium">{viewAppointment.time || "No time"}</p>
+                      <p className="font-medium text-sm sm:text-base">{viewAppointment.time_slot || "No time"}</p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Type</p>
-                      <p className="font-medium">
+                      <p className="font-medium text-sm sm:text-base">
                         {getAppointmentTypeConfig(viewAppointment.appointment_type_id).name}
                       </p>
                     </div>
@@ -358,20 +378,20 @@ export default function Appointments() {
                       <p className="text-sm text-gray-600">Status</p>
                       <div className="flex items-center space-x-1">
                         <div className={`w-2 h-2 rounded-full ${getStatusConfig(viewAppointment.status).dotColor}`}></div>
-                        <span className="font-medium">{viewAppointment.status}</span>
+                        <span className="font-medium text-sm sm:text-base">{viewAppointment.status}</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Messages from patient */}
+                {/* patient message */}
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h4 className="font-medium text-gray-900 mb-2 flex items-center space-x-2">
-                    <MessageSquare className="h-4 w-4" />
+                    <MessageSquare className="h-4 w-4 flex-shrink-0" />
                     <span>Patient Message</span>
                   </h4>
                   {viewAppointment.message ? (
-                    <p className="text-sm text-gray-700 bg-white p-3 rounded border">
+                    <p className="text-sm text-gray-700 bg-white p-3 rounded border break-words">
                       {viewAppointment.message}
                     </p>
                   ) : (
@@ -382,10 +402,10 @@ export default function Appointments() {
                 </div>
               </div>
 
-              {/* Button choices  */}
+              {/* status update buttons */}
               <div className="mt-6 pt-4 border-t">
                 <h4 className="font-medium text-gray-900 mb-3">Update Status</h4>
-                <div className="flex space-x-3">
+                <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
                   <button
                     onClick={() => handleStatusUpdate(viewAppointment.appointment_id, "Approved")}
                     disabled={isUpdating}
@@ -413,6 +433,7 @@ export default function Appointments() {
                 </div>
               </div>
 
+              {/* close Button */}
               <div className="flex justify-end mt-4">
                 <button
                   onClick={closeViewModal}
