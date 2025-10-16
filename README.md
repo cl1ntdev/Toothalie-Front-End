@@ -1,3 +1,7 @@
+make new
+
+
+
 # Toothalie - Dental Clinic Website
 
 This is the frontend for Toothalie, a modern and responsive dental clinic website built with React, TypeScript, and Vite.
