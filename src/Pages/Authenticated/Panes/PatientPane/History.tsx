@@ -146,7 +146,7 @@ function HistoryItem({ log, isLastItem }) {
 
           {/* Card Body */}
           <h2 className="text-lg font-medium text-gray-800 capitalize">
-            {log.action} — Appt #{log.appointment_id}
+            {log.action} — Appointment ID{log.appointment_id}
           </h2>
           <p className="text-gray-600 text-sm mt-1">{log.message}</p>
 
