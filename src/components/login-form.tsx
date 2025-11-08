@@ -25,9 +25,11 @@ export function LoginForm({
     const user = new UserLoginInfoClass(userName,password)
     setSubmitButton("Loading Please Wait ...")
     const userLoginInfo = await LoginAuth(user)
-    const userLoginID = userLoginInfo.userID
+    const userLoginID = userLoginInfo.id
     if(userLoginInfo.status != "error"){
-      navigate(`/patient/${userLoginID}`)      
+      console.log(userLoginInfo)
+      localStorage.setItem('userInfo',JSON.stringify(userLoginInfo))
+      navigate(`/user`)      
     }else{
       console.log("Error Login")
       setIsWrong(true)
