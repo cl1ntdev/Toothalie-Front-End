@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { fetchAppointmentDentist } from "@/API/Authenticated/appointment/FetchAppointment";
 import { UpdateDentistAppointment } from "@/API/Authenticated/appointment/EditAppointmentAPI";
-import { useParams } from "react-router-dom";
 import {
   Calendar,
   Clock,
@@ -16,16 +15,35 @@ import {
 } from "lucide-react";
 
 export default function Appointments() {
-  const { id } = useParams();
-  const dentistID: string = id || "";
-
+  const [dentistID, setDentistID] = useState<string>("");
   const [appointmentsData, setAppointmentsData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [viewAppointment, setViewAppointment] = useState<any | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
+  // ✅ Load dentistID from localStorage first
   useEffect(() => {
+    const localData = localStorage.getItem("userInfo");
+    if (!localData) return;
+
+    try {
+      const userInfo = JSON.parse(localData);
+      if (userInfo?.user?.id) {
+        setDentistID(userInfo.user.id.toString());
+        console.log("Loaded dentistID from localStorage:", userInfo.user.id);
+      } else {
+        console.warn("No user ID found in localStorage");
+      }
+    } catch (err) {
+      console.error("Failed to parse userInfo from localStorage:", err);
+    }
+  }, []);
+
+  // ✅ Fetch appointments only when dentistID is ready
+  useEffect(() => {
+    if (!dentistID) return; // Prevent fetching before ID is ready
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -33,18 +51,15 @@ export default function Appointments() {
         console.log("Fetched data:", data);
 
         if (data && data.status === "ok") {
-          let appointmentsArray = [];
-
-          if (Array.isArray(data.appointments)) {
-            appointmentsArray = data.appointments;
-          } else if (data.appointments && typeof data.appointments === "object") {
-            appointmentsArray = [data.appointments];
-          }
+          const appointmentsArray = Array.isArray(data.appointments)
+            ? data.appointments
+            : [data.appointments];
 
           const formattedAppointments = appointmentsArray.map((item: any) => {
             const appointment = item.appointment || item;
             const patients = item.patients || {};
             const schedule = item.schedule;
+
             return {
               appointment_id: appointment.appointment_id,
               date: appointment.user_set_date,
@@ -78,6 +93,7 @@ export default function Appointments() {
     fetchData();
   }, [dentistID]);
 
+  // --- UI Handlers ---
   const handleView = (appointment: any) => setViewAppointment(appointment);
   const closeViewModal = () => setViewAppointment(null);
 
@@ -104,6 +120,7 @@ export default function Appointments() {
     }
   };
 
+  // --- UI Helper Configs ---
   const getStatusConfig = (status: string) => {
     const config = {
       Pending: {
@@ -158,6 +175,7 @@ export default function Appointments() {
     return config[typeId as keyof typeof config] || config[1];
   };
 
+  // --- Conditional Render States ---
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center py-12">
@@ -187,6 +205,7 @@ export default function Appointments() {
       </div>
     );
 
+  // --- Main UI ---
   return (
     <>
       <div className="p-4 sm:p-6">
@@ -206,102 +225,93 @@ export default function Appointments() {
                     : "bg-white border-gray-200 hover:border-gray-300"
                 }`}
               >
-                <div className="flex flex-col gap-3 sm:gap-4">
-                  {/* Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                    <div className="flex items-center space-x-3 min-w-0">
-                      <div className={`p-2 rounded-lg ${appointmentTypeConfig.bgColor} flex-shrink-0`}>
-                        <AppointmentTypeIcon className={`h-5 w-5 ${appointmentTypeConfig.color}`} />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h3 className="font-semibold text-gray-900 text-base truncate">
-                          {appointment.patient_name}
-                        </h3>
-                        <p className="text-sm text-gray-500 truncate">
-                          {appointment.email || "No email provided"}
-                        </p>
-                      </div>
+                {/* Header */}
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+                  <div className="flex items-center space-x-3 min-w-0">
+                    <div className={`p-2 rounded-lg ${appointmentTypeConfig.bgColor} flex-shrink-0`}>
+                      <AppointmentTypeIcon className={`h-5 w-5 ${appointmentTypeConfig.color}`} />
                     </div>
-
-                    {/* Status Tag */}
-                    <div
-                      className={`flex items-center justify-center px-2.5 py-1 rounded-full border text-xs font-medium ${statusConfig.bgColor} ${statusConfig.borderColor} ${statusConfig.color} min-w-[80px] sm:min-w-[100px]`}
-                    >
-                      <div
-                        className={`w-1.5 h-1.5 rounded-full ${statusConfig.dotColor} mr-1.5 flex-shrink-0`}
-                      ></div>
-                      <span className="truncate">{appointment.status}</span>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-gray-900 text-base truncate">
+                        {appointment.patient_name}
+                      </h3>
+                      <p className="text-sm text-gray-500 truncate">
+                        {appointment.email || "No email provided"}
+                      </p>
                     </div>
                   </div>
 
-                  {/* Emergency Badge */}
-                  {appointment.emergency == 1 && (
-                    <div className="flex items-center justify-center px-3 py-1 rounded-full border border-red-200 bg-red-50 text-red-600 text-xs font-semibold min-w-[100px] animate-pulse">
-                      <span className="flex items-center gap-1">
-                        <span className="w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
-                        🚨 Emergency
-                      </span>
+                  {/* Status Tag */}
+                  <div
+                    className={`flex items-center justify-center px-2.5 py-1 rounded-full border text-xs font-medium ${statusConfig.bgColor} ${statusConfig.borderColor} ${statusConfig.color}`}
+                  >
+                    <div className={`w-1.5 h-1.5 rounded-full ${statusConfig.dotColor} mr-1.5`}></div>
+                    <span>{appointment.status}</span>
+                  </div>
+                </div>
+
+                {/* Emergency Badge */}
+                {appointment.emergency == 1 && (
+                  <div className="flex items-center justify-center px-3 py-1 rounded-full border border-red-200 bg-red-50 text-red-600 text-xs font-semibold min-w-[100px] animate-pulse">
+                    <span className="flex items-center gap-1">
+                      <span className="w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                      🚨 Emergency
+                    </span>
+                  </div>
+                )}
+
+                {/* Contact Info */}
+                {appointment.contact_no && (
+                  <div className="flex items-center space-x-3 text-sm text-gray-600 mt-2">
+                    <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                    <span className="truncate">{appointment.contact_no}</span>
+                  </div>
+                )}
+
+                {/* Date & Time */}
+                <div className="bg-gray-50 rounded-lg p-3 mt-3">
+                  <div className="flex flex-col xs:flex-row xs:items-center gap-3">
+                    <div className="flex items-center space-x-2 text-sm text-gray-700 xs:flex-1">
+                      <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                      <span className="font-medium truncate">{appointment.date || "No date"}</span>
                     </div>
-                  )}
-
-                  {/* Contact */}
-                  {appointment.contact_no && (
-                    <div className="flex items-center space-x-3 text-sm text-gray-600">
-                      <Phone className="h-4 w-4 text-gray-400 flex-shrink-0" />
-                      <span className="truncate">{appointment.contact_no}</span>
-                    </div>
-                  )}
-
-                  {/* Date & Time */}
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="flex flex-col xs:flex-row xs:items-center gap-3">
-                      <div className="flex items-center space-x-2 text-sm text-gray-700 xs:flex-1">
-                        <Calendar className="h-4 w-4 text-gray-500 flex-shrink-0" />
-                        <span className="font-medium truncate flex-1 text-sm">
-                          {appointment.date || "No date"}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center space-x-2 text-sm text-gray-700 xs:flex-1">
-                        <Clock className="h-4 w-4 text-gray-500 flex-shrink-0" />
-                        <span className="font-medium truncate flex-1 text-sm">
-                          {appointment.time_slot || "No time"}
-                        </span>
-                      </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-700 xs:flex-1">
+                      <Clock className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                      <span className="font-medium truncate">{appointment.time_slot || "No time"}</span>
                     </div>
                   </div>
+                </div>
 
-                  {/* Message */}
-                  {appointment.message && (
-                    <div className="text-sm text-gray-600">
-                      <div className="flex items-start space-x-2">
-                        <MessageSquare className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                        <p className="line-clamp-2">{appointment.message}</p>
-                      </div>
+                {/* Message */}
+                {appointment.message && (
+                  <div className="text-sm text-gray-600 mt-3">
+                    <div className="flex items-start space-x-2">
+                      <MessageSquare className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
+                      <p className="line-clamp-2">{appointment.message}</p>
                     </div>
-                  )}
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between pt-2">
-                    <div
-                      className={`inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg border text-xs ${appointmentTypeConfig.bgColor} ${appointmentTypeConfig.borderColor}`}
-                    >
-                      <AppointmentTypeIcon
-                        className={`h-3.5 w-3.5 ${appointmentTypeConfig.color} flex-shrink-0`}
-                      />
-                      <span className={`font-medium ${appointmentTypeConfig.color}`}>
-                        {appointmentTypeConfig.name}
-                      </span>
-                    </div>
-
-                    <button
-                      onClick={() => handleView(appointment)}
-                      className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="View Details"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
                   </div>
+                )}
+
+                {/* Footer */}
+                <div className="flex items-center justify-between pt-3">
+                  <div
+                    className={`inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg border text-xs ${appointmentTypeConfig.bgColor} ${appointmentTypeConfig.borderColor}`}
+                  >
+                    <AppointmentTypeIcon
+                      className={`h-3.5 w-3.5 ${appointmentTypeConfig.color} flex-shrink-0`}
+                    />
+                    <span className={`font-medium ${appointmentTypeConfig.color}`}>
+                      {appointmentTypeConfig.name}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleView(appointment)}
+                    className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    title="View Details"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
             );
@@ -309,7 +319,7 @@ export default function Appointments() {
         </div>
       </div>
 
-      {/* MODAL */}
+      {/* MODAL for appointment details */}
       {viewAppointment && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-2 sm:p-4 z-50">
           <div className="bg-white rounded-xl w-full max-w-md max-h-[95vh] overflow-y-auto">
@@ -325,91 +335,16 @@ export default function Appointments() {
                 </button>
               </div>
 
-              <div className="space-y-4">
-                {/* Patient Info */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 mb-3 flex items-center space-x-2">
-                    <User className="h-4 w-4 flex-shrink-0" />
-                    <span>Patient Information</span>
-                  </h4>
-                  <div className="space-y-3">
-                    <p className="font-medium text-base">{viewAppointment.patient_name}</p>
-                    <div className="grid grid-cols-1 xs:grid-cols-2 gap-3">
-                      <div>
-                        <p className="text-sm text-gray-600">Email</p>
-                        <p className="font-medium text-sm break-words">
-                          {viewAppointment.email || "No email provided"}
-                        </p>
-                      </div>
-                      {viewAppointment.contact_no && (
-                        <div>
-                          <p className="text-sm text-gray-600">Phone</p>
-                          <p className="font-medium text-sm">{viewAppointment.contact_no}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Appointment Details */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 mb-3">Appointment Details</h4>
-                  <div className="grid grid-cols-2 gap-3 sm:gap-4">
-                    <div>
-                      <p className="text-sm text-gray-600">Date</p>
-                      <p className="font-medium text-sm sm:text-base">
-                        {viewAppointment.date || "No date"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Time</p>
-                      <p className="font-medium text-sm sm:text-base">
-                        {viewAppointment.time_slot || "No time"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Type</p>
-                      {viewAppointment.emergency == 1 ? (
-                        <div className="flex items-center gap-2 bg-red-50 text-red-600 border border-red-200 rounded-md px-2 py-1 font-medium text-sm sm:text-base">
-                          <span className="w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
-                          🚨 Emergency
-                        </div>
-                      ) : (
-                        <p className="font-medium text-sm sm:text-base">
-                          {getAppointmentTypeConfig(viewAppointment.appointment_type_id).name}
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Status</p>
-                      <div className="flex items-center space-x-1">
-                        <div
-                          className={`w-2 h-2 rounded-full ${getStatusConfig(viewAppointment.status).dotColor}`}
-                        ></div>
-                        <span className="font-medium text-sm sm:text-base">
-                          {viewAppointment.status}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Message */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="font-medium text-gray-900 mb-2 flex items-center space-x-2">
-                    <MessageSquare className="h-4 w-4 flex-shrink-0" />
-                    <span>Patient Message</span>
-                  </h4>
-                  {viewAppointment.message ? (
-                    <p className="text-sm text-gray-700 bg-white p-3 rounded border break-words">
-                      {viewAppointment.message}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-gray-500 italic bg-white p-3 rounded border">
-                      No message provided by the patient.
-                    </p>
-                  )}
-                </div>
+              {/* Patient Info */}
+              <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                <h4 className="font-medium text-gray-900 mb-3 flex items-center space-x-2">
+                  <User className="h-4 w-4" />
+                  <span>Patient Information</span>
+                </h4>
+                <p className="font-medium text-base">{viewAppointment.patient_name}</p>
+                <p className="text-sm text-gray-600">
+                  {viewAppointment.email || "No email provided"}
+                </p>
               </div>
 
               {/* Status Buttons */}
@@ -421,28 +356,28 @@ export default function Appointments() {
                       handleStatusUpdate(viewAppointment.appointment_id, "Approved")
                     }
                     disabled={isUpdating}
-                    className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
                   >
                     {isUpdating ? (
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                     ) : (
-                      <CheckCircle className="h-4 w-4" />
+                      <CheckCircle className="h-4 w-4 inline-block mr-1" />
                     )}
-                    <span>Approve</span>
+                    Approve
                   </button>
                   <button
                     onClick={() =>
                       handleStatusUpdate(viewAppointment.appointment_id, "Rejected")
                     }
                     disabled={isUpdating}
-                    className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+                    className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                   >
                     {isUpdating ? (
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                     ) : (
-                      <XCircle className="h-4 w-4" />
+                      <XCircle className="h-4 w-4 inline-block mr-1" />
                     )}
-                    <span>Reject</span>
+                    Reject
                   </button>
                 </div>
               </div>
