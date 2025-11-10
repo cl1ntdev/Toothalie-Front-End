@@ -10,10 +10,6 @@ export default async function LoginAuth(value: UserLoginInfoClass) {
   const result = await response.json()
   console.log(result)
   
-  if(result.status == 'ok'){
-    localStorage.setItem('token',result.token)
-  }
-  
   // 
   // MAKE A RESPONSE OF A LOGIN USER IN LOCAL HOST 
   //
