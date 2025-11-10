@@ -1,40 +1,33 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getAllDentist }  from "@/API/Authenticated/GetDentist";
+import { getAllDentist } from "@/API/Authenticated/GetDentist";
 import SubmitAppointment from "@/API/Authenticated/appointment/SubmitAppointment";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ChevronDownIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 type AppointmentProps = {
   onClose: () => void;
-  // onSuccess: () => void;
-  appointmentSuccess: () => void
-}
+  appointmentSuccess: () => void;
+};
 
 export default function AppointmentModal({ onClose, appointmentSuccess }: AppointmentProps) {
-  const [dentists, setDentists] = useState([]);
+  const [dentists, setDentists] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [pickDentist, setPickDentist] = useState("");
-  const [pickDay, setPickDay] = useState("");
-  const [pickTime, setPickTime] = useState("");
-  const [error, setError] = useState(null);
+  const [pickDentist, setPickDentist] = useState<string | number>("");
+  const [pickDay, setPickDay] = useState<string>("");
+  const [pickTime, setPickTime] = useState<string>("");
+  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [error, setError] = useState<string | null>(null);
   const [isEmergency, setIsEmergency] = useState(false);
   const [isFamilyBooking, setIsFamilyBooking] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
   const [activePopover, setActivePopover] = useState<string | null>(null);
-  const [isDatePicked, setIsDatePicked] = useState<boolean>(false);
-  const [message,setMessage] = useState<string>("")
-  
-  
+  const [message, setMessage] = useState<string>("");
+
   useEffect(() => {
     const fetchDentists = async () => {
       try {
@@ -42,8 +35,10 @@ export default function AppointmentModal({ onClose, appointmentSuccess }: Appoin
         const res = await getAllDentist();
         if (res.status === "ok" && res.dentists) {
           setDentists(res.dentists);
+        } else {
+          setError("No dentists found.");
         }
-      } catch (error) {
+      } catch (err) {
         setError("Failed to load dentists.");
       } finally {
         setLoading(false);
@@ -65,15 +60,13 @@ export default function AppointmentModal({ onClose, appointmentSuccess }: Appoin
     return map[day] ?? -1;
   };
 
+  // Disable dates that are in the past or not matching the selected day
   const disableDates = (date: Date) => {
+    if (!pickDay) return false; // allow picking any date if no day selected
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
-    const selectedDayIndex = getDayIndex(pickDay);
-    const dayMatches =
-      selectedDayIndex === -1 || date.getDay() === selectedDayIndex;
-
-    return !dayMatches || date < today;
+    const dayIndex = getDayIndex(pickDay);
+    return date < today || date.getDay() !== dayIndex;
   };
 
   const handleSubmit = async () => {
@@ -84,8 +77,8 @@ export default function AppointmentModal({ onClose, appointmentSuccess }: Appoin
       return;
     }
 
-    const formattedDate = date ? date.toLocaleDateString("en-CA") : null;
-
+    const formattedDate = date.toLocaleDateString("en-CA"); // YYYY-MM-DD in local time
+    
     const response = await SubmitAppointment(
       userID,
       pickDentist,
@@ -99,22 +92,19 @@ export default function AppointmentModal({ onClose, appointmentSuccess }: Appoin
 
     if (response.ok === true) {
       onClose();
-      appointmentSuccess()
+      appointmentSuccess();
     } else {
-      setError("Failed to submit appointment. Please try again.");
+      setError(response.message || "Failed to submit appointment. Please try again.");
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
-        {/* Header section */}
+        {/* Header */}
         <div className="p-4 border-b flex justify-between items-center">
           <h2 className="text-lg font-medium">Book Appointment</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             ✕
           </button>
         </div>
@@ -147,9 +137,7 @@ export default function AppointmentModal({ onClose, appointmentSuccess }: Appoin
         {/* Content */}
         <div className="p-4 space-y-4">
           {error && (
-            <div className="bg-red-50 text-red-700 p-2 rounded text-sm">
-              {error}
-            </div>
+            <div className="bg-red-50 text-red-700 p-2 rounded text-sm">{error}</div>
           )}
 
           {loading ? (
@@ -157,46 +145,39 @@ export default function AppointmentModal({ onClose, appointmentSuccess }: Appoin
               <div className="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full"></div>
             </div>
           ) : dentists.length === 0 ? (
-            <div className="text-center py-4 text-gray-500">
-              No dentists available.
-            </div>
+            <div className="text-center py-4 text-gray-500">No dentists available.</div>
           ) : (
-            // Map all the dentist and give there schedule as choices
             <div className="space-y-4">
               {dentists.map((dentist) => (
-                <div
-                  key={dentist.dentistID}
-                  className="border rounded-lg p-4 space-y-3"
-                >
-                  {/* Dentist Info */}
+                <div key={dentist.id} className="border rounded-lg p-4 space-y-3">
+                  {/* Dentist info */}
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
                       DR
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-medium">{dentist.name}</h3>
-                      <p className="text-sm text-gray-600">{dentist.specialty}</p>
+                      <h3 className="font-medium">{dentist.first_name + " " + dentist.last_name}</h3>
+                      <p className="text-sm text-gray-600">{dentist.specialty || "General"}</p>
                     </div>
                   </div>
 
                   {/* Schedule */}
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium">Available Schedule:</h4>
-                    {/* check fi there are schedules */}
                     {dentist.schedule && Object.keys(dentist.schedule).length > 0 ? (
                       <div className="space-y-2">
-                        {/* map the keys and there ability time */}
                         {Object.keys(dentist.schedule).map((day) => (
                           <div key={day}>
                             <button
                               onClick={() => {
-                                setPickDentist(dentist.dentistID);
+                                setPickDentist(dentist.id);
                                 setPickDay(day);
                                 setPickTime("");
+                                setDate(undefined);
                                 setError(null);
                               }}
                               className={`text-sm ${
-                                pickDentist === dentist.dentistID && pickDay === day
+                                pickDentist === dentist.id && pickDay === day
                                   ? "text-blue-600 font-medium"
                                   : "text-gray-700"
                               }`}
@@ -204,19 +185,18 @@ export default function AppointmentModal({ onClose, appointmentSuccess }: Appoin
                               {day}
                             </button>
                             <div className="flex flex-wrap gap-1 mt-1 ml-3">
-                              {dentist.schedule[day]?.map((time) => (
+                              {dentist.schedule[day]?.map((time: string) => (
                                 <button
                                   key={time}
                                   onClick={() => {
-                                    setDate(undefined);
-                                    setPickDentist(dentist.dentistID);
+                                    setPickDentist(dentist.id);
                                     setPickDay(day);
                                     setPickTime(time);
-                                    setIsDatePicked(true);
+                                    setDate(undefined);
                                     setError(null);
                                   }}
                                   className={`px-2 py-1 rounded text-xs border ${
-                                    pickDentist === dentist.dentistID &&
+                                    pickDentist === dentist.id &&
                                     pickDay === day &&
                                     pickTime === time
                                       ? "bg-blue-600 text-white border-blue-600"
@@ -230,15 +210,14 @@ export default function AppointmentModal({ onClose, appointmentSuccess }: Appoin
                           </div>
                         ))}
 
-                        {/* Calendar Picker and Message of the user */}
-                        {isDatePicked && pickDentist === dentist.dentistID && (
+                        {/* Calendar picker */}
+                        {pickDentist === dentist.id && pickDay && pickTime && (
                           <div className="space-y-2 mt-3">
-                            
                             <Label className="text-sm">Select Date</Label>
                             <Popover
-                              open={activePopover === dentist.dentistID}
+                              open={activePopover === `${dentist.id}-calendar`}
                               onOpenChange={(isOpen) =>
-                                setActivePopover(isOpen ? dentist.dentistID : null)
+                                setActivePopover(isOpen ? `${dentist.id}-calendar` : null)
                               }
                             >
                               <PopoverTrigger asChild>
@@ -251,22 +230,23 @@ export default function AppointmentModal({ onClose, appointmentSuccess }: Appoin
                                 <Calendar
                                   mode="single"
                                   selected={date}
-                                  onSelect={(date) => {
-                                    setDate(date);
-                                    setActivePopover(null);
-                                  }}
+                                  onSelect={(d) => setDate(d)}
                                   disabled={disableDates}
                                 />
                               </PopoverContent>
                             </Popover>
+
                             <div className="space-y-1">
                               <label className="text-xs text-gray-600 block">Message</label>
-                              <input 
+                              <input
                                 placeholder="What's the issue?"
+                                value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                               />
-                              <p className="text-xs text-gray-400">This message will be sent to the dentist</p>
+                              <p className="text-xs text-gray-400">
+                                This message will be sent to the dentist
+                              </p>
                             </div>
                           </div>
                         )}
@@ -276,26 +256,18 @@ export default function AppointmentModal({ onClose, appointmentSuccess }: Appoin
                     )}
                   </div>
 
-                  {/* Book Button */}
-                  <button
+                  {/* Book button */}
+                  <Button
                     onClick={handleSubmit}
-                    disabled={
-                      pickDentist !== dentist.dentistID ||
-                      !pickDay ||
-                      !pickTime ||
-                      !date
-                    }
-                    className={`w-full py-2 rounded text-sm font-medium ${
-                      pickDentist === dentist.dentistID &&
-                      pickDay &&
-                      pickTime &&
-                      date
+                    disabled={!pickDentist || !pickDay || !pickTime || !date}
+                    className={`w-full py-2 text-sm font-medium ${
+                      pickDentist && pickDay && pickTime && date
                         ? "bg-blue-600 text-white hover:bg-blue-700"
                         : "bg-gray-200 text-gray-500 cursor-not-allowed"
                     }`}
                   >
                     {isEmergency ? "Book Emergency" : "Book Appointment"}
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>

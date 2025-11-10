@@ -22,52 +22,28 @@ import ReminderPanePatient from "./Panes/PatientPane/Reminder";
 
 export default function UserDashboard() {
   const [userInfo, setUserInfo] = useState(null);
-  const [userData, setUserData] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [currentPane, setCurrentPane] = useState("Home");
   const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ Load from localStorage
+  // ✅ Load user info from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("userInfo");
+    console.log(stored)
     if (stored) {
       const parsed = JSON.parse(stored);
-      setUserInfo(parsed.user);
+      setUserInfo(parsed.user); // user object directly
+      setIsLoading(false);
     } else {
       console.warn("No user info found in localStorage");
       setIsLoading(false);
     }
   }, []);
 
-  // ✅ Fetch user data (dentist or patient)
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!userInfo?.id) return;
-      setIsLoading(true);
-      try {
-        let data;
-        if (userInfo.role === "dentist") {
-          data = await getDentistData(userInfo.id);
-          setCurrentPane("Appointment");
-        } else {
-          data = await GetUserInfo(userInfo.id);
-          setCurrentPane("Home");
-        }
-        console.log(data)
-        setUserData(data);
-      } catch (error) {
-        console.error("Error loading user data:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, [userInfo]);
-
   const toggleSidebar = () => setIsSidebarExpanded((prev) => !prev);
 
   // ✅ Show loading screen
-  if (isLoading || !userInfo || !userData) {
+  if (isLoading || !userInfo) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -76,10 +52,10 @@ export default function UserDashboard() {
     );
   }
 
-  const isDentist = userInfo.role === "dentist";
-  const displayName = isDentist
-    ? userData.dentist?.name
-    : `${userData.user?.first_name} ${userData.user?.last_name}`;
+  // Determine user type from roles
+  const isDentist = userInfo.roles.includes("DENTIST");
+
+  const displayName = `${userInfo.firstName} ${userInfo.lastName}`;
 
   // ✅ Pane rendering
   const renderPane = () => {
@@ -129,7 +105,7 @@ export default function UserDashboard() {
               </div>
             </div>
           )}
-      
+
           {/* Toggle Button */}
           <button
             onClick={toggleSidebar}
@@ -143,8 +119,7 @@ export default function UserDashboard() {
             )}
           </button>
         </div>
-      
-        {/* Navigation */}
+
         {/* Navigation */}
         <nav className="flex-1 mt-4 px-2 space-y-2 flex flex-col">
           {(isDentist
@@ -178,7 +153,6 @@ export default function UserDashboard() {
           })}
         </nav>
 
-      
         {/* Logout */}
         <div className="p-4 border-t border-gray-200">
           <button className="flex items-center w-full p-3 rounded-lg text-gray-400 hover:text-red-600 hover:bg-gray-100 transition-colors">
@@ -187,7 +161,6 @@ export default function UserDashboard() {
           </button>
         </div>
       </aside>
-
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto p-6 bg-gray-50">

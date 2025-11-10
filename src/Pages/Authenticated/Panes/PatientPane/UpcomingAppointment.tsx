@@ -203,7 +203,7 @@ export default function UpcomingAppointment() {
                     </div>
                     <div>
                       <h3 className="font-medium text-gray-900 text-sm sm:text-base">
-                        {dentist?.name || 'Unknown Dentist'}
+                        {dentist?.first_name + " " + dentist?.last_name || 'Unknown Dentist'}
                       </h3>
                       <p className="text-xs sm:text-sm text-gray-500">
                         {dentist?.specialty || 'General Dentistry'}
