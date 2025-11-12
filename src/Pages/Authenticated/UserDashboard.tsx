@@ -9,8 +9,11 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  Clock,
   Settings,
+  LayoutDashboard,
 } from "lucide-react";
+import { Main } from "./Panes/DentistPane/Main";
 
 import Appointments from "./Panes/DentistPane/Appointments";
 import { SettingsPane } from "./Panes/DentistPane/SettingsPane";
@@ -19,19 +22,36 @@ import HistoryPaneDentist from "./Panes/DentistPane/History";
 import UpcomingAppointment from "./Panes/PatientPane/UpcomingAppointment";
 import HistoryPanePatient from "./Panes/PatientPane/History";
 import ReminderPanePatient from "./Panes/PatientPane/Reminder";
+import { useNavigate } from "react-router-dom";
 
 export default function UserDashboard() {
+  
+  const navigate = useNavigate()
+  
+  
+  const DentistDashboard =  [
+      { label: "Dashboard", icon: LayoutDashboard, key: "Dashboard" },
+      { label: "Appointments", icon: Calendar, key: "Appointment" },
+      { label: "Availability", icon: Clock, key: "Availability" },
+    ]
+  const PatientDashboard = 
+    [
+      { label: "Appointments", icon: Calendar, key: "Appointments" },
+      { label: "History", icon: History, key: "History" },
+      { label: "Reminders", icon: Bell, key: "Reminder" },
+    ] 
+  
   const [userInfo, setUserInfo] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [currentPane, setCurrentPane] = useState("Home");
+  const [currentPane, setCurrentPane] = useState("Dashboard");
   const [isLoading, setIsLoading] = useState(true);
 
-  // ✅ Load user info from localStorage
   useEffect(() => {
     const stored = localStorage.getItem("userInfo");
-    console.log(stored)
+    // console.log(stored)
     if (stored) {
       const parsed = JSON.parse(stored);
+      console.log(parsed)
       setUserInfo(parsed.user); // user object directly
       setIsLoading(false);
     } else {
@@ -40,9 +60,14 @@ export default function UserDashboard() {
     }
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('userInfo')
+    navigate('/login')
+  }
+  
+  
   const toggleSidebar = () => setIsSidebarExpanded((prev) => !prev);
 
-  // ✅ Show loading screen
   if (isLoading || !userInfo) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -54,23 +79,20 @@ export default function UserDashboard() {
 
   // Determine user type from roles
   const isDentist = userInfo.roles.includes("DENTIST");
-
+  const DashBoardComponents = isDentist ? DentistDashboard : PatientDashboard
   const displayName = `${userInfo.firstName} ${userInfo.lastName}`;
 
-  // ✅ Pane rendering
   const renderPane = () => {
     if (isDentist) {
       switch (currentPane) {
+        case "Dashboard":
+          return <Main />
         case "Appointment":
           return <Appointments />;
-        case "Settings":
+        case "Availability":
           return <SettingsPane />;
-        case "Reminder":
-          return <ReminderPaneDentist />;
-        case "History":
-          return <HistoryPaneDentist />;
         default:
-          return <Appointments />;
+          return <Main />;
       }
     } else {
       switch (currentPane) {
@@ -122,19 +144,7 @@ export default function UserDashboard() {
 
         {/* Navigation */}
         <nav className="flex-1 mt-4 px-2 space-y-2 flex flex-col">
-          {(isDentist
-            ? [
-                { label: "Appointments", icon: Calendar, key: "Appointment" },
-                { label: "History", icon: History, key: "History" },
-                { label: "Notifications", icon: Bell, key: "Reminder" },
-                { label: "Settings", icon: Settings, key: "Settings" },
-              ]
-            : [
-                { label: "Appointments", icon: Calendar, key: "Home" },
-                { label: "History", icon: History, key: "History" },
-                { label: "Reminders", icon: Bell, key: "Reminder" },
-              ]
-          ).map((item) => {
+          {(DashBoardComponents).map((item) => {
             const isActive = currentPane === item.key;
             return (
               <button
@@ -155,7 +165,9 @@ export default function UserDashboard() {
 
         {/* Logout */}
         <div className="p-4 border-t border-gray-200">
-          <button className="flex items-center w-full p-3 rounded-lg text-gray-400 hover:text-red-600 hover:bg-gray-100 transition-colors">
+          <button className="flex items-center w-full p-3 rounded-lg text-gray-400 hover:text-red-600 hover:bg-gray-100 transition-colors"
+            onClick={()=>handleLogout()}
+          >
             <LogOut size={20} />
             {isSidebarExpanded && <span className="ml-3 font-medium">Logout</span>}
           </button>
