@@ -2,7 +2,7 @@ import React, { useState,useEffect } from "react";
 import AppointmentModal from "./AppointmentModal";
 import UpcomingAppointment from "./UpcomingAppointment";
 import GetUserInfo from "@/API/Authenticated/GetUserInfoAPI";
-import HistoryPane from "./History";
+// import HistoryPane from "./History";
 import ReminderPane from "./Reminder";
 import {
   Calendar,
