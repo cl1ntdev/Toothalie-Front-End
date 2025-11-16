@@ -142,17 +142,21 @@ export default function AppointmentModal({
       return;
     }
 
+    console.log(selectService)
+    console.log(selectService.serviceID.toString())
+    const serviceID = selectService.serviceID.toString()
     const formattedDate = date.toLocaleDateString("en-CA"); // YYYY-MM-DD in local time
-    // const response = await SubmitAppointment(
-    //   userID,
-    //   pickDentist,
-    //   pickDay,
-    //   pickTime,
-    //   isEmergency,
-    //   isFamilyBooking,
-    //   formattedDate,
-    //   message,
-    // );
+    const response = await SubmitAppointment(
+      userID,
+      pickDentist,
+      pickDay,
+      pickTime,
+      isEmergency,
+      isFamilyBooking,
+      formattedDate,
+      message,
+      serviceID,
+    );
 
     if (response.ok === true) {
       onClose();
