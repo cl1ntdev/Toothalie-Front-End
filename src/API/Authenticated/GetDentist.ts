@@ -4,8 +4,9 @@ export async function getAllDentist(){
   if (!res.ok) {
     throw new Error("Failed to fetch dentists");
   }
-
-  return res.json();
+  const data = await res.json()
+  console.log(data)
+  return data;
 };
 
 export async function getDentistData(dentistID: string){
