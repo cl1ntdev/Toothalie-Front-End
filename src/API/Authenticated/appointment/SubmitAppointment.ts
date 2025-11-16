@@ -6,8 +6,8 @@ export default async function SubmitAppointment(
   emergency:boolean,
   familyBooking:boolean,
   date:string | null,
-  message:string
-
+  message:string,
+  serviceID: string | null
 ){
   // console.log(patientID)
   // console.log(dentistID)
@@ -16,6 +16,7 @@ export default async function SubmitAppointment(
   // console.log(emergency)
   // console.log(familyBooking)
   // console.log(date)
+  console.log(serviceID)
   
 const userInfo = JSON.parse(localStorage.getItem('userInfo'))
 const token = userInfo.token
@@ -34,7 +35,8 @@ const token = userInfo.token
       emergency,
       familyBooking,
       date,
-      message
+      message,
+      serviceID
     })
   })
   if(!submit.ok){
