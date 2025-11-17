@@ -33,7 +33,7 @@ export default function UserDashboard() {
       { label: "Dashboard", icon: LayoutDashboard, key: "Dashboard" },
       { label: "Appointments", icon: Calendar, key: "Appointment" },
       { label: "History", icon: History, key: "History" },
-      { label: "Availability", icon: Clock, key: "Availability" },
+      { label: "Settings", icon: Settings, key: "Settings" },
     ]
   const PatientDashboard = 
     [
@@ -80,7 +80,7 @@ export default function UserDashboard() {
 
   // Determine user type from roles
   const isDentist = userInfo.roles.includes("DENTIST");
-  const DashBoardComponents = isDentist ? DentistDashboard : PatientDashboard
+  const DashBoardComponents = isDentist ? DentistDashboard : PatientDashboard //use for loading panes
   const displayName = `${userInfo.firstName} ${userInfo.lastName}`;
 
   const renderPane = () => {
@@ -90,7 +90,7 @@ export default function UserDashboard() {
           return <Main />
         case "Appointment":
           return <Appointments />;
-        case "Availability":
+        case "Settings":
           return <SettingsPane />;
         case "History":
             return <HistoryPane />;
