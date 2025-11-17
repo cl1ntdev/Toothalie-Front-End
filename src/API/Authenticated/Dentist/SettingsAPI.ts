@@ -19,3 +19,21 @@ export async function updateSettingsDentist(schedules: any[], dentistID: string)
     throw error;
   }
 }
+
+export async function getServices(){
+  const result = await fetch('http://127.0.0.1:8000/api/get-services')
+  const data = result.json()
+  console.log(data)
+  return data
+}
+
+export async function getDentistServices(userID:string | null){
+  const result = await fetch('http://127.0.0.1:8000/api/get-dentist-service',{
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body:JSON.stringify({userID})
+  })
+  const data = result.json()
+  console.log(data)
+  return data
+}
