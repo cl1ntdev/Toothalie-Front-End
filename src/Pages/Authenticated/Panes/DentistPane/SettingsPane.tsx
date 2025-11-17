@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getDentistData } from "@/API/Authenticated/GetDentist";
 import { Plus, Save, Trash2, RefreshCw, Calendar, Clock, X } from "lucide-react";
 import { updateSettingsDentist } from "@/API/Authenticated/Dentist/SettingsApi";
+import SettingsService from "./SettingsService";
 
 export function SettingsPane() {
   const [dentistInfo, setDentistInfo] = useState<any>(null);
@@ -10,7 +11,6 @@ export function SettingsPane() {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [userInfo, setUserInfo] = useState<any>(null);
 
-  // -----------------------
   // Transform API schedule -> grouped by day
   const transformScheduleData = (apiSchedules: any[]) => {
     const groupedByDay: { [key: string]: any } = {};
@@ -35,7 +35,6 @@ export function SettingsPane() {
     return Object.values(groupedByDay);
   };
 
-  // -----------------------
   // Convert grouped schedule -> API format
   const convertToApiFormat = (groupedSchedules: any[]) => {
     const apiSchedules: any[] = [];
@@ -111,7 +110,6 @@ export function SettingsPane() {
     await fetchDentist(true);
   };
 
-  // -----------------------
   // Schedule manipulation
   const handleEditDay = (index: number, day: string) => {
     const updated = [...schedules];
@@ -162,7 +160,6 @@ export function SettingsPane() {
     setSchedules(updated);
   };
 
-  // -----------------------
   const handleSaveChanges = async () => {
     try {
       if (!dentistInfo?.id) throw new Error("Dentist info missing");
@@ -186,7 +183,6 @@ export function SettingsPane() {
     }
   };
 
-  // -----------------------
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
@@ -332,6 +328,7 @@ export function SettingsPane() {
           </div>
         )}
       </div>
+      <SettingsService /> 
     </div>
   );
 }
