@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getServices, getDentistServices } from '@/API/Authenticated/Dentist/SettingsApi';
+import { getServices, getDentistServices, updateDentistServices } from '@/API/Authenticated/Dentist/SettingsApi';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -29,7 +29,6 @@ export default function SettingsService() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ type: 'error' | 'success'; text: string } | null>(null);
 
-  // ----- helpers ----------------------------------------------
   const userId = JSON.parse(localStorage.getItem('userInfo') || '{}')?.user?.id;
 
   const hasChanges = (() => {
@@ -51,6 +50,7 @@ export default function SettingsService() {
     setMsg(null);
     try {
       const payload = Array.from(selected).map(id => ({ user_id: userId, service_id: id }));
+      console.log(payload)
       await updateDentistServices(userId, payload);
       setOriginalIds(Array.from(selected));
       setMsg({ type: 'success', text: 'Services updated!' });
@@ -61,7 +61,6 @@ export default function SettingsService() {
     }
   };
 
-  // ----- load data --------------------------------------------
   useEffect(() => {
     (async () => {
       try {
@@ -85,7 +84,7 @@ export default function SettingsService() {
     return acc;
   }, {});
 
-  // ----- render -----------------------------------------------
+  // ----- render some loading stuff-----------------------------------------------
   if (loading) {
     return (
       <div className="p-6 space-y-6">
