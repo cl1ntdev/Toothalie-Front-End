@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import Alert from "./_myComp/Alerts"
 import { IconFlagSearch } from "@tabler/icons-react"
+import { authenticateUser } from "@/API/AuthenticateUser"
 
 export function LoginForm({
   className,
@@ -21,10 +22,26 @@ export function LoginForm({
   const [submitButton,setSubmitButton] = useState<string>("Login") 
   const navigate = useNavigate()
   
+  useEffect(()=>{
+    console.log('working')
+    const remember=async()=>{
+      const userInfo=JSON.parse(localStorage.getItem('userInfo'))
+      console.log(userInfo.token)
+      const check=await authenticateUser(userInfo.token)
+      if(check.status=='ok'){
+        navigate('/user')
+      }
+    }
+    
+    remember()
+  },[])
+  
+  
+  
   const handleLogin = async() =>{
     const user = new UserLoginInfoClass(userName,password)
     setSubmitButton("Loading Please Wait ...")
-    const userLoginInfo = await LoginAuth(user)
+    const userLoginInfo = await LoginAuth(user) // this returns only a token
     const userLoginID = userLoginInfo.id
     if(userLoginInfo.status != "error"){
       console.log(userLoginInfo)
