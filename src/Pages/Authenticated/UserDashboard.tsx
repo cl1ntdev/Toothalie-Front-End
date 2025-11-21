@@ -48,18 +48,22 @@ export default function UserDashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem("userInfo");
-    // console.log(stored)
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      console.log(parsed)
-      setUserInfo(parsed.user); // user object directly
-      setIsLoading(false);
-    } else {
-      console.warn("No user info found in localStorage");
-      setIsLoading(false);
+    async function fetchUserInfo() {
+      try {
+        const data = await GetUserInfo();
+        setUserInfo(data.user);
+      } catch (err) {
+        console.error(err);
+        localStorage.removeItem("userInfo");
+        navigate("/login");
+      } finally {
+        setIsLoading(false);
+      }
     }
+  
+    fetchUserInfo();
   }, []);
+
 
   const handleLogout = () => {
     localStorage.removeItem('userInfo')
