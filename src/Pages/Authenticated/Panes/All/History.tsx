@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchHistory } from "@/API/Authenticated/appointment/FetchHistory";
 import { Clock, Plus, Edit3, XCircle, Info, User, Calendar, AlertCircle } from "lucide-react";
+import GetUserInfo from "@/API/Authenticated/GetUserInfoAPI";
 
 const getActionConfig = (action: string) => {
   switch (action) {
@@ -176,25 +177,26 @@ function HistoryItem({ log, isLast }: { log: any; isLast: boolean }) {
 export default function HistoryPane() {
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    const userInfo = JSON.parse(localStorage.getItem("userInfo"));
-    
-    console.log(userInfo)
-    const getHistory = async () => {
-      try {
-        console.log(userInfo.user.id,userInfo.user.roles);
-        const response = await fetchHistory(userInfo.user.id,userInfo.user.roles);
-        if (response?.status === "ok") {
-          setHistory(response.data || []);
-        }
-      } catch (err) {
-        console.error("Failed to fetch history:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getHistory();
+    const fetchData = async () => {
+       try {
+         const user = await GetUserInfo();
+         console.log(user);
+   
+         if (user?.user?.id && user.user.roles) {
+           const response = await fetchHistory(user.user.id, user.user.roles);
+           if (response?.status === "ok") {
+             setHistory(response.data || []);
+           }
+         }
+       } catch (err) {
+         console.error("Failed to fetch history:", err);
+       } finally {
+         setLoading(false);
+       }
+     };
+   
+     fetchData();
   }, []);
 
   return (
