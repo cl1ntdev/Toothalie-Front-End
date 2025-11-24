@@ -3,12 +3,16 @@ export async function updateSettingsDentist(
   dentistID: string,
 ) {
   console.log("Sending schedules:", schedules, "Dentist ID:", dentistID);
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
   try {
     const result = await fetch(
       "http://127.0.0.1:8000/api/update-dentist-settings",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${userInfo.token}`
+        },
         body: JSON.stringify({ schedules, dentistID }),
       },
     );

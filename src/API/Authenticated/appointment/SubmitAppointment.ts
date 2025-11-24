@@ -25,7 +25,7 @@ const token = userInfo.token
     method:"POST",
     headers:{
       "Content-Type":"application/json",
-      "Authorization": `Bearer ${token}`, // ⬅️ send token in Authorization header
+      "Authorization": `Bearer ${token}`, 
     },
     body: JSON.stringify({
       patientID, 
