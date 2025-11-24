@@ -1,5 +1,9 @@
 export async function getAllDentist(){
-  const res = await fetch('http://127.0.0.1:8000/api/dentists');
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  const res = await fetch('http://127.0.0.1:8000/api/dentists',{
+    method: 'GET',
+    headers: { "Authorization": `Bearer ${userInfo.token}` },
+  });
 
   if (!res.ok) {
     throw new Error("Failed to fetch dentists");
