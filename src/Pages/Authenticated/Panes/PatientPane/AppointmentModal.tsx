@@ -135,19 +135,11 @@ export default function AppointmentModal({
   };
 
   const handleSubmit = async () => {
-    const userID = localStorage.getItem("userID");
-
-    if (!userID || !pickDentist || !pickDay || !pickTime || !date) {
-      setError("Please complete all fields before booking.");
-      return;
-    }
-
     console.log(selectService)
     console.log(selectService.serviceID.toString())
     const serviceID = selectService.serviceID.toString()
     const formattedDate = date.toLocaleDateString("en-CA"); // YYYY-MM-DD in local time
     const response = await SubmitAppointment(
-      userID,
       pickDentist,
       pickDay,
       pickTime,
