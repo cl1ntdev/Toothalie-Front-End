@@ -43,7 +43,7 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"form
 
     console.log("Register Response:", res)
 
-    if (!res) {
+    if (!res || res.status !== 'ok') {
       alert("Registration failed")
       return
     }
