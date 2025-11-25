@@ -1,5 +1,4 @@
 export default async function SubmitAppointment(
-  patientID:string, 
   dentistID:string,
   day:string,
   time:string,
@@ -28,7 +27,6 @@ const token = userInfo.token
       "Authorization": `Bearer ${token}`, 
     },
     body: JSON.stringify({
-      patientID, 
       dentistID,
       day,
       time,
