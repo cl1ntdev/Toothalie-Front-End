@@ -51,7 +51,7 @@ export default function SettingsService() {
     try {
       const payload = Array.from(selected).map(id => ({ user_id: userId, service_id: id }));
       console.log(payload)
-      await updateDentistServices(userId, payload);
+      await updateDentistServices(payload);
       setOriginalIds(Array.from(selected));
       setMsg({ type: 'success', text: 'Services updated!' });
     } catch {

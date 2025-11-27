@@ -11,7 +11,6 @@ export function SettingsPane() {
   const [schedules, setSchedules] = useState<any[]>([]);
   const [userInfo, setUserInfo] = useState<any>(null);
 
-  // Transform API schedule -> grouped by day
   const transformScheduleData = (apiSchedules: any[]) => {
     const groupedByDay: { [key: string]: any } = {};
 
@@ -35,7 +34,6 @@ export function SettingsPane() {
     return Object.values(groupedByDay);
   };
 
-  // Convert grouped schedule -> API format
   const convertToApiFormat = (groupedSchedules: any[]) => {
     const apiSchedules: any[] = [];
 
@@ -53,18 +51,13 @@ export function SettingsPane() {
     return apiSchedules;
   };
 
-  // -----------------------
   const fetchDentist = async (forceRefresh = false) => {
     try {
       setLoading(true);
       if (forceRefresh) setRefreshing(true);
 
-      const userInfoBase = JSON.parse(localStorage.getItem("userInfo") || "{}");
-      const id = userInfoBase?.user?.id;
-      if (!id) throw new Error("User ID not found");
-      setUserInfo(userInfoBase.user);
-
-      const result = await getDentistData(`${id}?t=${Date.now()}`);
+    
+      const result = await getDentistData();
       console.log("Fetched dentist data:", result);
 
       if (result?.status === "ok") {
@@ -77,7 +70,7 @@ export function SettingsPane() {
           "loginedDentist",
           JSON.stringify({
             dentist: result.dentist,
-            user: userInfoBase.user,
+            // user: userInfoBase.user,
             schedule: result.schedule,
           }),
         );
@@ -110,7 +103,6 @@ export function SettingsPane() {
     await fetchDentist(true);
   };
 
-  // Schedule manipulation
   const handleEditDay = (index: number, day: string) => {
     const updated = [...schedules];
     updated[index].day_of_week = day;
@@ -167,7 +159,7 @@ export function SettingsPane() {
       const apiFormat = convertToApiFormat(schedules);
       console.log("Saving schedules:", apiFormat);
 
-      const res = await updateSettingsDentist(apiFormat, dentistInfo.id);
+      const res = await updateSettingsDentist(apiFormat);
 
       if (res.status === "ok") {
         localStorage.setItem(
