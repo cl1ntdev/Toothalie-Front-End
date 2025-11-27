@@ -67,11 +67,11 @@ export function Main() {
 
   // Fetch appointments
   useEffect(() => {
-    if (!dentistID) return;
+    console.log('working')
     const fetchData = async () => {
       try {
         setLoading(true);
-        const data = await fetchAppointmentDentist(dentistID);
+        const data = await fetchAppointmentDentist();
         console.log(data)
         if (data?.status === "ok" && Array.isArray(data.appointments)) {
           const formatted = data.appointments.map((item: any) => {
