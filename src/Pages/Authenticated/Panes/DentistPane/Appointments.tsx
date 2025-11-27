@@ -26,31 +26,14 @@ export default function Appointments() {
   const [viewAppointment, setViewAppointment] = useState<any | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // ✅ Load dentistID from localStorage
   useEffect(() => {
-    const localData = localStorage.getItem("userInfo");
-    if (!localData) return;
-
-    try {
-      const userInfo = JSON.parse(localData);
-      if (userInfo?.user?.id) {
-        setDentistID(userInfo.user.id.toString());
-      }
-    } catch (err) {
-      console.error("Failed to parse userInfo:", err);
-    }
-  }, []);
-
-  // ✅ Fetch appointments when dentistID is ready
-  useEffect(() => {
-    if (!dentistID) return;
 
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchAppointmentDentist(dentistID);
-
+        const data = await fetchAppointmentDentist();
+        console.log(data)
         if (data?.status === "ok" && Array.isArray(data.appointments)) {
           const formatted = data.appointments.map((item: any) => {
             const appt = item.appointment;
