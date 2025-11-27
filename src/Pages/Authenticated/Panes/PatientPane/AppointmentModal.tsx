@@ -41,22 +41,13 @@ export default function AppointmentModal({
     useState<ServiceType>("all");
   const [showFilters, setShowFilters] = useState(false);
 
-  // const [selectedGeneralService, setSelectedGeneralService] = useState<{
-  //   serviceID: string | number | null;
-  //   serviceName: string;
-  // }>({ serviceID: null, serviceName: "" });
-  
-  
-  const [selectService, setSelectService ] = useState<{
-    serviceTypeName: string
+  const [selectService, setSelectService] = useState<{
+    serviceTypeName: string;
     serviceID: string | number | null;
     serviceName: string;
-  }>({ serviceID: null, serviceName: "", serviceTypeName:"" });
+  }>({ serviceID: null, serviceName: "", serviceTypeName: "" });
 
-  useEffect(() => {
-    console.log(selectService)
-  }, [selectService]);
-
+  // fetch dentists
   useEffect(() => {
     const fetchDentists = async () => {
       try {
@@ -77,6 +68,7 @@ export default function AppointmentModal({
     fetchDentists();
   }, []);
 
+  // filter by service type
   useEffect(() => {
     if (serviceTypeFilter === "all") {
       setFilteredDentists(dentists);
@@ -104,42 +96,43 @@ export default function AppointmentModal({
   };
 
   const disableDates = (date: Date) => {
-    if (!pickDay) return false; 
+    if (!pickDay) return false;
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const dayIndex = getDayIndex(pickDay);
     return date < today || date.getDay() !== dayIndex;
   };
 
-  //group the services by service type
+  // group services
   const getServicesByType = (dentist: any) => {
     const services = dentist.services || [];
-    const groupedServices: Record<string, any[]> = {};
+    const grouped: Record<string, any[]> = {};
 
     services.forEach((service: any) => {
       const typeName = service.serviceTypeName || "Other Services";
-      if (!groupedServices[typeName]) {
-        groupedServices[typeName] = [];
-      }
-      groupedServices[typeName].push(service);
+      if (!grouped[typeName]) grouped[typeName] = [];
+      grouped[typeName].push(service);
     });
-    console.log('group serviecs are: ' + groupedServices)
-    return groupedServices;
+
+    return grouped;
   };
 
-  const formatServiceTypeName = (typeName: string) => {
-    return typeName
+  const formatServiceTypeName = (typeName: string) =>
+    typeName
       .replace(/([A-Z])/g, " $1")
       .replace(/^./, (str) => str.toUpperCase())
       .trim();
-  };
 
   const handleSubmit = async () => {
-    console.log(selectService)
-    console.log(selectService.serviceID.toString())
-    const serviceID = selectService.serviceID.toString()
-    const formattedDate = date.toLocaleDateString("en-CA"); // YYYY-MM-DD in local time
-    const response = await SubmitAppointment(
+    if (!date || !pickDentist || !pickDay || !pickTime || !selectService.serviceID) {
+      setError("Please complete all required fields.");
+      return;
+    }
+
+    const formattedDate = date.toLocaleDateString("en-CA");
+    const serviceID = selectService.serviceID.toString();
+
+    const res = await SubmitAppointment(
       pickDentist,
       pickDay,
       pickTime,
@@ -147,16 +140,14 @@ export default function AppointmentModal({
       isFamilyBooking,
       formattedDate,
       message,
-      serviceID,
+      serviceID
     );
 
-    if (response.ok === true) {
+    if (res.ok === true) {
       onClose();
       appointmentSuccess();
     } else {
-      setError(
-        response.message || "Failed to submit appointment. Please try again.",
-      );
+      setError(res.message || "Failed to submit appointment.");
     }
   };
 
