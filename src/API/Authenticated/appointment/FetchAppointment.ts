@@ -15,10 +15,14 @@ async function FetchAppointment(){
 }
 
 async function fetchAppointmentDentist(dentistID:string){
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  console.log(userInfo)
   const fetchAppointmentDetails = await fetch('http://127.0.0.1:8000/api/get-appointment-dentist',{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({dentistID})
+    method:"GET",
+    headers:{
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${userInfo.token}`
+    },
   })
   const data = await fetchAppointmentDetails.json() // only once
     console.log("Appointment data:", data)
