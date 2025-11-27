@@ -67,6 +67,9 @@ export default function UserDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('userInfo')
+    if(localStorage.getItem('loginedDentist')){
+      localStorage.removeItem('loginedDentist')
+    }
     navigate('/login')
   }
   
