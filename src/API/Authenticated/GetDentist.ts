@@ -13,11 +13,15 @@ export async function getAllDentist(){
   return data;
 };
 
-export async function getDentistData(dentistID: string){
+export async function getDentistData(){
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  console.log(userInfo)
   const result = await fetch('http://127.0.0.1:8000/api/dentist-info',{
-    method:"POST",
-    headers: { "Content-Type":"application/json"},
-    body:JSON.stringify({dentistID})
+    method:"GET",
+    headers: { 
+      "Content-Type":"application/json",
+      "Authorization": `Bearer ${userInfo.token}`
+    },
   })
   
   return result.json()
