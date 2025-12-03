@@ -33,6 +33,7 @@ export async function UpdateAppointment(
 ) {
   const init_date = new Date(baseDate);
   const date = init_date.toLocaleDateString("en-CA");
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
 
   console.log(date);
 
@@ -41,7 +42,10 @@ export async function UpdateAppointment(
       "http://127.0.0.1:8000/api/update-appointment",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json" ,
+          'Authorization': `Bearer ${userInfo.token}`
+        },
         body: JSON.stringify({
           appointmentID,
           scheduleID,
@@ -65,12 +69,17 @@ export async function UpdateDentistAppointment(
   appointment_id: string | null,
   status: string,
 ) {
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  
   console.log(status);
   const update = await fetch(
     "http://127.0.0.1:8000/api/edit-appointment-dentist",
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json" ,
+        "Authorization": `Bearer ${userInfo.token}`
+      },
       body: JSON.stringify({ appointment_id, status }),
     },
   );
