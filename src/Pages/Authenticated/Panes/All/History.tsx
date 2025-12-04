@@ -90,14 +90,18 @@ function HistoryItem({ log, isLast }: { log: any; isLast: boolean }) {
             <div className="flex items-center gap-2">
               <span
                 className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                  log.actor_type === "patient"
+                  log.actor_type === "PATIENT"
                     ? "bg-blue-100 text-blue-700"
                     : "bg-green-100 text-green-700"
                 }`}
               >
-                {log.actor_type === "patient" ? <User className="w-3 h-3 inline mr-1" /> : null}
+                {log.actor_type === "PATIENT" ? <User className="w-3 h-3 inline mr-1" /> : null}
                 {log.actor_type}
               </span>
+              {/* Actor Name */}
+                <span className="font-ceramon text-sm text-gray-700">
+                  {log.actor_type === 'PATIENT' ? log.patient_first_name + " " + log.patient_last_name : log.dentist_first_name + " " + log.dentist_last_name  }
+                </span>
             </div>
           </div>
 
@@ -129,7 +133,7 @@ function HistoryItem({ log, isLast }: { log: any; isLast: boolean }) {
           {/* Snapshot Details */}
           {isOpen && (
             <div className="mt-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
-              <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+              <h4 className="font-ceramon text-gray-800 mb-3 flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 Appointment Snapshot
               </h4>
@@ -204,7 +208,7 @@ export default function HistoryPane() {
       <div className="max-w-8xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Appointment History</h1>
+          <h1 className="text-3xl font-cermaon text-gray-900">Appointment History</h1>
           <p className="text-gray-600 mt-2">
           </p>
         </div>
