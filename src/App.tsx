@@ -7,6 +7,7 @@ import  RegisterPage  from './Pages/Auth/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserDashboard from './Pages/Authenticated/UserDashboard';
 import ToothalieAdmin from './Pages/Auth/ToothalieAdmin';
+import Unauthorized from './Pages/ErrorRoute/Unauthorized';
 function App() {
 
   return (
@@ -17,13 +18,20 @@ function App() {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
         <Route path='/toothalieAdmin' element={<ToothalieAdmin />} />
+        <Route path='/unauthorized' element={<Unauthorized />} />
        
        
         <Route path='/user' element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRoles={["ROLE_PATIENT","ROLE_DENTIST"]}>
             <UserDashboard />          
           </ProtectedRoute>
         } />
+        <Route path='/admin' element={
+          <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
+            <UserDashboard />          
+          </ProtectedRoute>
+        } />
+        
        
        
         {/*<Route path='/patient/:id' element={<PatientPanel />} />
