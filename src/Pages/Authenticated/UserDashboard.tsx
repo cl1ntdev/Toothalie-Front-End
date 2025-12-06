@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
+  TableOfContents,
   Settings,
   LayoutDashboard,
 } from "lucide-react";
@@ -18,6 +19,7 @@ import { Main } from "./Panes/DentistPane/Main";
 import Appointments from "./Panes/DentistPane/Appointments";
 import { SettingsPane } from "./Panes/DentistPane/SettingsPane";
 import UpcomingAppointment from "./Panes/PatientPane/UpcomingAppointment";
+import AppUser from "./Panes/Admin/AppUser";
 import HistoryPane from "./Panes/All/History";
 import { useNavigate } from "react-router-dom";
 import { MyProfile } from "./Panes/All/MyProfile";
@@ -40,7 +42,10 @@ export default function UserDashboard() {
     ] 
   
   const AdminDashboard = [
+    { label: "Dashboard", icon: LayoutDashboard, key: "Dashboard" },
+    { label: "Users", icon: User, key: "Users" },
     { label: "Appointments", icon: Calendar, key: "Appointments" },
+    { label: "Logs", icon: TableOfContents, key: "Logs" },
   ]
   
   const [userInfo, setUserInfo] = useState(null);
@@ -137,6 +142,8 @@ export default function UserDashboard() {
       }
     }else if (isAdmin){
       switch (currentPane) {
+        case "Users":
+          return <AppUser />
         default:
           return <>Admin</>;
       }
