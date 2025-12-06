@@ -4,10 +4,9 @@ import LandingPage from './Pages/LandingPage'
 import { Routes, Route } from "react-router-dom";
 import LoginPage from './Pages/Auth/LoginPage';
 import  RegisterPage  from './Pages/Auth/RegisterPage';
-import PatientPanel from './Pages/Authenticated/Panes/PatientPane/Patient';
-import DentistPanel from './Pages/Authenticated/Panes/DentistPane/Dentist';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserDashboard from './Pages/Authenticated/UserDashboard';
+import ToothalieAdmin from './Pages/Auth/ToothalieAdmin';
 function App() {
 
   return (
@@ -17,6 +16,7 @@ function App() {
         <Route path='/' element={<LandingPage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/register' element={<RegisterPage />} />
+        <Route path='/toothalieAdmin' element={<ToothalieAdmin />} />
        
        
         <Route path='/user' element={
