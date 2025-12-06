@@ -17,11 +17,9 @@ import { Main } from "./Panes/DentistPane/Main";
 
 import Appointments from "./Panes/DentistPane/Appointments";
 import { SettingsPane } from "./Panes/DentistPane/SettingsPane";
-import ReminderPaneDentist from "./Panes/DentistPane/Reminder";
 import HistoryPaneDentist from "./Panes/DentistPane/History";
 import UpcomingAppointment from "./Panes/PatientPane/UpcomingAppointment";
 import HistoryPane from "./Panes/All/History";
-import ReminderPanePatient from "./Panes/PatientPane/Reminder";
 import { useNavigate } from "react-router-dom";
 
 export default function UserDashboard() {
@@ -39,7 +37,6 @@ export default function UserDashboard() {
     [
       { label: "Appointments", icon: Calendar, key: "Appointments" },
       { label: "History", icon: History, key: "History" },
-      { label: "Reminders", icon: Bell, key: "Reminder" },
     ] 
   
   const [userInfo, setUserInfo] = useState(null);
@@ -110,8 +107,8 @@ export default function UserDashboard() {
           return <UpcomingAppointment />;
         case "History":
           return <HistoryPane />;
-        case "Reminder":
-          return <ReminderPanePatient />;
+        // case "Reminder":
+        //   return <ReminderPanePatient />;
         default:
           return <UpcomingAppointment />;
       }
