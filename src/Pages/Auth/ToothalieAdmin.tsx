@@ -1,8 +1,11 @@
 import React, { use, useState } from "react";
 import LoginAuth from "@/API/LoginAuth";
 import { UserLoginInfoClass } from "@/Classes/UserLogin";
+import { authenticateUser } from "@/API/AuthenticateUser";
+import { useNavigate } from "react-router-dom";
 
 export default function ToothalieAdmin() {
+  const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -11,7 +14,12 @@ export default function ToothalieAdmin() {
     console.log("Login attempt:", { username, password });
     const user = new UserLoginInfoClass(username,password)
     const result = await LoginAuth(user);
-    console.log(result)
+    const token = result.token
+    localStorage.setItem('userInfo', JSON.stringify({ token }))
+    const userDetails = await authenticateUser(token)
+    localStorage.setItem('userDetails',JSON.stringify(userDetails))
+    console.log(userDetails)
+    navigate('/admin')
   };
 
   return (
@@ -35,7 +43,7 @@ export default function ToothalieAdmin() {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              className="text-gray-700 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
               placeholder="Enter username"
               required
             />
@@ -54,7 +62,7 @@ export default function ToothalieAdmin() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              className="text-gray-700  w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
               placeholder="Enter password"
               required
             />
