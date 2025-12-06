@@ -4,7 +4,7 @@ export async function getUsers(){
   console.log(userInfo)
   const token = (userInfo.token).toString()
   console.log(token)
-  const result = await fetch('http://127.0.0.1:8000/api/get-users',{
+  const result = await fetch('http://127.0.0.1:8000/api/admin/get-users',{
     method: "GET",
     headers: {"Authorization": `Bearer ${token}`}
   })
@@ -19,7 +19,7 @@ export async function getUser(userID:string){
   console.log(userInfo)
   const token = (userInfo.token).toString()
   console.log(token)
-  const result = await fetch('http://127.0.0.1:8000/api/get-user',{
+  const result = await fetch('http://127.0.0.1:8000/api/admin/get-user',{
     method: "POST",
     headers: {
       "Content-Type":"application/json",
@@ -38,7 +38,7 @@ export async function deleteUser(userID:string){
   console.log(userInfo)
   const token = (userInfo.token).toString()
   console.log(token)
-  const result = await fetch('http://127.0.0.1:8000/api/delete-user',{
+  const result = await fetch('http://127.0.0.1:8000/api/admin/delete-user',{
     method: "POST",
     headers: {
       "Content-Type":"application/json",
@@ -57,7 +57,7 @@ export async function updateUser(payload){
   console.log(userInfo)
   const token = (userInfo.token).toString()
   console.log(token)
-  const result = await fetch('http://127.0.0.1:8000/api/update-user',{
+  const result = await fetch('http://127.0.0.1:8000/api/admin/update-user',{
     method: "POST",
     headers: {
       "Content-Type":"application/json",
@@ -77,7 +77,7 @@ export async function createUser(payload){
   console.log(userInfo)
   const token = (userInfo.token).toString()
   console.log(token)
-  const result = await fetch('http://127.0.0.1:8000/api/create-user',{
+  const result = await fetch('http://127.0.0.1:8000/api/admin/create-user',{
     method: "POST",
     headers: {
       "Content-Type":"application/json",
