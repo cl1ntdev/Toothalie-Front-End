@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchAppointmentDentist } from "@/API/Authenticated/appointment/FetchAppointment";
 import { UpdateDentistAppointment } from "@/API/Authenticated/appointment/EditAppointmentAPI";
-import { saveReminder } from "@/API/Authenticated/Dentist/Reminder";
+import { saveReminder,getReminder,updateReminder } from "@/API/Authenticated/Dentist/Reminder";
 
 import {
   Calendar,
@@ -54,6 +54,7 @@ export default function Appointments() {
   const [viewAppointment, setViewAppointment] = useState<any | null>(null);
   const [modalMode, setModalMode] = useState<'details' | 'reminder'>('details');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [viewAppointmentReminder, setViewAppointmentReminder] = useState<any | null>(null);
   
   // --- New Reminder Schedule State ---
   const [reminderSchedule, setReminderSchedule] = useState<ReminderDay[]>([]);
@@ -109,6 +110,51 @@ export default function Appointments() {
   }, [dentistID]);
 
   // --- Handlers ---
+
+  const handleMode = async (mode: string) => {
+    if (!viewAppointment) return;
+  
+    try {
+      // Fetch existing reminders for this appointment
+      const reminderResponse = await getReminder(viewAppointment.id.toString());
+  
+      if (reminderResponse.status === "success" && Array.isArray(reminderResponse.data)) {
+        const fetchedReminders = reminderResponse.data;
+  
+        // Map the fetched data into your ReminderDay format
+        const formattedSchedule: ReminderDay[] = fetchedReminders.map((day: any) => ({
+          id: day.id,           // use the reminder ID from backend
+          date: day.date,
+          slots: day.slots.map((slot: any) => ({
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+            message: slot.message,
+          })),
+        }));
+  
+        // Set the reminder schedule state so the modal can use it
+        setReminderSchedule(formattedSchedule);
+  
+        // Optional: also set a separate state for editing reminders in modal
+        setViewAppointmentReminder(fetchedReminders);
+      } else {
+        // If no reminders exist, initialize with one empty day
+        setReminderSchedule([
+          {
+            id: viewAppointment.id.toString(),
+            date: "",
+            slots: [{ startTime: "", endTime: "", message: "" }],
+          },
+        ]);
+      }
+  
+      // Open the modal in the requested mode
+      setModalMode(mode);
+    } catch (error) {
+      console.error("Failed to fetch reminders:", error);
+      alert("Failed to load reminders. Please try again.");
+    }
+  };
 
   const handleView = (appointment: any) => {
     setModalMode('details');
@@ -585,7 +631,7 @@ export default function Appointments() {
 
                         {viewAppointment.status === "Approved" && (
                             <button
-                                onClick={() => setModalMode('reminder')}
+                                onClick={() => handleMode('reminder')}
                                 className="w-full py-2.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors flex items-center justify-center gap-2"
                             >
                                 <Bell className="h-4 w-4" />
