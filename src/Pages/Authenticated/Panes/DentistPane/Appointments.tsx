@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { fetchAppointmentDentist } from "@/API/Authenticated/appointment/FetchAppointment";
 import { UpdateDentistAppointment } from "@/API/Authenticated/appointment/EditAppointmentAPI";
+import { saveReminder } from "@/API/Authenticated/Dentist/Reminder";
+
 import {
   Calendar,
   Clock,
@@ -23,12 +25,14 @@ import {
   Plus,
   Trash2,
   Save,
-  RefreshCw
+  RefreshCw,
+  ArrowRight,
+  X,
 } from "lucide-react";
 
 // --- Types for the new Schedule Structure ---
 interface ReminderSlot {
-  id: string;
+  // id: string;
   startTime: string;
   endTime: string;
   message: string;
@@ -108,9 +112,16 @@ export default function Appointments() {
 
   const handleView = (appointment: any) => {
     setModalMode('details');
+    // console.log(viewAppointment)
     // Initialize with one empty day when opening
     setReminderSchedule([
-      { id: Date.now().toString(), date: "", slots: [{ id: "slot-1", startTime: "", endTime: "", message: "" }] }
+      {
+           id: crypto.randomUUID(),   // <-- appointment_id becomes day ID
+           date: "",
+           slots: [
+             { startTime: "", endTime: "", message: "" }   // <-- no slot ID
+           ],
+         },
     ]);
     setViewAppointment(appointment);
   };
@@ -147,9 +158,11 @@ export default function Appointments() {
     setReminderSchedule([
       ...reminderSchedule,
       { 
-        id: Date.now().toString(), 
-        date: "", 
-        slots: [{ id: Date.now().toString() + "-slot", startTime: "", endTime: "", message: "" }] 
+        id: crypto.randomUUID(), // Appointment ID
+           date: "",
+           slots: [
+             { startTime: "", endTime: "", message: "" } // No ID needed
+           ]
       }
     ]);
   };
@@ -165,37 +178,55 @@ export default function Appointments() {
   };
 
   const addTimeSlot = (dayId: string) => {
-    setReminderSchedule(reminderSchedule.map(d => {
-      if (d.id === dayId) {
-        return {
-          ...d,
-          slots: [...d.slots, { id: Date.now().toString(), startTime: "", endTime: "", message: "" }]
-        };
-      }
-      return d;
-    }));
+    setReminderSchedule(
+       reminderSchedule.map((d) =>
+         d.id === dayId
+           ? {
+               ...d,
+               slots: [
+                 ...d.slots,
+                 { startTime: "", endTime: "", message: "" } // no ID
+               ],
+             }
+           : d
+       )
+     );
   };
 
-  const removeTimeSlot = (dayId: string, slotId: string) => {
-    setReminderSchedule(reminderSchedule.map(d => {
-      if (d.id === dayId) {
-        return { ...d, slots: d.slots.filter(s => s.id !== slotId) };
-      }
-      return d;
-    }));
+  const removeTimeSlot = (dayId: string, slotIndex: number) => {
+    setReminderSchedule(
+       reminderSchedule.map((d) =>
+         d.id === dayId
+           ? {
+               ...d,
+               slots: d.slots.filter((_, i) => i !== slotIndex),
+             }
+           : d
+       )
+     );
   };
 
-  const updateTimeSlot = (dayId: string, slotId: string, field: keyof ReminderSlot, value: string) => {
-    setReminderSchedule(reminderSchedule.map(d => {
-      if (d.id === dayId) {
-        return {
-          ...d,
-          slots: d.slots.map(s => s.id === slotId ? { ...s, [field]: value } : s)
+  const updateTimeSlot = (
+    dayId: string,
+    slotIndex: number,
+    field: keyof ReminderSlot,
+    value: string
+  ) => {
+    setReminderSchedule(
+      reminderSchedule.map((d) => {
+        if (d.id !== dayId) return d;
+  
+        const updatedSlots = [...d.slots];
+        updatedSlots[slotIndex] = {
+          ...updatedSlots[slotIndex],
+          [field]: value,
         };
-      }
-      return d;
-    }));
+  
+        return { ...d, slots: updatedSlots };
+      })
+    );
   };
+
 
   const handleSaveReminder = async () => {
     // Basic Validation
@@ -209,11 +240,11 @@ export default function Appointments() {
     
     try {
         setIsSavingReminder(true);
-        // TODO: Call your actual Reminder API here
         console.log("Saving schedule...", reminderSchedule);
-        
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Mock delay
-        
+        console.log(viewAppointment)
+        const reminderResponse = await saveReminder(reminderSchedule,(viewAppointment.id).toString());
+        // await new Promise(resolve => setTimeout(resolve, 1000)); // Mock delay
+        console.log(reminderResponse)
         alert("Reminders scheduled successfully!");
         setModalMode('details'); 
     } catch (error) {
@@ -566,147 +597,180 @@ export default function Appointments() {
             ) : (
                 // --- MODE: REMINDER FORM (Redesigned) ---
                 <>
-                    <div className="p-6 min-h-[400px]">
-                        
-                        {/* Header: Schedules + Add Day */}
-                        <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-lg font-medium text-gray-900">Schedules</h3>
-                            <div className="flex gap-2">
-                                <button className="p-2 text-gray-400 hover:text-gray-600 transition-colors">
-                                    <RefreshCw className="h-4 w-4" />
-                                </button>
-                                <button 
-                                    onClick={addDay}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-blue-600 bg-white border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
-                                >
-                                    <Plus className="h-4 w-4" />
-                                    Add Day
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="space-y-6">
-                            {reminderSchedule.map((day) => (
-                                <div key={day.id} className="border border-gray-200 rounded-xl overflow-hidden">
-                                    {/* Day Header */}
-                                    <div className="p-4 flex items-center justify-between bg-white border-b border-gray-100">
-                                        <div className="flex items-center gap-3 flex-1">
-                                            <div className="relative">
-                                                <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                                <input
-                                                    type="date"
-                                                    value={day.date}
-                                                    onChange={(e) => updateDayDate(day.id, e.target.value)}
-                                                    className="pl-9 pr-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 transition-all font-medium text-gray-700"
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <button 
-                                                onClick={() => addTimeSlot(day.id)}
-                                                className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-green-600 bg-white border border-green-200 rounded-md hover:bg-green-50 transition-colors"
-                                            >
-                                                <Plus className="h-3 w-3" />
-                                                Add Time
-                                            </button>
-                                            <button 
-                                                onClick={() => removeDay(day.id)}
-                                                className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Time Slots */}
-                                    <div className="p-3 space-y-2">
-                                        {day.slots.map((slot) => (
-                                            <div key={slot.id} className="bg-gray-50 rounded-lg p-2 flex flex-col sm:flex-row items-start sm:items-center gap-3 border border-gray-100 group">
+                  <div className="flex flex-col h-full bg-white">
+                      {/* Scrollable Content Area */}
+                      <div className="flex-1 overflow-y-auto p-6 min-h-[400px]">
+                          
+                          {/* Header: Schedules + Add Day */}
+                          <div className="flex items-center justify-between mb-8">
+                              <div>
+                                  <h3 className="text-lg font-semibold text-gray-900">Schedules</h3>
+                                  <p className="text-sm text-gray-500 mt-1">Manage dates and time slots for reminders.</p>
+                              </div>
+                              <div className="flex gap-3">
+                                  <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all">
+                                      <RefreshCw className="h-4 w-4" />
+                                  </button>
+                                  <button 
+                                      onClick={addDay}
+                                      className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 active:bg-blue-800 transition-all shadow-sm hover:shadow"
+                                  >
+                                      <Plus className="h-4 w-4" />
+                                      Add Date
+                                  </button>
+                              </div>
+                          </div>
+                  
+                          <div className="space-y-8">
+                              {reminderSchedule.map((day,index) => (
+                                  <div key={index} className="group relative bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                                      
+                                      {/* Day Header */}
+                                      <div className="px-5 py-4 flex items-center justify-between bg-gray-50/50 border-b border-gray-100 rounded-t-2xl">
+                                          <div className="flex items-center gap-4">
+                                              <div className="flex items-center gap-2 text-sm font-medium text-gray-700 bg-white px-3 py-1.5 border border-gray-200 rounded-md shadow-sm">
+                                                  <Calendar className="h-4 w-4 text-blue-500" />
+                                                  <input
+                                                      type="date"
+                                                      value={day.date}
+                                                      onChange={(e) => updateDayDate(day.id, e.target.value)}
+                                                      className="bg-transparent border-none p-0 focus:ring-0 text-gray-700 cursor-pointer text-sm font-medium"
+                                                  />
+                                              </div>
+                                              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                                                  {day.slots.length} {day.slots.length === 1 ? 'Slot' : 'Slots'}
+                                              </span>
+                                          </div>
+                  
+                                          <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                              <button 
+                                                  onClick={() => addTimeSlot(day.id)}
+                                                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors"
+                                              >
+                                                  <Plus className="h-3 w-3" />
+                                                  Add Time
+                                              </button>
+                                              <button 
+                                                  onClick={() => removeDay(day.id)}
+                                                  className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                                  title="Remove Day"
+                                              >
+                                                  <Trash2 className="h-4 w-4" />
+                                              </button>
+                                          </div>
+                                      </div>
+                  
+                                      {/* Time Slots Area */}
+                                      <div className="p-5 space-y-3">
+                                          {day.slots.map((slot, slotIndex) => (
+                                              <div key={slotIndex} className="flex flex-col sm:flex-row gap-3 items-start sm:items-center animate-in fade-in slide-in-from-top-2 duration-200">
+                                                  
+                                                {/* Time Range Group - Redesigned as a single "Pill" */}
+                                                    <div className="relative flex items-center bg-white border border-gray-200 rounded-lg shadow-sm transition-all duration-200 
+                                                        hover:border-blue-300 hover:shadow-md 
+                                                        focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10">
+                                                        
+                                                        {/* Start Time */}
+                                                        <div className="relative flex items-center pl-3">
+                                                            <Clock className="h-4 w-4 text-gray-400 group-focus-within/slot:text-blue-500 transition-colors" />
+                                                            <input
+                                                                type="time"
+                                                                value={slot.startTime}
+                                                                onChange={(e) => updateTimeSlot(day.id, slotIndex, "startTime", e.target.value)}
+                                                                className="pl-2 pr-1 py-2 bg-transparent border-none text-sm font-semibold text-gray-700 focus:ring-0 cursor-pointer w-[110px] [color-scheme:light]" 
+                                                            />
+                                                        </div>
                                                 
-                                                {/* Time Inputs */}
-                                                <div className="flex items-center gap-2 shrink-0">
-                                                    <Clock className="h-4 w-4 text-gray-400" />
-                                                    <input
-                                                        type="time"
-                                                        value={slot.startTime}
-                                                        onChange={(e) => updateTimeSlot(day.id, slot.id, 'startTime', e.target.value)}
-                                                        className="bg-white border border-gray-200 text-xs px-2 py-1 rounded w-24 focus:outline-none focus:border-blue-400"
-                                                    />
-                                                    <span className="text-gray-400 text-xs">-</span>
-                                                    <input
-                                                        type="time"
-                                                        value={slot.endTime}
-                                                        onChange={(e) => updateTimeSlot(day.id, slot.id, 'endTime', e.target.value)}
-                                                        className="bg-white border border-gray-200 text-xs px-2 py-1 rounded w-24 focus:outline-none focus:border-blue-400"
-                                                    />
-                                                </div>
-
-                                                {/* Divider for mobile */}
-                                                <div className="h-px w-full bg-gray-200 sm:hidden"></div>
-                                                <div className="h-4 w-px bg-gray-200 hidden sm:block"></div>
-
-                                                {/* Message Input (Flex Grow) */}
-                                                <div className="flex-1 w-full sm:w-auto relative">
-                                                    <MessageSquare className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-                                                    <input 
-                                                        type="text"
-                                                        value={slot.message}
-                                                        onChange={(e) => updateTimeSlot(day.id, slot.id, 'message', e.target.value)}
-                                                        placeholder="Enter reminder message..."
-                                                        className="w-full bg-white border border-gray-200 text-xs pl-8 pr-3 py-1.5 rounded focus:outline-none focus:border-blue-400"
-                                                    />
-                                                </div>
-
-                                                {/* Remove Slot */}
-                                                <button 
-                                                    onClick={() => removeTimeSlot(day.id, slot.id)}
-                                                    className="text-gray-300 hover:text-red-500 transition-colors p-1"
-                                                >
-                                                    <XCircle className="h-4 w-4" />
-                                                </button>
-                                            </div>
-                                        ))}
-                                        {day.slots.length === 0 && (
-                                            <p className="text-xs text-center text-gray-400 py-2 italic">
-                                                No time slots added.
-                                            </p>
-                                        )}
-                                    </div>
-                                </div>
-                            ))}
-                            
-                            {reminderSchedule.length === 0 && (
-                                <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                                    <Calendar className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                                    <p className="text-sm text-gray-500">No days added yet.</p>
-                                    <button 
-                                        onClick={addDay}
-                                        className="mt-3 text-xs font-medium text-blue-600 hover:underline"
-                                    >
-                                        Add your first day
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Footer for Reminder */}
-                    <div className="sticky bottom-0 bg-white border-t border-gray-100 p-6 flex items-center justify-end gap-3">
-                         <button 
-                            onClick={() => setModalMode('details')}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={handleSaveReminder}
-                            disabled={isSavingReminder}
-                            className="flex items-center gap-2 px-6 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg hover:bg-black transition-colors shadow-sm"
-                        >
-                            {isSavingReminder ? <Loader2 className="h-4 w-4 animate-spin"/> : <Save className="h-4 w-4"/>}
-                            Save Changes
-                        </button>
-                    </div>
+                                                        {/* Divider */}
+                                                        <div className="h-4 w-px bg-gray-200 mx-0"></div>
+                                                
+                                                        {/* End Time */}
+                                                        <div className="relative flex items-center pr-1">
+                                                            <input
+                                                                type="time"
+                                                                value={slot.endTime}
+                                                                onChange={(e) => updateTimeSlot(day.id, slotIndex, "endTime", e.target.value)}
+                                                                className="pl-3 pr-1 py-2 bg-transparent border-none text-sm font-medium text-gray-600 focus:ring-0 cursor-pointer w-[105px] [color-scheme:light]"
+                                                            />
+                                                        </div>
+                                                        
+                                                        {/* Helper Label (Optional - shows "to" on hover for clarity) */}
+                                                        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none opacity-0 group-hover/slot:opacity-100 transition-opacity bg-white px-1">
+                                                            <ArrowRight className="h-3 w-3 text-blue-400" />
+                                                        </div>
+                                                    </div>
+                  
+                                                  {/* Message Input (Flex Grow) */}
+                                                  <input
+                                                      type="text"
+                                                      placeholder="Enter reminder message..."
+                                                      value={slot.message}
+                                                      onChange={(e) => updateTimeSlot(day.id, slotIndex, "message", e.target.value)}
+                                                      className="flex-1 w-full px-3 py-2 text-sm text-gray-700 placeholder-gray-400 bg-white border border-gray-200 rounded-lg focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                                                  />
+                                                  
+                                                  {/* Remove Slot Button */}
+                                                  <button
+                                                      onClick={() => removeTimeSlot(day.id, slotIndex)}
+                                                      className="p-2 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                                                  >
+                                                      <X className="h-4 w-4" />
+                                                  </button>
+                                              </div>
+                                          ))}
+                  
+                                          {day.slots.length === 0 && (
+                                              <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed border-gray-100 rounded-xl bg-gray-50/50">
+                                                  <Clock className="h-8 w-8 text-gray-200 mb-2" />
+                                                  <p className="text-sm text-gray-500 font-medium">No time slots yet</p>
+                                                  <button 
+                                                      onClick={() => addTimeSlot(day.id)}
+                                                      className="mt-2 text-xs text-blue-600 hover:underline"
+                                                  >
+                                                      Add your first slot
+                                                  </button>
+                                              </div>
+                                          )}
+                                      </div>
+                                  </div>
+                              ))}
+                              
+                              {reminderSchedule.length === 0 && (
+                                  <div className="flex flex-col items-center justify-center py-16 bg-white rounded-xl border border-dashed border-gray-300 text-center">
+                                      <div className="h-12 w-12 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4">
+                                          <Calendar className="h-6 w-6" />
+                                      </div>
+                                      <h4 className="text-base font-medium text-gray-900">No dates scheduled</h4>
+                                      <p className="text-sm text-gray-500 mt-1 max-w-xs">Start by adding a date to configure your reminder schedule.</p>
+                                      <button 
+                                          onClick={addDay}
+                                          className="mt-6 px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                                      >
+                                          Add Date
+                                      </button>
+                                  </div>
+                              )}
+                          </div>
+                      </div>
+                  
+                      {/* Footer */}
+                      <div className="sticky bottom-0 bg-white/80 backdrop-blur-sm border-t border-gray-100 p-6 flex items-center justify-end gap-3 z-10">
+                           <button 
+                              onClick={() => setModalMode('details')}
+                              className="px-5 py-2.5 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                          >
+                              Cancel
+                          </button>
+                          <button
+                              onClick={handleSaveReminder}
+                              disabled={isSavingReminder}
+                              className="flex items-center gap-2 px-6 py-2.5 text-sm font-medium text-white bg-gray-900 rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm hover:shadow"
+                          >
+                              {isSavingReminder ? <Loader2 className="h-4 w-4 animate-spin"/> : <Save className="h-4 w-4"/>}
+                              Save Changes
+                          </button>
+                      </div>
+                  </div>
                 </>
             )}
 
