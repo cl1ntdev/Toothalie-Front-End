@@ -1,8 +1,11 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { FetchAppointment } from '@/API/Authenticated/appointment/FetchAppointment';
 import AppointmentModal from './AppointmentModal';
 import DeleteAppointmentModal from './DeleteAppointmentModal';
 import EditModal from './EditModal';
+import ViewAppointmentModal from './ViewAppointmentModal';
 import {
   Pencil,
   Trash2,
@@ -16,16 +19,21 @@ import {
   Users,
   Plus,
   Stethoscope,
+  Eye,
 } from 'lucide-react';
 
 export default function UpcomingAppointment() {
   const [appointmentsData, setAppointmentsData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [viewAppointmentModal, setViewAppointmentModal] = useState(false);
+
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
+  const [selectedAppointmentData, setSelectedAppointmentData] = useState<any>(null);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
   useEffect(() => {
@@ -149,6 +157,7 @@ export default function UpcomingAppointment() {
 
             const canEdit = appointment.status === 'Pending';
             const canDelete = appointment.status === 'Pending' || appointment.status === 'Rejected';
+            const canView = appointment.status === 'Approved';
 
             return (
               <div
@@ -210,6 +219,18 @@ export default function UpcomingAppointment() {
                         <Pencil className="w-4.5 h-4.5" />
                       </button>
                     )}
+                    {canView && (
+                      <button
+                        onClick={() => {
+                          setSelectedAppointmentData(appointmentData);
+                          setViewAppointmentModal(true);
+                        }}
+                        className="p-2.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                        aria-label="View"
+                      >
+                        <Eye className="w-4.5 h-4.5" />
+                      </button>
+                    )}
                     {canDelete && (
                       <button
                         onClick={() => handleDelete(appointment.appointment_id)}
@@ -249,6 +270,12 @@ export default function UpcomingAppointment() {
             setSelectedAppointmentId(null);
           }}
           onSuccessEdit={() => setIsUpdate((prev) => !prev)}
+        />
+      )}
+      {viewAppointmentModal && selectedAppointmentData && (
+        <ViewAppointmentModal
+          appointmentData={selectedAppointmentData}
+          onClose={() => setViewAppointmentModal(false)}
         />
       )}
     </div>
