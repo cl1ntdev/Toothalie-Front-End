@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { ArrowLeft, User, Mail, Shield, Lock, Save, X, Camera } from 'lucide-react'
 import GetUserInfo from '@/API/Authenticated/GetUserInfoAPI'
-
+import ChangePassword from '@/API/Authenticated/ChangePassword'
 type AdminProps = {
   onClose: () => void
 }
@@ -42,7 +42,7 @@ export function MyProfile({ onClose }: AdminProps) {
     return "Standard User";
   };
 
-  const handlePasswordChange = (e: React.FormEvent) => {
+  const handlePasswordChange = async(e: React.FormEvent) => {
     e.preventDefault();
     setPasswordError('');
     setPasswordSuccess('');
@@ -59,12 +59,16 @@ export function MyProfile({ onClose }: AdminProps) {
     // Simulate API call
     console.log("Updating password...", passwordData);
     setPasswordSuccess("Password updated successfully!");
-    
-    setTimeout(() => {
-        setIsChangingPassword(false);
-        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-        setPasswordSuccess('');
-    }, 1500);
+    const result = await ChangePassword(passwordData.currentPassword, passwordData.newPassword, passwordData.confirmPassword );
+    console.log(result)
+    if(result.status == 'ok'){
+      setIsChangingPassword(false);
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setPasswordSuccess('');
+    }else{
+      setIsChangingPassword(false);
+      setPasswordSuccess('Error');
+    }
   };
 
   return (
