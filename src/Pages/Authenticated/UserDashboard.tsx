@@ -39,6 +39,10 @@ export default function UserDashboard() {
       { label: "History", icon: History, key: "History" },
     ] 
   
+  const AdminDashboard = [
+    { label: "Appointments", icon: Calendar, key: "Appointments" },
+  ]
+  
   const [userInfo, setUserInfo] = useState(null);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [currentPane, setCurrentPane] = useState("Dashboard");
@@ -48,6 +52,7 @@ export default function UserDashboard() {
     async function fetchUserInfo() {
       try {
         const data = await GetUserInfo();
+        console.log(data)
         setUserInfo(data.user);
       } catch (err) {
         console.error(err);
@@ -83,8 +88,21 @@ export default function UserDashboard() {
   }
 
   // Determine user type from roles
-  const isDentist = userInfo.roles.includes("DENTIST");
-  const DashBoardComponents = isDentist ? DentistDashboard : PatientDashboard //use for loading panes
+  let roles = userInfo.roles;
+  
+  // Check if roles[0] is a JSON string
+  if (roles.length === 1 && typeof roles[0] === "string" && roles[0].startsWith("[")) {
+    roles = JSON.parse(roles[0]); // now roles = ["ROLE_ADMIN","ROLE_USER"]
+  }
+  
+  // Now you can safely check
+  const isAdmin = roles.includes("ROLE_ADMIN");
+  const isUser = roles.includes("ROLE_USER");
+  const isDentist = roles.includes("ROLE_DENTIST");
+  const isPatient = roles.includes("ROLE_PATIENT");
+  
+  console.log(roles, { isAdmin, isUser, isDentist, isPatient });
+  const DashBoardComponents = isDentist ? DentistDashboard : isPatient ? PatientDashboard : isAdmin ? AdminDashboard : <>Nothing in UserDashboard</> //use for loading panes
   const displayName = `${userInfo.firstName} ${userInfo.lastName}`;
 
   const renderPane = () => {
@@ -101,7 +119,7 @@ export default function UserDashboard() {
         default:
           return <Main />;
       }
-    } else {
+    } else if(isPatient) {
       switch (currentPane) {
         case "Home":
           return <UpcomingAppointment />;
@@ -111,6 +129,11 @@ export default function UserDashboard() {
         //   return <ReminderPanePatient />;
         default:
           return <UpcomingAppointment />;
+      }
+    }else if (isAdmin){
+      switch (currentPane) {
+        default:
+          return <>Admin</>;
       }
     }
   };
