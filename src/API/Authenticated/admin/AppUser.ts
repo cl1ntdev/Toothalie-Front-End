@@ -32,6 +32,25 @@ export async function getUser(userID:string){
 }
 
 
+export async function deleteUser(userID:string){
+  console.log('test')
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  console.log(userInfo)
+  const token = (userInfo.token).toString()
+  console.log(token)
+  const result = await fetch('http://127.0.0.1:8000/api/delete-user',{
+    method: "POST",
+    headers: {
+      "Content-Type":"application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify({userID})
+  })
+  const data = await result.json()
+  return data;
+}
+
+
 export async function updateUser(payload){
   console.log('test')
   const userInfo = JSON.parse(localStorage.getItem('userInfo'))
@@ -39,6 +58,26 @@ export async function updateUser(payload){
   const token = (userInfo.token).toString()
   console.log(token)
   const result = await fetch('http://127.0.0.1:8000/api/update-user',{
+    method: "POST",
+    headers: {
+      "Content-Type":"application/json",
+      "Authorization": `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
+  })
+  const data = await result.json()
+  return data;
+}
+
+export async function createUser(payload){
+  console.log("wroking")
+  console.log(payload)
+  console.log('test')
+  const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+  console.log(userInfo)
+  const token = (userInfo.token).toString()
+  console.log(token)
+  const result = await fetch('http://127.0.0.1:8000/api/create-user',{
     method: "POST",
     headers: {
       "Content-Type":"application/json",
