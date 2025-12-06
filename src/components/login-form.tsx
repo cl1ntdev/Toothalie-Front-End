@@ -23,18 +23,28 @@ export function LoginForm({
   const navigate = useNavigate()
   
   useEffect(()=>{
-    console.log('working')
-    const remember=async()=>{
-      const userInfo=JSON.parse(localStorage.getItem('userInfo'))
-      console.log(userInfo.token)
-      const check=await authenticateUser(userInfo.token)
-      if(check.status=='ok'){
-        navigate('/user')
+    const remember = async () => {
+      const userInfoStr = localStorage.getItem('userInfo');
+      if (!userInfoStr) return;
+  
+      const userInfo = JSON.parse(userInfoStr);
+      if (!userInfo?.token) return;
+  
+      try {
+        const check = await authenticateUser(userInfo.token);
+        if (check.status === 'ok') {
+          navigate('/user');
+        } else {
+          localStorage.removeItem('userInfo'); // invalidate token
+        }
+      } catch (err) {
+        console.error(err);
+        localStorage.removeItem('userInfo');
       }
     }
-    
-    remember()
-  },[])
+    remember();
+  }, []);
+
   
   
   
