@@ -1,4 +1,5 @@
 export async function authenticateUser(token: string) {
+  console.log(token)
   try {
     const res = await fetch('http://127.0.0.1:8000/api/auth/me', {
       headers: { Authorization: `Bearer ${token}` },
