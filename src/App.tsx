@@ -6,7 +6,6 @@ import LoginPage from './Pages/Auth/LoginPage';
 import  RegisterPage  from './Pages/Auth/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import UserDashboard from './Pages/Authenticated/UserDashboard';
-import AdminDashboard from './Pages/Authenticated/AdminDashboard';
 import ToothalieAdmin from './Pages/Auth/ToothalieAdmin';
 import Unauthorized from './Pages/ErrorRoute/Unauthorized';
 function App() {
@@ -29,7 +28,7 @@ function App() {
         } />
         <Route path='/admin' element={
           <ProtectedRoute allowedRoles={["ROLE_ADMIN"]}>
-            <AdminDashboard />          
+            <UserDashboard />          
           </ProtectedRoute>
         } />
         
