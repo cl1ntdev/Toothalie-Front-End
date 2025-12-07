@@ -27,7 +27,7 @@ import Schedule from "./Panes/Admin/Schedule";
 import HistoryPane from "./Panes/All/History";
 import { useNavigate } from "react-router-dom";
 import { MyProfile } from "./Panes/All/MyProfile";
-
+import { MyAdmin } from "./Panes/Admin/MyAdmin";
 export default function UserDashboard() {
   
   const navigate = useNavigate()
@@ -46,7 +46,7 @@ export default function UserDashboard() {
     ] 
   
   const AdminDashboard = [
-    { label: "Dashboard", icon: LayoutDashboard, key: "Dashboard" },
+    { label: "AdminDashboard", icon: LayoutDashboard, key: "AdminDashboard" },
     { label: "Users", icon: User, key: "Users" },
     { label: "Appointments", icon: Calendar, key: "Appointments" },
     { label: "Dentist Services", icon: User, key: "DentistServices" },
@@ -149,6 +149,9 @@ export default function UserDashboard() {
       }
     }else if (isAdmin){
       switch (currentPane) {
+        case "AdminDashboard":
+          return <MyAdmin />
+          // return <>Admin</>
         case "Users":
           return <AppUser />
         case "Appointments":
@@ -160,7 +163,7 @@ export default function UserDashboard() {
         case "Schedules":
           return <Schedule />
         default:
-          return <>Admin</>;
+          return <>NO CONTENT</>;
       }
     }
   };
