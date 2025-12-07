@@ -20,6 +20,10 @@ import Appointments from "./Panes/DentistPane/Appointments";
 import { SettingsPane } from "./Panes/DentistPane/SettingsPane";
 import UpcomingAppointment from "./Panes/PatientPane/UpcomingAppointment";
 import AppUser from "./Panes/Admin/AppUser";
+import Appointment from "./Panes/Admin/Appointment";
+import DentistService from "./Panes/Admin/DentistService";
+import Reminder from "./Panes/Admin/Reminder";
+import Schedule from "./Panes/Admin/Schedule";
 import HistoryPane from "./Panes/All/History";
 import { useNavigate } from "react-router-dom";
 import { MyProfile } from "./Panes/All/MyProfile";
@@ -45,6 +49,9 @@ export default function UserDashboard() {
     { label: "Dashboard", icon: LayoutDashboard, key: "Dashboard" },
     { label: "Users", icon: User, key: "Users" },
     { label: "Appointments", icon: Calendar, key: "Appointments" },
+    { label: "Dentist Services", icon: User, key: "DentistServices" },
+    { label: "Reminders", icon: Bell, key: "Reminders" },
+    { label: "Schedules", icon: Clock, key: "Schedules" },
     { label: "Logs", icon: TableOfContents, key: "Logs" },
   ]
   
@@ -144,6 +151,14 @@ export default function UserDashboard() {
       switch (currentPane) {
         case "Users":
           return <AppUser />
+        case "Appointments":
+          return <Appointment />
+        case "DentistServices":
+          return <DentistService />
+        case "Reminders":
+          return <Reminder />
+        case "Schedules":
+          return <Schedule />
         default:
           return <>Admin</>;
       }
