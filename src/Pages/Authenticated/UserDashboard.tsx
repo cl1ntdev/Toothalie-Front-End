@@ -50,7 +50,7 @@ export default function UserDashboard() {
     { label: "Users", icon: User, key: "Users" },
     { label: "Appointments", icon: Calendar, key: "Appointments" },
     { label: "Dentist Services", icon: User, key: "DentistServices" },
-    { label: "Reminders", icon: Bell, key: "Reminders" },
+    // { label: "Reminders", icon: Bell, key: "Reminders" },
     { label: "Schedules", icon: Clock, key: "Schedules" },
     { label: "Logs", icon: TableOfContents, key: "Logs" },
   ]
@@ -159,11 +159,13 @@ export default function UserDashboard() {
         case "DentistServices":
           return <DentistService />
         case "Reminders":
-          return <Reminder />
+          return <Reminder /> // nn
         case "Schedules":
           return <Schedule />
+        case "Logs":
+            return <>Logs</>
         default:
-          return <>NO CONTENT</>;
+          return <MyAdmin />
       }
     }
   };
