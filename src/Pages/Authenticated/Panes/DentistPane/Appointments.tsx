@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { fetchAppointmentDentist } from "@/API/Authenticated/appointment/FetchAppointment";
 import { UpdateDentistAppointment } from "@/API/Authenticated/appointment/EditAppointmentAPI";
 import { saveReminder,getReminder,updateReminder } from "@/API/Authenticated/Dentist/Reminder";
-
+import Alert from '@/components/_myComp/Alerts';
 import {
   Calendar,
   Clock,
@@ -59,6 +59,12 @@ export default function Appointments() {
   // --- New Reminder Schedule State ---
   const [reminderSchedule, setReminderSchedule] = useState<ReminderDay[]>([]);
   const [isSavingReminder, setIsSavingReminder] = useState(false);
+  const [alert, setAlert] = useState({ 
+       show: false, 
+       type: "info", 
+       title: "", 
+       message: "" 
+     });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -181,14 +187,23 @@ export default function Appointments() {
     try {
       setIsUpdating(true);
       const update = await UpdateDentistAppointment(appointmentId, newStatus);
+      console.log(update)
+      
+      if (update.status == "success") {
+        
+        setAlert({
+                 show: true,
+                 type: "success", // success, error, warning, info
+                 title: "Updated Successfully",
+                 message: `Status changed to ${newStatus}`
+               });
 
-      if (update?.status === "ok") {
         setAppointmentsData((prev) =>
           prev.map((a) => (a.id === appointmentId ? { ...a, status: newStatus } : a))
         );
         setViewAppointment((prev: any) => ({ ...prev, status: newStatus }));
       } else {
-        alert(update.message || "Failed to update appointment.");
+        console.log('error updating')
       }
     } catch (err) {
       console.error("Error updating appointment:", err);
@@ -291,7 +306,13 @@ export default function Appointments() {
         const reminderResponse = await saveReminder(reminderSchedule,(viewAppointment.id).toString());
         // await new Promise(resolve => setTimeout(resolve, 1000)); // Mock delay
         console.log(reminderResponse)
-        alert("Reminders scheduled successfully!");
+        setAlert({
+                 show: true,
+                 type: "success", // success, error, warning, info
+                 title: "Created Reminder Successfully",
+                 message: "Reminder sent to Patient."
+               });
+
         setModalMode('details'); 
     } catch (error) {
         console.error(error);
@@ -385,10 +406,6 @@ export default function Appointments() {
     <>
       <div className="p-6 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Appointments</h1>
-            <p className="text-gray-500 mt-1">Manage your patient schedule</p>
-          </div>
           <div className="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium border border-blue-100">
             Total: {appointmentsData.length}
           </div>
@@ -823,6 +840,17 @@ export default function Appointments() {
           </div>
         </div>
       )}
+      
+      
+      <Alert 
+                      isOpen={alert.show} 
+                      type={alert.type}
+                      title={alert.title}
+                      message={alert.message}
+                      onClose={() => setAlert({ ...alert, show: false })} 
+                    />
+        
+
     </>
   );
 }
