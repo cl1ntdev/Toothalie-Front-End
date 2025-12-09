@@ -188,7 +188,7 @@ export default function Appointment() {
 
   // --- HELPERS ---
   const filteredAppointments = appointments.filter((appointment) => {
-    console.log(appointment.patient_name)
+    // console.log(appointment.patient_name)
     const matchesSearch =
       appointment.patient_name?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.dentist_name?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -489,11 +489,13 @@ export default function Appointment() {
                           <option value="" disabled>
                             Select patient
                           </option>
-                          {users?.map((u) => (
-                            <option key={u.id} value={u.id}>
-                              {u.first_name} {u.last_name} ({u.username})
-                            </option>
-                          ))}
+                          {users
+                            ?.filter((u) => u.roles.includes("ROLE_PATIENT"))
+                            .map((d) => (
+                              <option key={d.id} value={d.id}>
+                                {d.first_name} {d.last_name} ({d.username})
+                              </option>
+                            ))}
                         </select>
                       </div>
 
