@@ -20,6 +20,7 @@ export function LoginForm({
   const [password,setPassword] = useState<string>("")
   const [isWrong,setIsWrong] = useState<boolean>(false)
   const [submitButton,setSubmitButton] = useState<string>("Login") 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const navigate = useNavigate()
   
   useEffect(()=>{
@@ -49,6 +50,7 @@ export function LoginForm({
   
   
   const handleLogin = async() =>{
+    setIsSubmitting(true);
     const user = new UserLoginInfoClass(userName,password)
     setSubmitButton("Loading Please Wait ...")
     const userLoginInfo = await LoginAuth(user) // this returns only a token
@@ -63,6 +65,7 @@ export function LoginForm({
   
     }
     console.log(userLoginInfo)
+    setIsSubmitting(false);
   }
   
   useEffect(()=>{
@@ -101,7 +104,7 @@ export function LoginForm({
           </div>
           <Input onChange={(e)=>setPassword(e.target.value)} id="password" type="password" required />
         </div>
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
           {submitButton}
         </Button>
         {/*<div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
