@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getDentistData } from "@/API/Authenticated/GetDentist";
-import { Plus, Save, Trash2, RefreshCw, Calendar, Clock, X } from "lucide-react";
+import { Plus, Save, Trash2, RefreshCw, Calendar, Clock, X, User, Mail, Shield } from "lucide-react";
 import { updateSettingsDentist } from "@/API/Authenticated/Dentist/SettingsApi";
 import SettingsService from "./SettingsService";
+import Alert from '@/components/_myComp/Alerts';
 
 export function SettingsPane() {
   const [dentistInfo, setDentistInfo] = useState<any>(null);
@@ -10,6 +11,12 @@ export function SettingsPane() {
   const [refreshing, setRefreshing] = useState(false);
   const [schedules, setSchedules] = useState<any[]>([]);
   const [userInfo, setUserInfo] = useState<any>(null);
+  const [alert, setAlert] = useState({ 
+       show: false, 
+       type: "info", 
+       title: "", 
+       message: "" 
+     });
 
   const transformScheduleData = (apiSchedules: any[]) => {
     const groupedByDay: { [key: string]: any } = {};
@@ -56,7 +63,6 @@ export function SettingsPane() {
       setLoading(true);
       if (forceRefresh) setRefreshing(true);
 
-    
       const result = await getDentistData();
       console.log("Fetched dentist data:", result);
 
@@ -166,7 +172,16 @@ export function SettingsPane() {
           "loginedDentist",
           JSON.stringify({ dentist: dentistInfo, user: userInfo, schedule: apiFormat }),
         );
-        alert("Schedules saved successfully!");
+        
+        
+         setAlert({
+                  show: true,
+                  type: "success", // success, error, warning, info
+                  title: "Saved Successfully",
+                  message: "Schedule Save Successfully"
+                });
+        
+
       } else {
         console.error("Failed to save schedules:", res);
       }
@@ -177,150 +192,206 @@ export function SettingsPane() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mb-3"></div>
-        <span className="text-gray-500 text-sm">Loading...</span>
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-600 mb-4"></div>
+        <span className="text-gray-500 text-sm font-medium">Loading settings...</span>
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
+    <div className="max-w-5xl mx-auto p-4 sm:p-8 space-y-8 font-ceramon text-slate-900">
+      
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-medium text-gray-900 mb-2">Settings</h1>
-        <div className="w-12 h-0.5 bg-gray-200"></div>
+      <div className="flex justify-between items-end border-b border-gray-200 pb-4">
+        <div>
+          <h1 className="text-3xl font-bold font-ceramon text-slate-900">Account Settings</h1>
+          <p className="text-slate-500 mt-1">Manage your profile details and availability.</p>
+        </div>
+        <button 
+          onClick={handleRefresh} 
+          disabled={refreshing}
+          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all disabled:opacity-50"
+          title="Refresh Data"
+        >
+          <RefreshCw className={`w-5 h-5 ${refreshing ? "animate-spin" : ""}`} />
+        </button>
       </div>
 
-      {/* Dentist info */}
+      {/* Dentist Profile Card */}
       {dentistInfo && (
-        <div className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200">
-          <h2 className="text-lg font-medium text-gray-900 mb-3">
-            {dentistInfo.first_name} {dentistInfo.last_name}
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-gray-600">
-            <p className="break-all">Email: {dentistInfo.email}</p>
-            <p>Roles: {JSON.parse(dentistInfo.roles).join(", ")}</p>
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="bg-slate-50/50 px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+            <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
+              <User size={20} />
+            </div>
+            <h2 className="text-lg font-bold text-slate-800">Profile Information</h2>
+          </div>
+          
+          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Full Name</label>
+              <p className="text-lg font-semibold text-slate-900">{dentistInfo.first_name} {dentistInfo.last_name}</p>
+            </div>
+            
+            <div>
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block flex items-center gap-1">
+                <Mail size={12} /> Email Address
+              </label>
+              <p className="text-base text-slate-700 font-medium">{dentistInfo.email}</p>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block flex items-center gap-1">
+                <Shield size={12} /> Assigned Roles
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {JSON.parse(dentistInfo.roles).map((role: string, idx: number) => (
+                  <span key={idx} className="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full border border-slate-200">
+                    {role.replace('ROLE_', '')}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Schedules */}
-      <div className="bg-white p-4 sm:p-6 rounded-lg border border-gray-200">
-        {/* Header buttons */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4">
-          <h2 className="text-lg font-medium text-gray-900">Schedules</h2>
-          <div className="flex gap-2 self-end sm:self-auto">
-            <button
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
-              aria-label="Refresh schedules"
-            >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-            </button>
-
-            <button
-              onClick={handleAddSchedule}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-lg border border-blue-200 transition-colors"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add Day</span>
-            </button>
+      {/* Schedule Management Section */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white sticky top-0 z-10">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-emerald-100 text-emerald-600 rounded-lg">
+              <Calendar size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold text-slate-800">Weekly Schedule</h2>
+              <p className="text-xs text-slate-500">Define your availability slots.</p>
+            </div>
           </div>
+          
+          <button
+            onClick={handleAddSchedule}
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-indigo-200 active:scale-95"
+          >
+            <Plus className="w-4 h-4" />
+            Add Availability
+          </button>
         </div>
 
-        {schedules.length === 0 && (
-          <p className="text-gray-400 text-sm text-center py-8">
-            No schedules found. Click "Add Day" to create a schedule.
-          </p>
-        )}
-
-        <div className="space-y-4">
-          {schedules.map((sched, dayIndex) => (
-            <div key={sched.day_of_week} className="border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-3 p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
-                <div className="flex items-center gap-2 flex-1">
-                  <Calendar className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                  <select
-                    value={sched.day_of_week}
-                    onChange={(e) => handleEditDay(dayIndex, e.target.value)}
-                    className="border-none bg-transparent text-sm font-medium focus:outline-none focus:ring-1 focus:ring-blue-500 rounded py-1"
-                  >
-                    {["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].map((day) => (
-                      <option
-                        key={day}
-                        value={day}
-                        disabled={schedules.some((s, i) => i !== dayIndex && s.day_of_week === day)}
+        <div className="p-6 bg-slate-50/30 min-h-[300px]">
+          {schedules.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-48 text-center border-2 border-dashed border-slate-200 rounded-xl">
+              <Calendar className="w-10 h-10 text-slate-300 mb-3" />
+              <p className="text-slate-500 font-medium">No schedules configured.</p>
+              <p className="text-xs text-slate-400">Click "Add Availability" to get started.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6">
+              {schedules.map((sched, dayIndex) => (
+                <div key={dayIndex} className="bg-white rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md hover:border-indigo-100 group">
+                  
+                  {/* Card Header: Day Selector */}
+                  <div className="px-5 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 rounded-t-xl">
+                    <div className="flex items-center gap-3">
+                      <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                      <select
+                        value={sched.day_of_week}
+                        onChange={(e) => handleEditDay(dayIndex, e.target.value)}
+                        className="bg-transparent font-bold text-slate-700 focus:outline-none focus:ring-0 cursor-pointer hover:text-indigo-600 transition-colors"
                       >
-                        {day}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleAddTimeSlot(dayIndex)}
-                    className="flex items-center gap-2 px-3 py-1 text-xs text-green-600 hover:bg-green-50 rounded-lg border border-green-200 transition-colors"
-                  >
-                    <Plus className="w-3 h-3" />
-                    Add Time
-                  </button>
-
-                  <button
-                    onClick={() => handleDeleteSchedule(dayIndex)}
-                    className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                    aria-label="Delete day"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              <div className="p-4 space-y-3">
-                {sched.time_slots?.map((timeSlot: any, timeIndex: number) => (
-                  <div key={timeSlot.id} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-2 flex-1">
-                      <Clock className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                      <input
-                        type="text"
-                        value={timeSlot.time}
-                        onChange={(e) => handleEditTimeSlot(dayIndex, timeIndex, e.target.value)}
-                        className="w-full border-none bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 rounded px-2 py-1 border border-gray-200"
-                        placeholder="09:00-10:00"
-                      />
+                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map((day) => (
+                          <option 
+                            key={day} 
+                            value={day}
+                            disabled={schedules.some((s, i) => i !== dayIndex && s.day_of_week === day)}
+                          >
+                            {day}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-
-                    <div className="flex justify-end sm:justify-center">
-                      <button
-                        onClick={() => handleDeleteTimeSlot(dayIndex, timeIndex)}
-                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-                        aria-label="Delete time slot"
+                    
+                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button 
+                        onClick={() => handleAddTimeSlot(dayIndex)}
+                        className="p-1.5 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+                        title="Add Time Slot"
                       >
-                        <X className="w-4 h-4" />
+                        <Plus size={16} />
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteSchedule(dayIndex)}
+                        className="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                        title="Remove Day"
+                      >
+                        <Trash2 size={16} />
                       </button>
                     </div>
                   </div>
-                ))}
-              </div>
+
+                  {/* Time Slots Grid */}
+                  <div className="p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    {sched.time_slots?.map((timeSlot: any, timeIndex: number) => (
+                      <div key={timeSlot.id} className="relative flex items-center">
+                        <div className="absolute left-3 text-slate-400 pointer-events-none">
+                          <Clock size={14} />
+                        </div>
+                        <input
+                          type="text"
+                          value={timeSlot.time}
+                          onChange={(e) => handleEditTimeSlot(dayIndex, timeIndex, e.target.value)}
+                          className="w-full pl-9 pr-8 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-300"
+                          placeholder="09:00-10:00"
+                        />
+                        <button
+                          onClick={() => handleDeleteTimeSlot(dayIndex, timeIndex)}
+                          className="absolute right-2 p-1 text-slate-300 hover:text-rose-500 transition-colors"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                        onClick={() => handleAddTimeSlot(dayIndex)}
+                        className="flex items-center justify-center gap-2 py-2 text-sm font-medium text-slate-400 border border-dashed border-slate-300 rounded-lg hover:border-indigo-300 hover:text-indigo-500 hover:bg-indigo-50/50 transition-all"
+                    >
+                        <Plus size={14} /> Add Slot
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
 
+        {/* Save Footer */}
         {schedules.length > 0 && (
-          <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
+          <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
             <button
               onClick={handleSaveChanges}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-gray-900 text-white hover:bg-gray-800 rounded-lg transition-colors w-full sm:w-auto justify-center"
+              className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-black transition-all shadow-lg active:scale-95"
             >
               <Save className="w-4 h-4" />
-              Save Changes
+              Save Configuration
             </button>
           </div>
         )}
       </div>
+
+      {/* Additional Settings Component */}
       <SettingsService /> 
+      
+      
+      <Alert 
+                      isOpen={alert.show} 
+                      type={alert.type}
+                      title={alert.title}
+                      message={alert.message}
+                      onClose={() => setAlert({ ...alert, show: false })} 
+                    />
+        
+
     </div>
   );
 }
