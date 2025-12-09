@@ -29,6 +29,7 @@ import { useNavigate } from "react-router-dom";
 import { MyProfile } from "./Panes/All/MyProfile";
 import { MyAdmin } from "./Panes/Admin/MyAdmin";
 import Logs from "./Panes/Admin/Logs";
+import { LogoutUser } from "@/API/Authenticated/Logout";
 export default function UserDashboard() {
   
   const navigate = useNavigate()
@@ -85,12 +86,13 @@ export default function UserDashboard() {
   }, []);
 
 
-  const handleLogout = () => {
-    localStorage.removeItem('userInfo')
-    if(localStorage.getItem('loginedDentist')){
-      localStorage.removeItem('loginedDentist')
+  const handleLogout = async() => {
+    // localStorage.removeItem('userInfo')
+    const r = await LogoutUser()
+    console.log(r)
+    if(r.ok){
+      navigate('/login')      
     }
-    navigate('/login')
   }
   
   
