@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
   getAppointments,
   createAppointment,
@@ -29,6 +29,7 @@ export default function Appointment() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("ALL");
+  const [filterType, setFilterType] = useState("ALL");
 
   // State for Create/Edit Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -187,8 +188,18 @@ export default function Appointment() {
   };
 
   // --- HELPERS ---
+  // Get unique types for filter
+  const uniqueTypes = useMemo(() => {
+    const types = new Set<string>();
+    appointments.forEach((a) => {
+      if (a.service_name) types.add(a.service_name);
+      if (a.service_type_name) types.add(a.service_type_name);
+      if (a.appointment_type) types.add(a.appointment_type);
+    });
+    return Array.from(types).sort();
+  }, [appointments]);
+
   const filteredAppointments = appointments.filter((appointment) => {
-    // console.log(appointment.patient_name)
     const matchesSearch =
       appointment.patient_name?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
       appointment.dentist_name?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -199,7 +210,13 @@ export default function Appointment() {
       filterStatus === "ALL" ||
       appointment.status?.toLowerCase() === filterStatus.toLowerCase();
 
-    return matchesSearch && matchesStatus;
+    const matchesType =
+      filterType === "ALL" ||
+      appointment.service_name === filterType ||
+      appointment.service_type_name === filterType ||
+      appointment.appointment_type === filterType;
+
+    return matchesSearch && matchesStatus && matchesType;
   });
 
   const getStatusBadge = (status) => {
@@ -284,6 +301,19 @@ export default function Appointment() {
               <option value="Pending">Pending</option>
               <option value="Approved">Approved</option>
               <option value="Rejected">Rejected</option>
+            </select>
+
+            <select
+              className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-sm cursor-pointer"
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+            >
+              <option value="ALL">All Types</option>
+              {uniqueTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
             </select>
 
             <button
@@ -378,10 +408,10 @@ export default function Appointment() {
                       {/* SERVICES / TYPE */}
                       <td className="p-4 text-sm text-gray-700">
                         <span className="font-medium">
-                          {safe(
-                            a.service_name,
-                            `Type #${a.appointment_type_id}`,
-                          )}
+                          {a.service_name || 
+                           a.service_type_name || 
+                           a.appointment_type || 
+                           (a.appointment_type_id ? `Type #${a.appointment_type_id}` : "—")}
                         </span>
 
                         {a.emergency === 1 && (
@@ -552,8 +582,34 @@ export default function Appointment() {
                                     .split("T")[0]
                                 : ""
                             }
+                            min={new Date().toISOString().split("T")[0]}
                             className="pl-9 block w-full rounded-lg border-gray-300 border text-sm py-2"
+                            onChange={(e) => {
+                              // Validate selected date matches dentist's available days
+                              if (selectedDentistId && availableSchedules.length > 0) {
+                                const selectedDate = new Date(e.target.value);
+                                const dayName = selectedDate.toLocaleDateString("en-US", {
+                                  weekday: "long",
+                                });
+                                
+                                const availableDays = new Set(
+                                  availableSchedules.map((s) => s.day_of_week)
+                                );
+                                
+                                if (!availableDays.has(dayName)) {
+                                  alert(
+                                    `This dentist is not available on ${dayName}. Available days: ${Array.from(availableDays).join(", ")}`
+                                  );
+                                  e.target.value = "";
+                                }
+                              }
+                            }}
                           />
+                          {selectedDentistId && availableSchedules.length > 0 && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              Available days: {Array.from(new Set(availableSchedules.map((s) => s.day_of_week))).join(", ")}
+                            </p>
+                          )}
                         </div>
                       </div>
 
