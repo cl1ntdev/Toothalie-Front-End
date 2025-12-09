@@ -296,7 +296,13 @@ export default function Appointments() {
     );
 
     if(!isValid || reminderSchedule.length === 0) {
-        return alert("Please fill in all dates, times, and messages.");
+      setAlert({
+               show: true,
+               type: "error", // success, error, warning, info
+               title: "Updated Unsuccessful",
+               message: `Please fill up necessary requirements`
+             });
+        return 
     }
     
     try {
