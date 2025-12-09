@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { getDentistServices, createDentistService, updateDentistService, deleteDentistService } from '@/API/Authenticated/admin/DentistService';
+import { getUsers } from '@/API/Authenticated/admin/AppUser';
+import { getServices } from '@/API/Authenticated/admin/Services';
 import { Eye, Pencil, Trash2, Search, Plus, AlertTriangle, Loader2, Filter } from 'lucide-react';
 
 export default function DentistService() {
   const [dentistServices, setDentistServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [users, setUsers] = useState([]);
+  const [services, setServices] = useState([]);
   
   // NEW: State for Filter
   const [selectedFilter, setSelectedFilter] = useState('All');
@@ -22,9 +26,21 @@ export default function DentistService() {
   const fetchDentistServices = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await getDentistServices();
+      
+      const [response, usersResponse, servicesResponse] = await Promise.all([
+        getDentistServices(),
+        getUsers(),
+        getServices()
+      ]);
+      
       if (response && response.dentist_services) {
         setDentistServices(response.dentist_services);
+      }
+      if (usersResponse && usersResponse.users) {
+        setUsers(usersResponse.users);
+      }
+      if (servicesResponse && servicesResponse.data) {
+        setServices(servicesResponse.data);
       }
     } catch (error) {
       console.error("Failed to fetch dentist services", error);
@@ -248,16 +264,54 @@ export default function DentistService() {
               <form onSubmit={(e) => {
                 e.preventDefault();
                 const formData = new FormData(e.target);
-                const data = Object.fromEntries(formData.entries());
+                const data = {
+                  user_id: parseInt(formData.get('user_id') as string),
+                  service_id: parseInt(formData.get('service_id') as string)
+                };
                 handleFormSubmit(data);
               }}>
                 <div className="mb-4">
-                  <label htmlFor="user_id" className="block text-sm font-medium text-gray-700">Dentist User ID</label>
-                  <input type="number" id="user_id" name="user_id" defaultValue={currentDentistService?.user_id || ''} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required />
+                  <label htmlFor="user_id" className="block text-sm font-medium text-gray-700 mb-1">Dentist</label>
+                  <select 
+                    id="user_id" 
+                    name="user_id" 
+                    defaultValue={currentDentistService?.user_id || ''} 
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" 
+                    required
+                  >
+                    <option value="">Select Dentist</option>
+                    {users
+                      .filter(u => {
+                        try {
+                          const roles = typeof u.roles === 'string' ? JSON.parse(u.roles) : u.roles;
+                          return Array.isArray(roles) && roles.some(r => r.includes('DENTIST'));
+                        } catch {
+                          return false;
+                        }
+                      })
+                      .map((dentist) => (
+                        <option key={dentist.id} value={dentist.id}>
+                          {dentist.first_name} {dentist.last_name} ({dentist.username})
+                        </option>
+                      ))}
+                  </select>
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="service_id" className="block text-sm font-medium text-gray-700">Service ID</label>
-                  <input type="number" id="service_id" name="service_id" defaultValue={currentDentistService?.service_id || ''} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" required />
+                  <label htmlFor="service_id" className="block text-sm font-medium text-gray-700 mb-1">Service</label>
+                  <select 
+                    id="service_id" 
+                    name="service_id" 
+                    defaultValue={currentDentistService?.service_id || ''} 
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2" 
+                    required
+                  >
+                    <option value="">Select Service</option>
+                    {services.map((service) => (
+                      <option key={service.service_id} value={service.service_id}>
+                        {service.service_name} ({service.serviceTypeName})
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="flex justify-end gap-3 mt-6">
                   <button type="button" onClick={handleModalClose} className="px-4 py-2 bg-white border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 font-medium">Cancel</button>

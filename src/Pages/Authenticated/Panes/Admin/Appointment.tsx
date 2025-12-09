@@ -42,6 +42,8 @@ export default function Appointment() {
 
   // Dentist-filtered schedules and services
   const [selectedDentistId, setSelectedDentistId] = useState(null);
+  const [selectedScheduleId, setSelectedScheduleId] = useState(null);
+  const [selectedScheduleDay, setSelectedScheduleDay] = useState(null);
 
   const [availableSchedules, setAvailableSchedules] = useState([]);
   const [availableServices, setAvailableServices] = useState([]);
@@ -54,11 +56,23 @@ export default function Appointment() {
   useEffect(() => {
     if (currentAppointment) {
       const dID = currentAppointment.dentist_id;
+      const sID = currentAppointment.schedule_id;
       setSelectedDentistId(dID);
       setAvailableSchedules(allSchedules[dID] || []);
       setAvailableServices(allServices[dID] || []);
+      
+      // Set selected schedule if editing
+      if (sID) {
+        setSelectedScheduleId(sID);
+        const schedule = (allSchedules[dID] || []).find(s => s.scheduleID === sID);
+        if (schedule) {
+          setSelectedScheduleDay(schedule.day_of_week);
+        }
+      }
     } else {
       setSelectedDentistId(null);
+      setSelectedScheduleId(null);
+      setSelectedScheduleDay(null);
       setAvailableSchedules([]);
       setAvailableServices([]);
     }
@@ -141,6 +155,8 @@ export default function Appointment() {
   const handleModalClose = () => {
     setIsModalOpen(false);
     setCurrentAppointment(null);
+    setSelectedScheduleId(null);
+    setSelectedScheduleDay(null);
   };
 
   const handleFormSubmit = async (formData) => {
@@ -264,6 +280,44 @@ export default function Appointment() {
       year: "numeric",
     });
     return time ? `${formatted} • ${time}` : formatted;
+  };
+
+  // Helper function to get valid dates for a specific day of week
+  const getValidDatesForDay = (dayOfWeek, count = 4) => {
+    if (!dayOfWeek) return [];
+    
+    const dayMap = {
+      'Sunday': 0,
+      'Monday': 1,
+      'Tuesday': 2,
+      'Wednesday': 3,
+      'Thursday': 4,
+      'Friday': 5,
+      'Saturday': 6
+    };
+    
+    const targetDay = dayMap[dayOfWeek];
+    if (targetDay === undefined) return [];
+    
+    const validDates = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Find the next occurrence of the target day
+    let currentDate = new Date(today);
+    const currentDay = currentDate.getDay();
+    let daysUntilTarget = (targetDay - currentDay + 7) % 7;
+    if (daysUntilTarget === 0) daysUntilTarget = 7; // If today is the target day, get next week's
+    
+    currentDate.setDate(currentDate.getDate() + daysUntilTarget);
+    
+    // Get the next 'count' valid dates
+    for (let i = 0; i < count; i++) {
+      validDates.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 7); // Add 7 days for next week
+    }
+    
+    return validDates;
   };
 
   return (
@@ -566,6 +620,7 @@ export default function Appointment() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Date */}
+                      {/* Date Input */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           User Set Date
@@ -575,6 +630,10 @@ export default function Appointment() {
                           <input
                             type="date"
                             name="user_set_date"
+                            id="user_set_date_input"
+                            required
+                            // Add step="7" to encourage weekly jumps (works on some browsers/mobile)
+                            step="7"
                             defaultValue={
                               currentAppointment?.user_set_date
                                 ? new Date(currentAppointment.user_set_date)
@@ -582,36 +641,73 @@ export default function Appointment() {
                                     .split("T")[0]
                                 : ""
                             }
+                            // Min is dynamically updated by the Schedule Select, but defaults to today
                             min={new Date().toISOString().split("T")[0]}
                             className="pl-9 block w-full rounded-lg border-gray-300 border text-sm py-2"
+                            
+                            // Strict Validation Logic
                             onChange={(e) => {
-                              // Validate selected date matches dentist's available days
-                              if (selectedDentistId && availableSchedules.length > 0) {
-                                const selectedDate = new Date(e.target.value);
-                                const dayName = selectedDate.toLocaleDateString("en-US", {
-                                  weekday: "long",
-                                });
+                              // 1. If no schedule selected, do nothing
+                              if (!selectedScheduleDay) return;
+                      
+                              const selectedDate = new Date(e.target.value);
+                              
+                              // Handle Invalid Date input (e.g. user clears the field)
+                              if (isNaN(selectedDate.getTime())) return;
+                      
+                              const dayName = selectedDate.toLocaleDateString("en-US", {
+                                weekday: "long",
+                              });
+                      
+                              // 2. Check if day matches
+                              if (dayName !== selectedScheduleDay) {
+                                e.preventDefault();
                                 
-                                const availableDays = new Set(
-                                  availableSchedules.map((s) => s.day_of_week)
+                                // Find the valid date closest to what they tried to pick
+                                // or just default to the next valid one
+                                const validDates = getValidDatesForDay(selectedScheduleDay, 1);
+                                const nextValidDate = validDates[0].toISOString().split("T")[0];
+                      
+                                alert(
+                                  `You cannot select ${dayName}. The schedule slot is strictly for ${selectedScheduleDay}s.\n\nReverting to the next available ${selectedScheduleDay}: ${validDates[0].toLocaleDateString()}`
                                 );
-                                
-                                if (!availableDays.has(dayName)) {
-                                  alert(
-                                    `This dentist is not available on ${dayName}. Available days: ${Array.from(availableDays).join(", ")}`
-                                  );
-                                  e.target.value = "";
-                                }
+                      
+                                // 3. FORCE REVERT THE VALUE
+                                e.target.value = nextValidDate;
                               }
                             }}
                           />
-                          {selectedDentistId && availableSchedules.length > 0 && (
-                            <p className="text-xs text-gray-500 mt-1">
-                              Available days: {Array.from(new Set(availableSchedules.map((s) => s.day_of_week))).join(", ")}
-                            </p>
+                          
+                          {/* Keep your Quick Select buttons, they are excellent UX */}
+                          {selectedScheduleDay && (
+                            <div className="mt-2">
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                <span className="text-xs text-gray-600 self-center">Quick select:</span>
+                                {getValidDatesForDay(selectedScheduleDay, 4).map((date, idx) => (
+                                  <button
+                                    key={idx}
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      const dateInput = document.getElementById("user_set_date_input");
+                                      if (dateInput) {
+                                        dateInput.value = date.toISOString().split("T")[0];
+                                      }
+                                    }}
+                                    className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
+                                  >
+                                    {date.toLocaleDateString("en-US", {
+                                      month: "short",
+                                      day: "numeric",
+                                    })}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
                           )}
                         </div>
                       </div>
+                      
 
                       {/* Schedule Dropdown */}
                       <div>
@@ -623,6 +719,34 @@ export default function Appointment() {
                           defaultValue={currentAppointment?.schedule_id || ""}
                           required
                           className="block w-full rounded-lg border-gray-300 border text-sm py-2 bg-white"
+                          onChange={(e) => {
+                            const scheduleId = e.target.value;
+                            setSelectedScheduleId(scheduleId);
+                            // Find the selected schedule to get its day of week
+                            const selectedSchedule = availableSchedules.find(
+                              (sch) => sch.scheduleID.toString() === scheduleId
+                            );
+                            if (selectedSchedule) {
+                              const dayOfWeek = selectedSchedule.day_of_week;
+                                      setSelectedScheduleDay(dayOfWeek);
+                              
+                                      // --- NEW LOGIC START ---
+                                      // Automatically set the date input to the next valid date
+                                      const validDates = getValidDatesForDay(dayOfWeek, 1);
+                                      if (validDates.length > 0) {
+                                        const nextValidDateStr = validDates[0].toISOString().split("T")[0];
+                                        const dateInput = document.getElementById("user_set_date_input");
+                                        
+                                        if (dateInput) {
+                                          dateInput.value = nextValidDateStr;
+                                          // Set the 'min' attribute to this date so they can't pick past dates
+                                          dateInput.min = nextValidDateStr;
+                                        }
+                                      }
+                            } else {
+                              setSelectedScheduleDay(null);
+                            }
+                          }}
                         >
                           <option value="" disabled>
                             Select schedule
@@ -633,6 +757,11 @@ export default function Appointment() {
                             </option>
                           ))}
                         </select>
+                        {selectedScheduleDay && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Selected slot is on: <strong>{selectedScheduleDay}</strong>
+                          </p>
+                        )}
                       </div>
 
                       {/* Status */}

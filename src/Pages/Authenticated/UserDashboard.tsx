@@ -28,6 +28,7 @@ import HistoryPane from "./Panes/All/History";
 import { useNavigate } from "react-router-dom";
 import { MyProfile } from "./Panes/All/MyProfile";
 import { MyAdmin } from "./Panes/Admin/MyAdmin";
+import Logs from "./Panes/Admin/Logs";
 export default function UserDashboard() {
   
   const navigate = useNavigate()
@@ -163,7 +164,7 @@ export default function UserDashboard() {
         case "Schedules":
           return <Schedule />
         case "Logs":
-            return <>Logs</>
+            return <Logs />
         default:
           return <MyAdmin />
       }

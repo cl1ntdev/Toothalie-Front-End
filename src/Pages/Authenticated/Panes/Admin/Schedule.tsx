@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { getSchedules, createSchedule, updateSchedule, deleteSchedule } from '@/API/Authenticated/admin/Schedule';
+import { getUsers } from '@/API/Authenticated/admin/AppUser';
 import { Eye, Pencil, Trash2, Search, Plus, AlertTriangle, Loader2 } from 'lucide-react';
 
 export default function Schedule() {
@@ -7,6 +8,8 @@ export default function Schedule() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterDay, setFilterDay] = useState('ALL');
+  const [users, setUsers] = useState([]);
+  const [timeSlot, setTimeSlot] = useState('');
 
   // State for Create/Edit Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,9 +23,15 @@ export default function Schedule() {
   const fetchSchedules = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await getSchedules();
+      const [response, usersResponse] = await Promise.all([
+        getSchedules(),
+        getUsers()
+      ]);
       if (response && response.schedules) {
         setSchedules(response.schedules);
+      }
+      if (usersResponse && usersResponse.users) {
+        setUsers(usersResponse.users);
       }
     } catch (error) {
       console.error("Failed to fetch schedules", error);
@@ -38,30 +47,59 @@ export default function Schedule() {
   // --- HANDLERS ---
   const handleCreateClick = () => {
     setCurrentSchedule(null); // Clear any existing data
+    setTimeSlot(''); // Clear time slot
     setIsModalOpen(true);
   };
 
   const handleEditClick = (schedule) => {
     setCurrentSchedule(schedule);
+    setTimeSlot(schedule.time_slot || '');
     setIsModalOpen(true);
   };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
     setCurrentSchedule(null);
+    setTimeSlot('');
   };
 
   const handleFormSubmit = async (formData) => {
     try {
+      // Validate time slot format
+      const timeSlotValue = timeSlot || formData.time_slot || '';
+      const trimmedTimeSlot = timeSlotValue.trim();
+      
+      if (!trimmedTimeSlot) {
+        alert('Time slot is required');
+        return;
+      }
+      
+      if (!/^\d{1,2}:\d{2}(AM|PM)\s*-\s*\d{1,2}:\d{2}(AM|PM)$/i.test(trimmedTimeSlot)) {
+        alert('Time slot must be in format: "10:00AM - 11:00AM"\nExample: 9:00AM - 10:00AM or 2:30PM - 3:30PM');
+        return;
+      }
+      
+      // Normalize format (uppercase AM/PM, single space around dash)
+      const normalizedTimeSlot = trimmedTimeSlot
+        .replace(/\s+/g, ' ')
+        .replace(/(am|pm)/gi, (match) => match.toUpperCase());
+      
+      const data = {
+        dentistID: parseInt(formData.dentistID),
+        day_of_week: formData.day_of_week,
+        time_slot: normalizedTimeSlot
+      };
+      
       if (currentSchedule) {
         // Update existing schedule
-        await updateSchedule({ scheduleID: currentSchedule.scheduleID, ...formData });
+        await updateSchedule({ scheduleID: currentSchedule.scheduleID, ...data });
       } else {
         // Create new schedule
-        await createSchedule(formData);
+        await createSchedule(data);
       }
       fetchSchedules(); // Refresh data
       handleModalClose(); // Close modal
+      setTimeSlot(''); // Reset time slot
     } catch (error) {
       console.error("Error saving schedule", error);
       alert("Failed to save schedule");
@@ -210,22 +248,40 @@ export default function Schedule() {
               <form onSubmit={(e) => {
                 e.preventDefault();
                 const formData = new FormData(e.target as HTMLFormElement);
-                const data = Object.fromEntries(formData.entries());
+                const data = {
+                  ...Object.fromEntries(formData.entries()),
+                  time_slot: timeSlot || formData.get('time_slot') || ''
+                };
                 handleFormSubmit(data);
               }}>
                 <div className="mb-4">
-                  <label htmlFor="dentistID" className="block text-sm font-medium text-gray-700">Dentist User ID</label>
-                  <input
-                    type="number"
+                  <label htmlFor="dentistID" className="block text-sm font-medium text-gray-700 mb-1">Dentist</label>
+                  <select
                     id="dentistID"
                     name="dentistID"
                     defaultValue={currentSchedule?.dentistID || ''}
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                     required
-                  />
+                  >
+                    <option value="">Select Dentist</option>
+                    {users
+                      .filter(u => {
+                        try {
+                          const roles = typeof u.roles === 'string' ? JSON.parse(u.roles) : u.roles;
+                          return Array.isArray(roles) && roles.some(r => r.includes('DENTIST'));
+                        } catch {
+                          return false;
+                        }
+                      })
+                      .map((dentist) => (
+                        <option key={dentist.id} value={dentist.id}>
+                          {dentist.first_name} {dentist.last_name} ({dentist.username})
+                        </option>
+                      ))}
+                  </select>
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="day_of_week" className="block text-sm font-medium text-gray-700">Day of Week</label>
+                  <label htmlFor="day_of_week" className="block text-sm font-medium text-gray-700 mb-1">Day of Week</label>
                   <select
                     id="day_of_week"
                     name="day_of_week"
@@ -244,15 +300,42 @@ export default function Schedule() {
                   </select>
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="time_slot" className="block text-sm font-medium text-gray-700">Time Slot</label>
+                  <label htmlFor="time_slot" className="block text-sm font-medium text-gray-700 mb-1">
+                    Time Slot
+                    <span className="text-xs text-gray-500 ml-1">(Format: 10:00AM - 11:00AM)</span>
+                  </label>
                   <input
-                    type="text" // Assuming time slot is a string (e.g., "9:00 AM - 5:00 PM")
+                    type="text"
                     id="time_slot"
                     name="time_slot"
-                    defaultValue={currentSchedule?.time_slot || ''}
+                    value={timeSlot !== '' ? timeSlot : (currentSchedule?.time_slot || '')}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setTimeSlot(value);
+                    }}
+                    onBlur={(e) => {
+                      const value = e.target.value.trim();
+                      // Auto-format if close to correct format
+                      if (value && !/^\d{1,2}:\d{2}(AM|PM)\s*-\s*\d{1,2}:\d{2}(AM|PM)$/i.test(value)) {
+                        // Try to fix common mistakes
+                        const fixed = value
+                          .replace(/\s+/g, ' ')
+                          .replace(/(\d{1,2}:\d{2})\s*(am|pm)\s*-\s*(\d{1,2}:\d{2})\s*(am|pm)/i, (match, time1, ampm1, time2, ampm2) => {
+                            return `${time1}${ampm1.toUpperCase()} - ${time2}${ampm2.toUpperCase()}`;
+                          });
+                        if (fixed !== value && /^\d{1,2}:\d{2}(AM|PM)\s*-\s*\d{1,2}:\d{2}(AM|PM)$/i.test(fixed)) {
+                          setTimeSlot(fixed);
+                        }
+                      }
+                    }}
+                    placeholder="10:00AM - 11:00AM"
+                    pattern="^\d{1,2}:\d{2}(AM|PM)\s*-\s*\d{1,2}:\d{2}(AM|PM)$"
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
                     required
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    Example: 9:00AM - 10:00AM, 2:30PM - 3:30PM
+                  </p>
                 </div>
 
                 <div className="flex justify-end gap-3 mt-6">
