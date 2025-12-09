@@ -75,7 +75,6 @@ export default function Logs() {
       setLogs(response.logs ?? []);
       setTotal(response.total ?? 0);
       
-      // Update filter options if available
       if (response.filters) {
         setAvailableActions(response.filters.actions ?? []);
         setAvailableUsers(response.filters.users ?? []);
@@ -87,7 +86,7 @@ export default function Logs() {
     } finally {
       setLoading(false);
     }
-  }, [filters, currentPage, pageSize]); // Dependencies are clean
+  }, [filters, currentPage, pageSize]);
 
   useEffect(() => {
     fetchLogs();
@@ -95,7 +94,7 @@ export default function Logs() {
 
   const handleFilterChange = (key: keyof FilterState, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
-    setCurrentPage(0); // Reset to page 1 on filter change
+    setCurrentPage(0);
   };
 
   const clearFilters = () => {
@@ -108,16 +107,22 @@ export default function Logs() {
     setCurrentPage(0);
   };
 
+  // UPDATED: Matches "2025-12-06 2:18:09 PM" format
   const formatDate = (dateString: string) => {
     if (!dateString) return "-";
     const date = new Date(dateString);
-    return date.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
+    
+    // YYYY-MM-DD
+    const datePart = date.toLocaleDateString("en-CA"); 
+    // h:mm:ss A
+    const timePart = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
       minute: "2-digit",
+      second: "2-digit",
+      hour12: true
     });
+
+    return `${datePart} ${timePart}`;
   };
 
   const getActionBadgeColor = (action: string) => {
@@ -236,32 +241,35 @@ export default function Logs() {
           {loading && <Loader2 className="h-4 w-4 animate-spin text-blue-600" />}
         </div>
 
-        <div className="relative">
+        <div className="relative overflow-x-auto">
           <Table>
             <TableHeader>
+              {/* UPDATED HEADER ORDER */}
               <TableRow>
-                <TableHead className="w-[180px]">Timestamp</TableHead>
-                <TableHead className="w-[200px]">User</TableHead>
-                <TableHead className="w-[120px]">Role</TableHead>
+                <TableHead className="w-[80px]">User ID</TableHead>
+                <TableHead className="w-[150px]">Username</TableHead>
+                <TableHead className="w-[150px]">Role</TableHead>
                 <TableHead className="w-[180px]">Action</TableHead>
-                <TableHead>Details</TableHead>
+                <TableHead className="min-w-[250px]">Target Data</TableHead>
+                <TableHead className="w-[180px] text-right">Date & Time</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
-                // Skeleton Loader
+                // Skeleton Loader (Updated to match column count)
                 Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={i}>
+                    <TableCell><div className="h-4 w-8 bg-gray-100 rounded animate-pulse" /></TableCell>
+                    <TableCell><div className="h-4 w-24 bg-gray-100 rounded animate-pulse" /></TableCell>
+                    <TableCell><div className="h-4 w-20 bg-gray-100 rounded animate-pulse" /></TableCell>
                     <TableCell><div className="h-4 w-24 bg-gray-100 rounded animate-pulse" /></TableCell>
                     <TableCell><div className="h-4 w-32 bg-gray-100 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-16 bg-gray-100 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-20 bg-gray-100 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-48 bg-gray-100 rounded animate-pulse" /></TableCell>
+                    <TableCell><div className="h-4 w-32 bg-gray-100 rounded animate-pulse ml-auto" /></TableCell>
                   </TableRow>
                 ))
               ) : logs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-64 text-center">
+                  <TableCell colSpan={6} className="h-64 text-center">
                     <div className="flex flex-col items-center justify-center text-gray-400">
                       <FileText className="h-12 w-12 mb-2 opacity-50" />
                       <p>No activity logs found matching your criteria.</p>
@@ -270,30 +278,44 @@ export default function Logs() {
                 </TableRow>
               ) : (
                 logs.map((log) => (
+                  // UPDATED ROW ORDER
                   <TableRow key={log.id} className="hover:bg-gray-50">
-                    <TableCell className="font-mono text-xs text-gray-500">
-                      {formatDate(log.created_at)}
+                    {/* 1. User ID */}
+                    <TableCell className="font-medium text-gray-600">
+                      {log.user_id || "-"}
                     </TableCell>
+
+                    {/* 2. Username */}
                     <TableCell>
-                      <div className="flex flex-col">
-                        <span className="font-medium text-gray-800">{log.username || "Unknown"}</span>
-                        {log.user_id && <span className="text-[10px] text-gray-400">ID: {log.user_id}</span>}
-                      </div>
+                      <span className="font-semibold text-gray-800">
+                        {log.username || "Unknown"}
+                      </span>
                     </TableCell>
+
+                    {/* 3. Role */}
                     <TableCell>
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-600">
                         {log.role}
                       </span>
                     </TableCell>
+
+                    {/* 4. Action */}
                     <TableCell>
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getActionBadgeColor(log.action)}`}>
                         {log.action.replace(/_/g, " ")}
                       </span>
                     </TableCell>
+
+                    {/* 5. Target Data */}
                     <TableCell>
-                      <p className="text-sm text-gray-600 line-clamp-2" title={log.target_data}>
+                      <p className="text-sm text-gray-600 truncate max-w-[300px]" title={log.target_data}>
                         {log.target_data}
                       </p>
+                    </TableCell>
+
+                    {/* 6. Date & Time */}
+                    <TableCell className="text-right font-mono text-xs text-gray-500 whitespace-nowrap">
+                      {formatDate(log.created_at)}
                     </TableCell>
                   </TableRow>
                 ))
