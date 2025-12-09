@@ -1,5 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { getActivityLogs, type ActivityLogFilters } from "@/API/Authenticated/admin/ActivityLogs";
+import {
+  getActivityLogs,
+  type ActivityLogFilters,
+} from "@/API/Authenticated/admin/ActivityLogs";
 import { Filter, User, FileText, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -39,7 +42,7 @@ interface FilterState {
 export default function Logs() {
   const [logs, setLogs] = useState<ActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Filters State
   const [filters, setFilters] = useState<FilterState>({
     userId: "",
@@ -50,8 +53,10 @@ export default function Logs() {
 
   // Filter Options Data
   const [availableActions, setAvailableActions] = useState<string[]>([]);
-  const [availableUsers, setAvailableUsers] = useState<{ user_id: number; username: string }[]>([]);
-  
+  const [availableUsers, setAvailableUsers] = useState<
+    { user_id: number; username: string }[]
+  >([]);
+
   // Pagination State
   const [total, setTotal] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -74,7 +79,7 @@ export default function Logs() {
 
       setLogs(response.logs ?? []);
       setTotal(response.total ?? 0);
-      
+
       if (response.filters) {
         setAvailableActions(response.filters.actions ?? []);
         setAvailableUsers(response.filters.users ?? []);
@@ -111,15 +116,15 @@ export default function Logs() {
   const formatDate = (dateString: string) => {
     if (!dateString) return "-";
     const date = new Date(dateString);
-    
+
     // YYYY-MM-DD
-    const datePart = date.toLocaleDateString("en-CA"); 
+    const datePart = date.toLocaleDateString("en-CA");
     // h:mm:ss A
     const timePart = date.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
       second: "2-digit",
-      hour12: true
+      hour12: true,
     });
 
     return `${datePart} ${timePart}`;
@@ -141,21 +146,22 @@ export default function Logs() {
 
   return (
     <div className="space-y-6">
-
       {/* Filters Container */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div className="flex items-center gap-2 mb-4">
           <Filter className="h-4 w-4 text-gray-500" />
           <h2 className="text-sm font-medium text-gray-700">Filter Records</h2>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* User Select */}
           <div className="space-y-1">
             <label className="text-xs font-medium text-gray-600">User</label>
             <Select
               value={filters.userId}
-              onValueChange={(val) => handleFilterChange("userId", val === "ALL" ? "" : val)}
+              onValueChange={(val) =>
+                handleFilterChange("userId", val === "ALL" ? "" : val)
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="All Users" />
@@ -163,7 +169,10 @@ export default function Logs() {
               <SelectContent>
                 <SelectItem value="ALL">All Users</SelectItem>
                 {availableUsers.map((user) => (
-                  <SelectItem key={user.user_id} value={user.user_id.toString()}>
+                  <SelectItem
+                    key={user.user_id}
+                    value={user.user_id.toString()}
+                  >
                     {user.username}
                   </SelectItem>
                 ))}
@@ -173,10 +182,14 @@ export default function Logs() {
 
           {/* Action Select */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-600">Action Type</label>
+            <label className="text-xs font-medium text-gray-600">
+              Action Type
+            </label>
             <Select
               value={filters.action}
-              onValueChange={(val) => handleFilterChange("action", val === "ALL" ? "" : val)}
+              onValueChange={(val) =>
+                handleFilterChange("action", val === "ALL" ? "" : val)
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="All Actions" />
@@ -194,7 +207,9 @@ export default function Logs() {
 
           {/* Date From */}
           <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-600">Date From</label>
+            <label className="text-xs font-medium text-gray-600">
+              Date From
+            </label>
             <Input
               type="date"
               value={filters.dateFrom}
@@ -216,9 +231,17 @@ export default function Logs() {
         </div>
 
         {/* Clear Filters Button */}
-        {(filters.userId || filters.action || filters.dateFrom || filters.dateTo) && (
+        {(filters.userId ||
+          filters.action ||
+          filters.dateFrom ||
+          filters.dateTo) && (
           <div className="mt-4 flex justify-end">
-            <Button variant="ghost" size="sm" onClick={clearFilters} className="text-red-600 hover:text-red-700 hover:bg-red-50">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
               Clear Filters
             </Button>
           </div>
@@ -231,7 +254,9 @@ export default function Logs() {
           <h2 className="text-sm font-semibold text-gray-700">
             Records Found: {total}
           </h2>
-          {loading && <Loader2 className="h-4 w-4 animate-spin text-blue-600" />}
+          {loading && (
+            <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+          )}
         </div>
 
         <div className="relative overflow-x-auto">
@@ -244,7 +269,9 @@ export default function Logs() {
                 <TableHead className="w-[150px]">Role</TableHead>
                 <TableHead className="w-[180px]">Action</TableHead>
                 <TableHead className="min-w-[250px]">Target Data</TableHead>
-                <TableHead className="w-[180px] text-right">Date & Time</TableHead>
+                <TableHead className="w-[180px] text-right">
+                  Date & Time
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -252,12 +279,24 @@ export default function Logs() {
                 // Skeleton Loader (Updated to match column count)
                 Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell><div className="h-4 w-8 bg-gray-100 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-24 bg-gray-100 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-20 bg-gray-100 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-24 bg-gray-100 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-32 bg-gray-100 rounded animate-pulse" /></TableCell>
-                    <TableCell><div className="h-4 w-32 bg-gray-100 rounded animate-pulse ml-auto" /></TableCell>
+                    <TableCell>
+                      <div className="h-4 w-8 bg-gray-100 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 w-20 bg-gray-100 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 w-24 bg-gray-100 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
+                    </TableCell>
+                    <TableCell>
+                      <div className="h-4 w-32 bg-gray-100 rounded animate-pulse ml-auto" />
+                    </TableCell>
                   </TableRow>
                 ))
               ) : logs.length === 0 ? (
@@ -294,14 +333,16 @@ export default function Logs() {
 
                     {/* 4. Action */}
                     <TableCell>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getActionBadgeColor(log.action)}`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getActionBadgeColor(log.action)}`}
+                      >
                         {log.action.replace(/_/g, " ")}
                       </span>
                     </TableCell>
 
                     {/* 5. Target Data */}
                     <TableCell>
-                      <p className="text-sm text-gray-600 truncate max-w-[300px]" title={log.target_data}>
+                      <p className="text-sm text-gray-600 whitespace-nowrap">
                         {log.target_data}
                       </p>
                     </TableCell>
@@ -335,7 +376,9 @@ export default function Logs() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))}
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))
+                }
                 disabled={currentPage >= totalPages - 1 || loading}
               >
                 Next
