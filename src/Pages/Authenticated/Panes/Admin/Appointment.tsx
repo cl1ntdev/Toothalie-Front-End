@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-
+import Alert from "@/components/_myComp/Alerts";
 export default function Appointment() {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,6 +63,15 @@ export default function Appointment() {
   const [allServices, setAllServices] = useState({}); // { dentistId: [services] }
 
   const [users, setUsers] = useState([]);
+  
+  const [alert, setAlert] = useState({ 
+       show: false, 
+       type: "info", 
+       title: "", 
+       message: "" 
+     });
+ 
+
   // ============= ss
   useEffect(() => {
     if (currentAppointment) {
@@ -184,8 +193,26 @@ export default function Appointment() {
           ...formData,
         });
         console.log(res);
+        if(res.status == 'success'){
+          
+          setAlert({
+                   show: true,
+                   type: "success", // success, error, warning, info
+                   title: "Updated Successfully",
+                   message: "Appointment updated in the system."
+                 });
+         
+
+        }
       } else {
-        await createAppointment(formData);
+        setAlert({
+                 show: true,
+                 type: "success", // success, error, warning, info
+                 title: "Created Successfully",
+                 message: "Appointment added to the system."
+               });
+        const res = await createAppointment(formData);
+        console.log(res)
       }
       fetchAppointments();
       handleModalClose();
@@ -211,6 +238,15 @@ export default function Appointment() {
       );
       setOpenDeleteModal(false);
       setIDtoDelete(null);
+      
+      setAlert({
+               show: true,
+               type: "success", // success, error, warning, info
+               title: "Deleted Successfully",
+               message: "Appointment deleted from the system."
+             });
+     
+
     } catch (error) {
       console.error("Error deleting appointment", error);
       alert("Failed to delete appointment");
@@ -284,9 +320,9 @@ export default function Appointment() {
           className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
             status === "pending"
               ? "bg-yellow-500"
-              : status === "confirmed"
+              : status === "approved"
                 ? "bg-green-500"
-                : status === "cancelled"
+                : status === "rejected"
                   ? "bg-red-500"
                   : "bg-blue-500"
           }`}
@@ -812,9 +848,8 @@ export default function Appointment() {
                           className="block w-full rounded-lg border-gray-300 border text-sm py-2 bg-white"
                         >
                           <option value="pending">Pending</option>
-                          <option value="confirmed">Confirmed</option>
-                          <option value="cancelled">Cancelled</option>
-                          <option value="completed">Completed</option>
+                          <option value="approved">Approved</option>
+                          <option value="rejected">Rejected</option>
                         </select>
                       </div>
 
@@ -945,6 +980,14 @@ export default function Appointment() {
           </div>
         </div>
       )}
+      <Alert 
+                      isOpen={alert.show} 
+                      type={alert.type}
+                      title={alert.title}
+                      message={alert.message}
+                      onClose={() => setAlert({ ...alert, show: false })} 
+                    />
+        
     </div>
   );
 }

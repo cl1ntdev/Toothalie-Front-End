@@ -17,7 +17,7 @@ import {
   X,
   Sparkles
 } from 'lucide-react';
-
+import Alert from '@/components/_myComp/Alerts';
 export default function DentistService() {
   const [dentistServices, setDentistServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,6 +34,14 @@ export default function DentistService() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [IDtoDelete, setIDtoDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [alert, setAlert] = useState({ 
+       show: false, 
+       type: "info", 
+       title: "", 
+       message: "" 
+     });
+ 
 
   const fetchDentistServices = useCallback(async () => {
     try {
@@ -78,8 +86,22 @@ export default function DentistService() {
     try {
       if (currentDentistService) {
         await updateDentistService({ dentistServiceID: currentDentistService.id, ...formData });
+        setAlert({
+                 show: true,
+                 type: "success", // success, error, warning, info
+                 title: "Updated Successfully",
+                 message: "Dentist Service updated in the system."
+               });
+
       } else {
         await createDentistService(formData);
+        setAlert({
+                 show: true,
+                 type: "success", // success, error, warning, info
+                 title: "Created Successfully",
+                 message: "Dentist Service added to the system."
+               });
+
       }
       fetchDentistServices();
       handleModalClose();
@@ -102,6 +124,13 @@ export default function DentistService() {
       setDentistServices(prev => prev.filter(ds => ds.id !== IDtoDelete));
       setOpenDeleteModal(false);
       setIDtoDelete(null);
+      setAlert({
+               show: true,
+               type: "success", // success, error, warning, info
+               title: "Delted Successfully",
+               message: "User deleted from the system."
+             });
+
     } catch (error) {
       console.error("Error deleting dentist service", error);
       alert("Failed to delete dentist service");
@@ -438,6 +467,18 @@ export default function DentistService() {
           </div>
         </div>
       )}
+      
+      
+      
+      <Alert 
+                      isOpen={alert.show} 
+                      type={alert.type}
+                      title={alert.title}
+                      message={alert.message}
+                      onClose={() => setAlert({ ...alert, show: false })} 
+                    />
+        
+
     </div>
   );
 }

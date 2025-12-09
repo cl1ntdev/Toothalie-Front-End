@@ -14,7 +14,7 @@ import {
   X,
   CheckCircle2
 } from 'lucide-react';
-
+import Alert from '@/components/_myComp/Alerts';
 export default function Schedule() {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,6 +29,14 @@ export default function Schedule() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [IDtoDelete, setIDtoDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [alert, setAlert] = useState({ 
+       show: false, 
+       type: "info", 
+       title: "", 
+       message: "" 
+     });
+ 
 
   const fetchSchedules = useCallback(async () => {
     try {
@@ -96,8 +104,26 @@ export default function Schedule() {
       
       if (currentSchedule) {
         await updateSchedule({ scheduleID: currentSchedule.scheduleID, ...data });
+        
+        
+         setAlert({
+                  show: true,
+                  type: "success", // success, error, warning, info
+                  title: "Updated Successfully",
+                  message: "Schedule updated from the system."
+                });
+
       } else {
         await createSchedule(data);
+        
+        
+         setAlert({
+                  show: true,
+                  type: "success", // success, error, warning, info
+                  title: "Created Successfully",
+                  message: "Schedule added to the system."
+                });
+
       }
       fetchSchedules();
       handleModalClose();
@@ -120,6 +146,15 @@ export default function Schedule() {
       setSchedules(prev => prev.filter(s => s.scheduleID !== IDtoDelete));
       setOpenDeleteModal(false);
       setIDtoDelete(null);
+      
+      
+       setAlert({
+                show: true,
+                type: "success", // success, error, warning, info
+                title: "Deleted Successfully",
+                message: "Schedule deleted from the system."
+              });
+
     } catch (error) {
       console.error("Error deleting schedule", error);
       alert("Failed to delete schedule");
@@ -478,6 +513,15 @@ export default function Schedule() {
           </div>
         </div>
       )}
+      
+      <Alert 
+                      isOpen={alert.show} 
+                      type={alert.type}
+                      title={alert.title}
+                      message={alert.message}
+                      onClose={() => setAlert({ ...alert, show: false })} 
+                    />
+
     </div>
   );
 }
