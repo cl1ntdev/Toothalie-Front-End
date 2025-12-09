@@ -18,7 +18,7 @@ import {
 } from 'lucide-react'; 
 import AppUserEditModal from './AppUserEditModal';
 import AppUserCreate from './AppUserCreate';
-
+import Alert from '@/components/_myComp/Alerts';
 export default function AppUser() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -34,7 +34,12 @@ export default function AppUser() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [IDtoDelete, setIDtoDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
+  const [alert, setAlert] = useState({ 
+      show: false, 
+      type: "info", 
+      title: "", 
+      message: "" 
+    });
   const fetchUsers = useCallback(async () => {
     try {
       const response = await getUsers();
@@ -56,6 +61,35 @@ export default function AppUser() {
   const handleCreate = () => setOpenCreateModal(true);
 
   const handleCreateSuccess = () => {
+    console.log('success')
+    setAlert({
+          show: true,
+          type: "success", // success, error, warning, info
+          title: "Created Successfully",
+          message: "User added to the system."
+        });
+    setOpenCreateModal(false);
+    fetchUsers();
+  };
+  const handleEditSuccess = () => {
+    console.log('success')
+    setAlert({
+          show: true,
+          type: "success", // success, error, warning, info
+          title: "Update Successfully",
+          message: "Sucessfull updated a user"
+        });
+    setOpenCreateModal(false);
+    fetchUsers();
+  };
+  const handleDeleteSuccess = () => {
+    console.log('success')
+    setAlert({
+          show: true,
+          type: "success", // success, error, warning, info
+          title: "Deleted Successfully",
+          message: "Sucessfull deleted a user"
+        });
     setOpenCreateModal(false);
     fetchUsers();
   };
@@ -84,6 +118,7 @@ export default function AppUser() {
       setUsers(prevUsers => prevUsers.filter(u => u.id !== IDtoDelete));
       setOpenDeleteModal(false);
       setIDtoDelete(null);
+      handleDeleteSuccess()
     } catch (error) {
       console.error("Error deleting user", error);
       alert("Failed to delete user");
@@ -363,6 +398,7 @@ export default function AppUser() {
         <AppUserEditModal 
             userID={IDtoEdit} 
             onClose={handleCloseEdit} 
+            onEditSuccess={handleEditSuccess} 
         /> 
       )}
 
@@ -408,6 +444,14 @@ export default function AppUser() {
           </div>
         </div>
       )}
-    </div>
+        <Alert 
+                isOpen={alert.show} 
+                type={alert.type}
+                title={alert.title}
+                message={alert.message}
+                onClose={() => setAlert({ ...alert, show: false })} 
+              />
+  
+          </div>
   );
 }

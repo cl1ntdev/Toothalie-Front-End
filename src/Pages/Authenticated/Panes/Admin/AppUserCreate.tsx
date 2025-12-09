@@ -38,8 +38,8 @@ export default function AppUserCreate({ onClose, onSuccess }) {
       const res = await createUser(payload); // Actual API call
       console.log(res)
      
-      // if (onSuccess) onSuccess(); // Refresh table in parent
-      // onClose();
+      if (onSuccess) onSuccess(); // Refresh table in parent
+      onClose();
     } catch (error) {
       console.error(error);
       alert("Failed to create user. Please try again.");

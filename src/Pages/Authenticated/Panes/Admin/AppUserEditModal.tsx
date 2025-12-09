@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getUser,updateUser } from '@/API/Authenticated/admin/AppUser';
 import { X, Save, Loader2, Eye, EyeOff } from 'lucide-react'; // Added Eye/EyeOff
 
-export default function AppUserEditModal({ userID, onClose }) {
+export default function AppUserEditModal({ userID, onClose, onEditSuccess }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
@@ -88,8 +88,8 @@ export default function AppUserEditModal({ userID, onClose }) {
     try {
         const result = await updateUser(payload); 
         console.log(result)
-        alert("User updated successfully (Mock)");
         onClose(); 
+      onEditSuccess();
     } catch (error) {
         alert("Failed to update user");
     } finally {
