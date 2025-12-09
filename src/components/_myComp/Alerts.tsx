@@ -1,119 +1,83 @@
-import React, { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import React, { useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle2, XCircle, AlertTriangle, Info, X } from "lucide-react";
 
-const AlertLists = [
-  {
-    status: "error_stat_1",
-    message: "Incorrect Username or Password",
-    description: "Make sure you entered the correct information.",
-    color: "text-red-600",
-    border: "border-red-300",
-    ok: false,
+const alertConfig = {
+  success: {
+    icon: CheckCircle2,
+    styles: "bg-emerald-50 border-emerald-100 text-emerald-800",
+    iconColor: "text-emerald-500",
   },
-  {
-    status: "ok_stat_1",
-    message: "Login Successful",
-    description: "You have successfully logged in.",
-    color: "text-green-600",
-    border: "border-green-300",
-    ok: true,
+  error: {
+    icon: XCircle,
+    styles: "bg-rose-50 border-rose-100 text-rose-800",
+    iconColor: "text-rose-500",
   },
-  {
-    status: "ok_stat_2",
-    message: "Saved Changes",
-    description: "You have successfully saved changes.",
-    color: "text-green-600",
-    border: "border-green-300",
-    ok: true,
+  warning: {
+    icon: AlertTriangle,
+    styles: "bg-amber-50 border-amber-100 text-amber-800",
+    iconColor: "text-amber-500",
   },
-]
+  info: {
+    icon: Info,
+    styles: "bg-blue-50 border-blue-100 text-blue-800",
+    iconColor: "text-blue-500",
+  },
+};
 
-type AlertProps = {
-  status: string
-  autoClose?: number // optional auto-close in ms (e.g., 3000)
-}
+export default function Alert({ 
+  isOpen, 
+  onClose, 
+  type = "info", 
+  title, 
+  message, 
+  autoClose = true,
+  duration = 4000 
+}) {
+  const config = alertConfig[type] || alertConfig.info;
+  const Icon = config.icon;
 
-export default function Alert({ status, autoClose }: AlertProps) {
-  const [visible, setVisible] = useState(true)
-  const baseMessage = AlertLists.find((a) => a.status === status)
-
-  if (!baseMessage) return null
-
-  // Optional auto-close effect
-  React.useEffect(() => {
-    if (autoClose) {
-      const timer = setTimeout(() => setVisible(false), autoClose)
-      return () => clearTimeout(timer)
+  useEffect(() => {
+    if (isOpen && autoClose) {
+      const timer = setTimeout(onClose, duration);
+      return () => clearTimeout(timer);
     }
-  }, [autoClose])
+  }, [isOpen, autoClose, duration, onClose]);
 
   return (
     <AnimatePresence>
-      {visible && (
-        <motion.div
-          role="alert"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.25 }}
-          className={`rounded-lg border ${baseMessage.border} bg-white p-4 shadow-sm`}
-        >
-          <div className="flex items-start gap-4">
-            {/* Status Icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-              stroke="currentColor"
-              className={`size-6 ${baseMessage.color}`}
-            >
-              {baseMessage.ok ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 9v3.75m0 3.75h.008v-.008H12v.008zm9-3.75a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              )}
-            </svg>
+      {isOpen && (
+        <div className="fixed top-6 right-6 z-[100] w-full max-w-sm pointer-events-none">
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, x: 20, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            className={`pointer-events-auto relative flex items-start gap-4 p-4 rounded-2xl border shadow-xl backdrop-blur-md ${config.styles}`}
+          >
+            {/* Icon */}
+            <div className={`mt-0.5 p-1.5 bg-white rounded-full shadow-sm ${config.iconColor}`}>
+              <Icon size={18} strokeWidth={2.5} />
+            </div>
 
             {/* Content */}
-            <div className="flex-1">
-              <strong className="font-medium text-gray-900">
-                {baseMessage.message}
-              </strong>
-              <p className="mt-0.5 text-sm text-gray-700">
-                {baseMessage.description}
+            <div className="flex-1 pt-0.5">
+              {title && <h4 className="font-bold text-sm mb-1">{title}</h4>}
+              <p className="text-sm opacity-90 leading-relaxed font-medium">
+                {message}
               </p>
             </div>
 
-            {/* Dismiss Button */}
+            {/* Close Button */}
             <button
-              onClick={() => setVisible(false)}
-              className="rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
-              type="button"
-              aria-label="Dismiss alert"
+              onClick={onClose}
+              className="p-1 hover:bg-black/5 rounded-full transition-colors"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-                stroke="currentColor"
-                className="size-5"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <X size={16} className="opacity-60" />
             </button>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       )}
     </AnimatePresence>
-  )
+  );
 }
