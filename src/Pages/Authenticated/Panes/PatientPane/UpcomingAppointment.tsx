@@ -11,30 +11,42 @@ import {
   Trash2,
   Calendar,
   Clock,
-  User,
-  CheckCircle,
+  CheckCircle2,
   XCircle,
-  ClockIcon,
   AlertTriangle,
-  Users,
   Plus,
   Stethoscope,
   Eye,
+  Activity, // Loader
+  MapPin,
+  MoreHorizontal
 } from 'lucide-react';
+import Alert from '@/components/_myComp/Alerts';
+
 
 export default function UpcomingAppointment() {
-  const [appointmentsData, setAppointmentsData] = useState<any[]>([]);
+  const [appointmentsData, setAppointmentsData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [viewAppointmentModal, setViewAppointmentModal] = useState(false);
 
-  const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
-  const [selectedAppointmentData, setSelectedAppointmentData] = useState<any>(null);
-  const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [selectedAppointmentId, setSelectedAppointmentId] = useState(null);
+  const [selectedAppointmentData, setSelectedAppointmentData] = useState(null);
+  const [isUpdate, setIsUpdate] = useState(false);
+
+  
+  const [alert, setAlert] = useState({ 
+       show: false, 
+       type: "info", 
+       title: "", 
+       message: "" 
+     });
+ 
+ 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,23 +69,46 @@ export default function UpcomingAppointment() {
     setIsUpdate(false);
   }, [isUpdate]);
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id) => {
     setSelectedAppointmentId(id);
     setDeleteModalOpen(true);
   };
 
-  const handleEdit = (id: string) => {
+  const handleEdit = (id) => {
     setSelectedAppointmentId(id);
     setEditModalOpen(true);
   };
+  
+  const handleEditSuccess = () => {
+    setAlert({
+             show: true,
+             type: "success", // success, error, warning, info
+             title: "Updated Successfully",
+             message: "Updated appointment from the system."
+           });
+    setIsUpdate((prev) => !prev)
+  }
 
   const handleCloseModal = () => setShowAppointmentModal(false);
   const handleAppointmentSuccess = () => {
+    setAlert({
+             show: true,
+             type: "success", // success, error, warning, info
+             title: "Created Successfully",
+             message: "Created appointment to the system."
+           });
     setShowAppointmentModal(false);
     setIsUpdate(true);
   };
 
   const triggerDelete = () => {
+    setAlert({
+             show: true,
+             type: "success", // success, error, warning, info
+             title: "Delete Successfully",
+             message: "Deleted appointment from the system."
+           });
+
     setIsUpdate(true);
     setAppointmentsData((prev) =>
       prev.filter((appt) => appt.appointment.appointment_id !== selectedAppointmentId)
@@ -82,165 +117,196 @@ export default function UpcomingAppointment() {
     setSelectedAppointmentId(null);
   };
 
-  const getStatusConfig = (status: string) => {
+  // --- UI HELPERS ---
+  const getStatusConfig = (status) => {
     const config = {
-      Pending: { icon: ClockIcon, color: 'text-yellow-700', bg: 'bg-yellow-50', border: 'border-yellow-200' },
-      Approved: { icon: CheckCircle, color: 'text-green-700', bg: 'bg-green-50', border: 'border-green-200' },
-      Rejected: { icon: XCircle, color: 'text-red-700', bg: 'bg-red-50', border: 'border-red-200' },
+      Pending: { icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+      Approved: { icon: CheckCircle2, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+      Rejected: { icon: XCircle, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100' },
     };
-    return config[status as keyof typeof config] || config.Pending;
+    return config[status] || config.Pending;
   };
 
-  const getAppointmentTypeConfig = (typeId: number) => {
-    const config = {
-      1: { name: 'Normal', icon: User, color: 'text-blue-700', bg: 'bg-blue-50' },
-      2: { name: 'Family', icon: Users, color: 'text-purple-700', bg: 'bg-purple-50' },
-    };
-    return config[typeId as keyof typeof config] || config[1];
+  const getAppointmentTypeBadge = (typeId) => {
+    if (typeId === 2) { // Family
+        return <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">Family Visit</span>
+    }
+    return <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">Standard</span>
   };
+
+  const getDateComponents = (dateString) => {
+      const date = new Date(dateString);
+      return {
+          day: date.getDate(),
+          month: date.toLocaleDateString('en-US', { month: 'short' }),
+          weekday: date.toLocaleDateString('en-US', { weekday: 'long' }),
+          full: date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+      };
+  };
+
+  // --- RENDER STATES ---
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-16">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400"></div>
-        <span className="ml-3 text-gray-600">Loading your appointments...</span>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] font-ceramon">
+        <div className="relative">
+          <Activity className="h-12 w-12 text-indigo-600 animate-pulse stroke-1" />
+        </div>
+        <p className="mt-4 text-slate-500 font-medium animate-pulse">Loading Schedule...</p>
       </div>
     );
   }
 
   if (error) {
-    return <div className="text-center text-red-600 py-16">{error}</div>;
+    return (
+        <div className="flex flex-col items-center justify-center min-h-[50vh] text-center p-6">
+            <div className="bg-rose-50 p-4 rounded-full mb-4">
+                <AlertTriangle className="w-8 h-8 text-rose-500" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900">Oops! Something went wrong.</h3>
+            <p className="text-slate-500 mt-2">{error}</p>
+            <button 
+                onClick={() => setIsUpdate(!isUpdate)} 
+                className="mt-6 px-6 py-2 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors"
+            >
+                Try Again
+            </button>
+        </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header + New Appointment Button */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Your Appointments</h2>
-          <p className="text-gray-600 mt-1">
-            {appointmentsData.length} upcoming appointment{appointmentsData.length !== 1 ? 's' : ''}
-          </p>
-        </div>
+    <div className="space-y-8 font-ceramon text-slate-900">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        
         <button
           onClick={() => setShowAppointmentModal(true)}
-          className="flex items-center gap-2 px-5 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-sm"
+          className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-200 font-medium active:scale-95 group"
         >
-          <Plus className="w-5 h-5" />
-          New Appointment
+          <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+          <span>Book Appointment</span>
         </button>
       </div>
 
-      {/* Appointments List */}
+      {/* Appointments Grid */}
       {appointmentsData.length === 0 ? (
-        <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-          <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">No upcoming appointments</p>
-          <p className="text-gray-400 text-sm mt-2">Schedule your first visit now!</p>
+        <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-slate-200">
+          <div className="bg-slate-50 p-6 rounded-full mb-4">
+             <Calendar className="w-10 h-10 text-slate-300" />
+          </div>
+          <p className="text-lg font-medium text-slate-900">No upcoming appointments</p>
+          <p className="text-slate-400 text-sm mt-1 mb-6">You are all caught up! Need to see a doctor?</p>
+          <button 
+            onClick={() => setShowAppointmentModal(true)}
+            className="text-indigo-600 font-medium hover:underline hover:text-indigo-700"
+          >
+            Schedule a visit now
+          </button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {appointmentsData.map((appointmentData) => {
             const { appointment, dentist, schedules } = appointmentData;
-            const schedule = schedules.find((s: any) => s.scheduleID === appointment.schedule_id);
-            const appointmentDate = new Date(appointment.user_set_date).toLocaleDateString('en-US', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-            });
-
+            const schedule = schedules.find((s) => s.scheduleID === appointment.schedule_id);
+            const dateInfo = getDateComponents(appointment.user_set_date);
             const statusCfg = getStatusConfig(appointment.status);
             const StatusIcon = statusCfg.icon;
-            const typeCfg = getAppointmentTypeConfig(appointment.appointment_type_id);
-            const TypeIcon = typeCfg.icon;
             const isEmergency = appointment.emergency === 1;
 
             const canEdit = appointment.status === 'Pending';
             const canDelete = appointment.status === 'Pending' || appointment.status === 'Rejected';
-            const canView = appointment.status === 'Approved';
+            
+            // View is available for everyone to see details, but Edit is restricted
+            const canView = true; 
 
             return (
               <div
                 key={appointment.appointment_id}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-all duration-200"
+                className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:border-indigo-100 transition-all duration-300 group relative overflow-hidden"
               >
-                <div className="flex items-start justify-between gap-6">
-                  {/* Left: Dentist Info + Details */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl text-white">
-                        <Stethoscope className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-900 text-lg">
-                          Dr. {dentist?.first_name} {dentist?.last_name || 'Unknown'}
-                        </h3>
-                        <p className="text-sm text-gray-600">{dentist?.specialty || 'General Dentistry'}</p>
-                      </div>
-                    </div>
+                {/* Emergency Strip */}
+                {isEmergency && <div className="absolute top-0 left-0 w-full h-1 bg-rose-500"></div>}
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700 mb-4">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-gray-500" />
-                        <span>{appointmentDate}</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-gray-500" />
-                        <span>{schedule?.time_slot || 'Time not set'}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-3">
-                      {isEmergency && (
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
-                          <AlertTriangle className="w-3.5 h-3.5" />
-                          Emergency
-                        </span>
-                      )}
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ${typeCfg.bg} border text-xs font-medium`}>
-                        <TypeIcon className={`w-3.5 h-3.5 ${typeCfg.color}`} />
-                        {typeCfg.name}
-                      </span>
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full ${statusCfg.bg} ${statusCfg.border} text-xs font-medium`}>
-                        <StatusIcon className={`w-3.5 h-3.5 ${statusCfg.color}`} />
-                        {appointment.status}
-                      </span>
-                    </div>
+                <div className="flex items-start gap-5">
+                  {/* Date Box */}
+                  <div className="flex flex-col items-center justify-center w-16 h-20 bg-slate-50 rounded-2xl border border-slate-100 shrink-0 group-hover:bg-indigo-50 group-hover:border-indigo-100 transition-colors">
+                    <span className="text-xs font-bold text-slate-400 uppercase group-hover:text-indigo-400">{dateInfo.month}</span>
+                    <span className="text-2xl font-bold text-slate-900 font-ceramon group-hover:text-indigo-600">{dateInfo.day}</span>
                   </div>
 
-                  {/* Right: Action Buttons */}
-                  <div className="flex items-center gap-2">
-                    {canEdit && (
-                      <button
-                        onClick={() => handleEdit(appointment.appointment_id)}
-                        className="p-2.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                        aria-label="Edit"
-                      >
-                        <Pencil className="w-4.5 h-4.5" />
-                      </button>
-                    )}
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-start mb-2">
+                        <div className="flex flex-wrap gap-2 mb-1">
+                            {getAppointmentTypeBadge(appointment.appointment_type_id)}
+                            {isEmergency && (
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-rose-600 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100 flex items-center gap-1">
+                                    <AlertTriangle size={10} /> Emergency
+                                </span>
+                            )}
+                        </div>
+                        
+                        {/* Status Badge */}
+                        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${statusCfg.bg} ${statusCfg.border} ${statusCfg.color}`}>
+                            <StatusIcon size={12} />
+                            {appointment.status}
+                        </div>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-slate-900 truncate">
+                        Dr. {dentist?.first_name} {dentist?.last_name || 'Unassigned'}
+                    </h3>
+                    <p className="text-sm text-slate-500 mb-4 flex items-center gap-1">
+                        <Stethoscope size={14} className="text-slate-400"/>
+                        {dentist?.specialty || 'General Dentistry'}
+                    </p>
+
+                    <div className="flex items-center gap-4 text-sm text-slate-600 bg-slate-50/50 p-3 rounded-xl border border-slate-50">
+                        <div className="flex items-center gap-2">
+                            <Clock size={16} className="text-indigo-500" />
+                            <span className="font-medium">{schedule?.time_slot || 'Time TBD'}</span>
+                        </div>
+                        <div className="w-px h-4 bg-slate-200"></div>
+                        <div className="flex items-center gap-2 text-slate-500">
+                            <span className="truncate">{dateInfo.weekday}</span>
+                        </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Actions */}
+                <div className="flex items-center justify-end gap-2 mt-5 pt-4 border-t border-slate-50">
                     {canView && (
-                      <button
+                        <button
                         onClick={() => {
-                          setSelectedAppointmentData(appointmentData);
-                          setViewAppointmentModal(true);
+                            setSelectedAppointmentData(appointmentData);
+                            setViewAppointmentModal(true);
                         }}
-                        className="p-2.5 text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                        aria-label="View"
-                      >
-                        <Eye className="w-4.5 h-4.5" />
-                      </button>
+                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        title="View Details"
+                        >
+                        <Eye size={18} />
+                        </button>
+                    )}
+                    {canEdit && (
+                        <button
+                        onClick={() => handleEdit(appointment.appointment_id)}
+                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Edit Appointment"
+                        >
+                        <Pencil size={18} />
+                        </button>
                     )}
                     {canDelete && (
-                      <button
+                        <button
                         onClick={() => handleDelete(appointment.appointment_id)}
-                        className="p-2.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                        aria-label="Delete"
-                      >
-                        <Trash2 className="w-4.5 h-4.5" />
-                      </button>
+                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                        title="Cancel Appointment"
+                        >
+                        <Trash2 size={18} />
+                        </button>
                     )}
-                  </div>
                 </div>
               </div>
             );
@@ -248,10 +314,11 @@ export default function UpcomingAppointment() {
         </div>
       )}
 
-      {/* Modals */}
+      {/* --- MODALS --- */}
       {showAppointmentModal && (
         <AppointmentModal onClose={handleCloseModal} appointmentSuccess={handleAppointmentSuccess} />
       )}
+      
       {deleteModalOpen && (
         <DeleteAppointmentModal
           appointmentID={selectedAppointmentId}
@@ -262,6 +329,7 @@ export default function UpcomingAppointment() {
           deleteSuccess={triggerDelete}
         />
       )}
+      
       {editModalOpen && (
         <EditModal
           appointmentID={selectedAppointmentId}
@@ -269,15 +337,24 @@ export default function UpcomingAppointment() {
             setEditModalOpen(false);
             setSelectedAppointmentId(null);
           }}
-          onSuccessEdit={() => setIsUpdate((prev) => !prev)}
+          onSuccessEdit={handleEditSuccess}
         />
       )}
+      
       {viewAppointmentModal && selectedAppointmentData && (
         <ViewAppointmentModal
           appointmentData={selectedAppointmentData}
           onClose={() => setViewAppointmentModal(false)}
         />
       )}
+      
+      <Alert 
+                      isOpen={alert.show} 
+                      type={alert.type}
+                      title={alert.title}
+                      message={alert.message}
+                      onClose={() => setAlert({ ...alert, show: false })} 
+                    />
     </div>
   );
 }

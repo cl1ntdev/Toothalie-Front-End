@@ -7,7 +7,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Label } from "@/components/ui/label";
-import { Clock, CalendarIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  X,
+  Stethoscope,
+  Clock,
+  AlertTriangle,
+  Users,
+  CheckCircle2,
+  Loader2 // Using Loader2 for consistency with standard UI, can swap for Activity
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -45,14 +54,8 @@ export default function EditModal({
   const [isFamilyBooking, setIsFamilyBooking] = useState(false);
   const [date, setDate] = useState<Date>();
   const [day, setDay] = useState("");
-  const [message,setMessage] = useState<string>("")
+  const [message, setMessage] = useState<string>("");
 
-  useEffect(()=>{
-    console.log(appointmentInfo)
-    console.log(isEmergency)
-    console.log(isFamilyBooking)
-  },[appointmentInfo,isEmergency,isFamilyBooking]) // for debugging 
-  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -60,21 +63,15 @@ export default function EditModal({
         if (!appointmentID) return;
 
         const data = await FetchEditAppointmentDetailsAPI(appointmentID);
-        setDate(
-          new Date(data.appointment.user_set_date)
-        )
-       
-        setDay(data.appointment.day_of_week)
-        if(data.appointment){
-          console.log(data.appointment.emergency)
-          console.log(data.appointment.appointment_type_id)
-          const emergencyCheck = data.appointment.emergency === 1 
-          const bookingTypeCheck = data.appointment.appointment_type_id === 2 
-          setIsEmergency(emergencyCheck)
-          setIsFamilyBooking(bookingTypeCheck)  
-          setMessage(data.appointment.message != null ? data.appointment.message : "No message" )
-        }
+        setDate(new Date(data.appointment.user_set_date));
+        setDay(data.appointment.day_of_week);
         
+        if (data.appointment) {
+          setIsEmergency(data.appointment.emergency === 1);
+          setIsFamilyBooking(data.appointment.appointment_type_id === 2);
+          setMessage(data.appointment.message || "");
+        }
+
         setAppointmentInfo(data);
         if (data.scheduleDetails?.scheduleID) {
           setSelectedSchedule(data.scheduleDetails.scheduleID.toString());
@@ -91,11 +88,8 @@ export default function EditModal({
   const disableDates = (date: Date) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
     if (date <= today) return true;
-
     if (!day) return true;
-
     const dayIndex = getDayIndex(day);
     return date.getDay() !== dayIndex;
   };
@@ -103,17 +97,20 @@ export default function EditModal({
   const handleTimeSlotSelect = (scheduleID: string, dayOfWeek: string) => {
     setSelectedSchedule(scheduleID);
     setDay(dayOfWeek);
-    setDate(undefined); 
+    setDate(undefined); // Reset date when slot changes to force re-selection
   };
 
   const handleSave = async () => {
-    console.log(appointmentID, selectedSchedule,date,isEmergency,isFamilyBooking,message)
-  
-    // if (!appointmentID || !selectedSchedule || !date || !isEmergency || !isFamilyBooking || !message) return;
-
     try {
-      const res = await UpdateAppointment(appointmentID, selectedSchedule,date,isEmergency,isFamilyBooking,message);
-      if (res.status == 'ok') { 
+      const res = await UpdateAppointment(
+        appointmentID,
+        selectedSchedule,
+        date,
+        isEmergency,
+        isFamilyBooking,
+        message
+      );
+      if (res.status == 'ok') {
         onSuccessEdit();
         onClose();
       }
@@ -124,10 +121,10 @@ export default function EditModal({
 
   if (loading) {
     return (
-      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-        <div className="bg-white p-6 rounded-lg w-80 text-center">
-          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-3"></div>
-          <p className="text-gray-600 text-sm">Loading...</p>
+      <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="bg-white p-8 rounded-2xl shadow-xl flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 text-indigo-600 animate-spin" />
+          <p className="text-slate-500 font-medium">Loading details...</p>
         </div>
       </div>
     );
@@ -136,163 +133,193 @@ export default function EditModal({
   if (!appointmentInfo) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg w-full max-w-sm">
-        <div className="p-4 border-b">
-          <h2 className="text-lg font-medium text-gray-900">
-            Reschedule Appointment
-          </h2>
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 font-sans animate-in fade-in duration-200">
+      <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100">
+        
+        {/* Header */}
+        <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 font-ceramon leading-tight">
+              Reschedule Appointment
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">Update time, date, or details</p>
+          </div>
+          <button 
+            onClick={onClose}
+            className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-full transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        <div className="p-4 space-y-4">
-          {/* Dentist Info */}
-          <div>
-            <Label className="text-sm text-gray-700 mb-1 block">Dentist</Label>
-            <div className="p-2 bg-gray-50 rounded">
-              <p className="text-gray-900 font-medium text-sm">
+        <div className="p-6 overflow-y-auto space-y-6">
+          
+          {/* Dentist Info Card */}
+          <div className="flex items-center gap-4 p-4 bg-slate-50 border border-slate-100 rounded-2xl">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-indigo-600 shadow-sm border border-slate-100">
+              <Stethoscope className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Dentist</p>
+              <p className="text-slate-900 font-bold text-lg leading-tight">
                 {appointmentInfo.dentist.name}
               </p>
-              <p className="text-xs text-gray-600">
+              <p className="text-sm text-slate-500 font-medium">
                 {appointmentInfo.dentist.specialty}
               </p>
             </div>
           </div>
 
-          {/* Appointment Type choices */}
-          <div>
-            <Label className="text-sm text-gray-700 mb-2 block">Type</Label>
-            <div className="flex gap-4">
-              <div className="flex items-center gap-1.5">
+          {/* Appointment Type */}
+          <div className="space-y-3">
+            <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+              Appointment Type
+            </Label>
+            <div className="grid grid-cols-2 gap-3">
+              <label 
+                className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${isEmergency ? 'bg-rose-50 border-rose-200 ring-1 ring-rose-200' : 'bg-white border-slate-200 hover:bg-slate-50'}`}
+              >
                 <Checkbox
                   id="emergency"
                   checked={isEmergency}
-                  onCheckedChange={(checked) =>
-                    setIsEmergency(checked === true)
-                  }
+                  onCheckedChange={(checked) => setIsEmergency(checked === true)}
+                  className={`data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600`}
                 />
-                <label
-                  htmlFor="emergency"
-                  className="text-xs text-gray-700 cursor-pointer"
-                >
-                  Emergency
-                </label>
-              </div>
-              <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-2">
+                    <AlertTriangle size={16} className={isEmergency ? "text-rose-600" : "text-slate-400"} />
+                    <span className={`text-sm font-medium ${isEmergency ? 'text-rose-700' : 'text-slate-700'}`}>Emergency</span>
+                </div>
+              </label>
+
+              <label 
+                className={`flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all ${isFamilyBooking ? 'bg-purple-50 border-purple-200 ring-1 ring-purple-200' : 'bg-white border-slate-200 hover:bg-slate-50'}`}
+              >
                 <Checkbox
                   id="family-booking"
                   checked={isFamilyBooking}
-                  onCheckedChange={(checked) =>
-                    setIsFamilyBooking(checked === true)
-                  }
+                  onCheckedChange={(checked) => setIsFamilyBooking(checked === true)}
+                  className={`data-[state=checked]:bg-purple-600 data-[state=checked]:border-purple-600`}
                 />
-                <label
-                  htmlFor="family-booking"
-                  className="text-xs text-gray-700 cursor-pointer"
-                >
-                  Family
-                </label>
-              </div>
+                <div className="flex items-center gap-2">
+                    <Users size={16} className={isFamilyBooking ? "text-purple-600" : "text-slate-400"} />
+                    <span className={`text-sm font-medium ${isFamilyBooking ? 'text-purple-700' : 'text-slate-700'}`}>Family</span>
+                </div>
+              </label>
             </div>
           </div>
 
-          {/* time slot for the specific dentist */}
-          <div>
-            <Label className="text-sm text-gray-700 mb-2 block">
-              Available Times
+          {/* Time Slots */}
+          <div className="space-y-3">
+            <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+              Available Slots
             </Label>
-            <div className="space-y-3 max-h-48 overflow-y-auto">
-              {Object.keys(appointmentInfo.schedules).map(
-                (dayOfWeek, index) => (
-                  <div key={index}>
-                    <h3 className="font-medium text-gray-900 text-xs mb-1">
-                      {dayOfWeek}
-                    </h3>
-                    <div className="flex flex-wrap gap-1.5">
-                      {appointmentInfo.schedules[dayOfWeek].map(
-                        (schedule: any, slotIndex: number) => (
+            <div className="border border-slate-200 rounded-2xl p-4 bg-white space-y-4 max-h-48 overflow-y-auto custom-scrollbar">
+              {Object.keys(appointmentInfo.schedules).map((dayOfWeek, index) => (
+                <div key={index}>
+                  <h3 className="font-bold text-slate-700 text-xs mb-2 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                    {dayOfWeek}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {appointmentInfo.schedules[dayOfWeek].map(
+                      (schedule: any, slotIndex: number) => {
+                        const isSelected = selectedSchedule === schedule.scheduleID.toString();
+                        return (
                           <button
                             key={slotIndex}
-                            onClick={() =>
-                              handleTimeSlotSelect(
-                                schedule.scheduleID.toString(),
-                                dayOfWeek
-                              )
-                            }
-                            className={`px-2.5 py-1.5 rounded text-xs border transition-colors ${
-                              selectedSchedule ===
-                              schedule.scheduleID.toString()
-                                ? "border-blue-500 bg-blue-50 text-blue-700 font-medium"
-                                : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
-                            }`}
+                            onClick={() => handleTimeSlotSelect(schedule.scheduleID.toString(), dayOfWeek)}
+                            className={`
+                              relative px-3 py-2 rounded-lg text-xs font-medium transition-all border
+                              ${isSelected 
+                                ? "bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-200" 
+                                : "bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:text-indigo-600"
+                              }
+                            `}
                           >
-                            {schedule.time_slot}
+                            {isSelected && <CheckCircle2 size={12} className="absolute -top-1 -right-1 text-white bg-indigo-600 rounded-full" />}
+                            <span className="flex items-center gap-1.5">
+                                <Clock size={12} className={isSelected ? "text-indigo-200" : "text-slate-400"} />
+                                {schedule.time_slot}
+                            </span>
                           </button>
-                        )
-                      )}
-                    </div>
+                        );
+                      }
+                    )}
                   </div>
-                )
-              )}
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* date picker section */}
-          <div>
-            <Label className="text-sm text-gray-700 mb-1 block">Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  disabled={!selectedSchedule}
-                  className={`w-full justify-start text-sm h-9 ${
-                    !selectedSchedule ? "opacity-50 cursor-not-allowed" : ""
-                  }`}
-                >
-                  <CalendarIcon className="h-4 w-4 mr-2" />
-                  {date ? date.toLocaleDateString() : "Select date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={setDate}
-                  disabled={disableDates}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-          <div className="space-y-1">
-            <label className="text-xs text-gray-600 block">Message</label>
-            <input 
-              value={message}
-              placeholder="What's the issue?"
-              onChange={(e) => setMessage(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
-            />
-            <p className="text-xs text-gray-400">This message will be sent to the dentist</p>
+          {/* Date & Message */}
+          <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Select Date</Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    disabled={!selectedSchedule}
+                    className={`w-full justify-start text-left font-normal h-11 rounded-xl border-slate-200 bg-white hover:bg-slate-50 hover:text-slate-900 ${
+                      !selectedSchedule && "opacity-50 cursor-not-allowed bg-slate-50"
+                    }`}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4 text-slate-400" />
+                    {date ? (
+                        <span className="text-slate-900 font-medium">{date.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' })}</span>
+                    ) : (
+                        <span className="text-slate-400">Pick a date...</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 rounded-xl shadow-xl border-slate-100" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    onSelect={setDate}
+                    disabled={disableDates}
+                    initialFocus
+                    className="p-3 bg-white rounded-xl"
+                  />
+                </PopoverContent>
+              </Popover>
+              {selectedSchedule && !date && (
+                 <p className="text-[10px] text-amber-600 font-medium ml-1">Please select a valid {day} date.</p>
+              )}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">Message</Label>
+              <textarea
+                value={message}
+                placeholder="Any specific requests or symptoms?"
+                onChange={(e) => setMessage(e.target.value)}
+                rows={2}
+                className="w-full px-4 py-3 text-sm bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none placeholder:text-slate-400"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-2 p-4 border-t">
+        {/* Footer */}
+        <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
           <Button
             onClick={onClose}
             variant="outline"
-            className="flex-1 text-sm h-9"
+            className="flex-1 h-11 rounded-xl border-slate-200 hover:bg-white hover:text-slate-900 font-medium text-slate-600"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
             disabled={!selectedSchedule || !date}
-            className={`flex-1 text-sm h-9 text-white ${
+            className={`flex-1 h-11 rounded-xl font-bold text-white shadow-lg transition-all ${
               !selectedSchedule || !date
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-slate-300 shadow-none cursor-not-allowed text-slate-500"
+                : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-200 active:scale-[0.98]"
             }`}
           >
-            Confirm
+            Confirm Changes
           </Button>
         </div>
       </div>

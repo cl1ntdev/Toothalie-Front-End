@@ -16,7 +16,8 @@ export default function DeleteAppointmentModal({ appointmentID, onClose, deleteS
     setIsLoading(true);
     setError(null);
     const delStatus = await DeleteAppointmentAPI(appointmentID)
-    if(delStatus.status == "ok"){
+    console.log(delStatus)
+    if(delStatus.status == "success"){
       // onDeleteSuccess()
       deleteSuccess()
       onClose()
