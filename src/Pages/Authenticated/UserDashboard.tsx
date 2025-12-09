@@ -11,7 +11,8 @@ import {
   TableOfContents,
   Settings,
   LayoutDashboard,
-  AlertCircle // Added for the icon
+  AlertCircle,
+  Users,
 } from "lucide-react";
 
 // API Imports
@@ -66,7 +67,7 @@ const DashboardLayout = ({
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 overflow-hidden font-sans text-slate-800 relative">
+    <div className="flex font-ceramon h-screen bg-gray-50 overflow-hidden font-sans text-slate-800 relative">
       
       {/* 1. LOGOUT CONFIRMATION MODAL */}
       {showLogoutConfirmation && (
@@ -198,15 +199,15 @@ const DashboardLayout = ({
 
       {/* Main Content Area */}
       <main className="flex-1 overflow-y-auto relative h-full">
-        <div className="max-w-7xl mx-auto p-6 lg:p-10">
+        <div className="max-w-13xl mx-auto p-6 lg:p-10">
           
           {/* Content Header */}
           <header className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+              <h1 className="text-3xl font-ceramon font-bold text-gray-900 tracking-tight">
                 {navItems.find(i => i.key === currentPane)?.label || 'Dashboard'}
               </h1>
-              <p className="text-gray-500 mt-1">
+              <p className="text-gray-500 mt-1 font-ceramon">
                 Welcome back, {userInfo?.firstName}.
               </p>
             </div>
@@ -245,7 +246,7 @@ export default function UserDashboard() {
   
   const AdminDashboard = [
     { label: "Overview", icon: LayoutDashboard, key: "AdminDashboard" },
-    { label: "Users", icon: User, key: "Users" },
+    { label: "Users", icon: Users, key: "Users" },
     { label: "Appointments", icon: Calendar, key: "Appointments" },
     { label: "Services", icon: User, key: "DentistServices" },
     { label: "Schedules", icon: Clock, key: "Schedules" },

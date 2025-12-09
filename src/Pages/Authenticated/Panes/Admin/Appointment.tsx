@@ -16,13 +16,23 @@ import {
   Plus,
   AlertTriangle,
   Loader2,
-  Calendar,
+  Calendar as CalendarIcon,
   User,
   Clock,
   Stethoscope,
   FileText,
   Activity,
 } from "lucide-react";
+import { DayPicker } from "react-day-picker";
+import "react-day-picker/dist/style.css";
+import { format, parseISO } from "date-fns";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function Appointment() {
   const [appointments, setAppointments] = useState([]);
@@ -34,6 +44,7 @@ export default function Appointment() {
   // State for Create/Edit Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentAppointment, setCurrentAppointment] = useState(null);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 
   // State for Delete Modal
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -60,11 +71,16 @@ export default function Appointment() {
       setSelectedDentistId(dID);
       setAvailableSchedules(allSchedules[dID] || []);
       setAvailableServices(allServices[dID] || []);
-      
+      if (currentAppointment.user_set_date) {
+        setSelectedDate(parseISO(currentAppointment.user_set_date));
+      }
+
       // Set selected schedule if editing
       if (sID) {
         setSelectedScheduleId(sID);
-        const schedule = (allSchedules[dID] || []).find(s => s.scheduleID === sID);
+        const schedule = (allSchedules[dID] || []).find(
+          (s) => s.scheduleID === sID,
+        );
         if (schedule) {
           setSelectedScheduleDay(schedule.day_of_week);
         }
@@ -75,6 +91,7 @@ export default function Appointment() {
       setSelectedScheduleDay(null);
       setAvailableSchedules([]);
       setAvailableServices([]);
+      setSelectedDate(undefined);
     }
   }, [currentAppointment, allSchedules, allServices]);
 
@@ -82,7 +99,7 @@ export default function Appointment() {
   useEffect(() => {
     if (!currentAppointment && users.length > 0 && !selectedDentistId) {
       // Find the first dentist in the users list
-      const firstDentist = users.find(u => u.roles.includes("ROLE_DENTIST"));
+      const firstDentist = users.find((u) => u.roles.includes("ROLE_DENTIST"));
       if (firstDentist) {
         setSelectedDentistId(firstDentist.id);
         setAvailableSchedules(allSchedules[firstDentist.id] || []);
@@ -90,27 +107,27 @@ export default function Appointment() {
       }
     }
   }, [currentAppointment, users, allSchedules, allServices, selectedDentistId]);
-  
+
   const handleDentistChange = (e) => {
     const dID = e.target.value; // This is a String (e.g., "25")
-        
-        // Convert to number for state if your IDs are numbers, 
-        // but keep as is for object lookup if keys are strings.
-        // Ideally, cast to the format your ID is stored in.
-        setSelectedDentistId(dID);
-    
-        if (dID) {
-          // Access using the ID directly. 
-          // Note: allSchedules[25] and allSchedules["25"] usually both work in JS,
-          // but explicitly converting to the key format is safer.
-          setAvailableSchedules(allSchedules[dID] || []);
-          setAvailableServices(allServices[dID] || []);
-        } else {
-          setAvailableSchedules([]);
-          setAvailableServices([]);
-        }
+
+    // Convert to number for state if your IDs are numbers,
+    // but keep as is for object lookup if keys are strings.
+    // Ideally, cast to the format your ID is stored in.
+    setSelectedDentistId(dID);
+
+    if (dID) {
+      // Access using the ID directly.
+      // Note: allSchedules[25] and allSchedules["25"] usually both work in JS,
+      // but explicitly converting to the key format is safer.
+      setAvailableSchedules(allSchedules[dID] || []);
+      setAvailableServices(allServices[dID] || []);
+    } else {
+      setAvailableSchedules([]);
+      setAvailableServices([]);
+    }
   };
-  
+
   const fetchAppointments = useCallback(async () => {
     try {
       setLoading(true);
@@ -119,9 +136,8 @@ export default function Appointment() {
       console.log(response);
       console.log(responseUsers);
 
-      if (response && response.appointments)
-        console.log(response.appointments)
-        setAppointments(response.appointments);
+      if (response && response.appointments) console.log(response.appointments);
+      setAppointments(response.appointments);
       if (responseUsers && responseUsers.users) setUsers(responseUsers.users);
 
       if (response && response.schedules) setAllSchedules(response.schedules);
@@ -160,14 +176,14 @@ export default function Appointment() {
   };
 
   const handleFormSubmit = async (formData) => {
-    console.log(formData)
+    console.log(formData);
     try {
       if (currentAppointment) {
         const res = await updateAppointment({
           appointmentID: currentAppointment.appointment_id,
           ...formData,
         });
-        console.log(res)
+        console.log(res);
       } else {
         await createAppointment(formData);
       }
@@ -189,7 +205,7 @@ export default function Appointment() {
     setIsDeleting(true);
     try {
       const res = await deleteAppointment(IDtoDelete);
-      console.log(res)
+      console.log(res);
       setAppointments((prev) =>
         prev.filter((app) => app.appointment_id !== IDtoDelete),
       );
@@ -217,10 +233,22 @@ export default function Appointment() {
 
   const filteredAppointments = appointments.filter((appointment) => {
     const matchesSearch =
-      appointment.patient_name?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment.dentist_name?.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment.status?.toLowerCase().toLowerCase().includes(searchTerm.toLowerCase()) ||
-      appointment.message?.toLowerCase().toLowerCase().includes(searchTerm.toLowerCase());
+      appointment.patient_name
+        ?.toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      appointment.dentist_name
+        ?.toString()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      appointment.status
+        ?.toLowerCase()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      appointment.message
+        ?.toLowerCase()
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
 
     const matchesStatus =
       filterStatus === "ALL" ||
@@ -253,7 +281,15 @@ export default function Appointment() {
         className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ring-1 ring-inset ${activeStyle}`}
       >
         <span
-          className={`mr-1.5 h-1.5 w-1.5 rounded-full ${status === "pending" ? "bg-yellow-500" : status === "confirmed" ? "bg-green-500" : status === "cancelled" ? "bg-red-500" : "bg-blue-500"}`}
+          className={`mr-1.5 h-1.5 w-1.5 rounded-full ${
+            status === "pending"
+              ? "bg-yellow-500"
+              : status === "confirmed"
+                ? "bg-green-500"
+                : status === "cancelled"
+                  ? "bg-red-500"
+                  : "bg-blue-500"
+          }`}
         ></span>
         {status ? status.charAt(0).toUpperCase() + status.slice(1) : "Unknown"}
       </span>
@@ -262,8 +298,14 @@ export default function Appointment() {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 font-ceramon">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+          <Activity className="w-6 h-6 text-indigo-600 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+        </div>
+        <p className="mt-4 text-slate-500 font-medium animate-pulse">
+          Loading Appointments...
+        </p>
       </div>
     );
 
@@ -274,66 +316,89 @@ export default function Appointment() {
   // Format full date/time
   const formatDateTime = (date, time) => {
     if (!date) return "—";
-    let formatted = new Date(date).toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
-    return time ? `${formatted} • ${time}` : formatted;
+    try {
+      const dateObj = new Date(date);
+      let formattedDate = dateObj.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "Asia/Manila",
+      });
+
+      if (time) {
+        // Assuming time is in "HH:mm:ss" format, we can parse it and format it to PH time as well.
+        const [hours, minutes] = time.split(":");
+        const timeObj = new Date();
+        timeObj.setHours(hours, minutes, 0, 0);
+
+        const formattedTime = timeObj.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+          timeZone: "Asia/Manila",
+        });
+        return `${formattedDate} • ${formattedTime}`;
+      }
+      return formattedDate;
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
+    }
   };
 
   // Helper function to get valid dates for a specific day of week
   const getValidDatesForDay = (dayOfWeek, count = 4) => {
     if (!dayOfWeek) return [];
-    
+
     const dayMap = {
-      'Sunday': 0,
-      'Monday': 1,
-      'Tuesday': 2,
-      'Wednesday': 3,
-      'Thursday': 4,
-      'Friday': 5,
-      'Saturday': 6
+      Sunday: 0,
+      Monday: 1,
+      Tuesday: 2,
+      Wednesday: 3,
+      Thursday: 4,
+      Friday: 5,
+      Saturday: 6,
     };
-    
+
     const targetDay = dayMap[dayOfWeek];
     if (targetDay === undefined) return [];
-    
+
     const validDates = [];
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    // Find the next occurrence of the target day
-    let currentDate = new Date(today);
-    const currentDay = currentDate.getDay();
-    let daysUntilTarget = (targetDay - currentDay + 7) % 7;
-    if (daysUntilTarget === 0) daysUntilTarget = 7; // If today is the target day, get next week's
-    
+    let currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+
+    // Adjust to the first available day, which could be today
+    let daysUntilTarget = (targetDay - currentDate.getDay() + 7) % 7;
     currentDate.setDate(currentDate.getDate() + daysUntilTarget);
-    
-    // Get the next 'count' valid dates
+
     for (let i = 0; i < count; i++) {
       validDates.push(new Date(currentDate));
-      currentDate.setDate(currentDate.getDate() + 7); // Add 7 days for next week
+      currentDate.setDate(currentDate.getDate() + 7);
     }
-    
+
     return validDates;
   };
 
+  const dayOfWeekMap = {
+    Sunday: 0,
+    Monday: 1,
+    Tuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6,
+  };
+  const disabledDays = selectedScheduleDay
+    ? Object.values(dayOfWeekMap).filter(
+        (day) => day !== dayOfWeekMap[selectedScheduleDay],
+      )
+    : [];
+
   return (
-    <div className="p-6 bg-gray-50 min-h-screen font-sans text-gray-900">
+    <div className="p-6 bg-gray-50 font-ceramon  min-h-screen font-sans text-gray-900">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
-              Appointments
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Manage patient schedules and status
-            </p>
-          </div>
-
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative group">
               <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
@@ -462,10 +527,12 @@ export default function Appointment() {
                       {/* SERVICES / TYPE */}
                       <td className="p-4 text-sm text-gray-700">
                         <span className="font-medium">
-                          {a.service_name || 
-                           a.service_type_name || 
-                           a.appointment_type || 
-                           (a.appointment_type_id ? `Type #${a.appointment_type_id}` : "—")}
+                          {a.service_name ||
+                            a.service_type_name ||
+                            a.appointment_type ||
+                            (a.appointment_type_id
+                              ? `Type #${a.appointment_type_id}`
+                              : "—")}
                         </span>
 
                         {a.emergency === 1 && (
@@ -500,7 +567,7 @@ export default function Appointment() {
                   <tr>
                     <td colSpan="7" className="p-12 text-center">
                       <div className="flex flex-col items-center justify-center text-gray-400">
-                        <Calendar className="h-12 w-12 mb-3 text-gray-300" />
+                        <CalendarIcon className="h-12 w-12 mb-3 text-gray-300" />
                         <p className="text-lg font-medium text-gray-900">
                           No appointments found
                         </p>
@@ -548,6 +615,9 @@ export default function Appointment() {
                   const fd = new FormData(e.target);
                   const data = Object.fromEntries(fd.entries());
                   data.emergency = fd.get("emergency") === "on" ? 1 : 0;
+                  if (selectedDate) {
+                    data.user_set_date = format(selectedDate, "yyyy-MM-dd");
+                  }
                   handleFormSubmit(data);
                 }}
               >
@@ -584,7 +654,6 @@ export default function Appointment() {
                       </div>
 
                       {/* Dentist Dropdown */}
-                      {/* Dentist Dropdown */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Dentist
@@ -592,10 +661,10 @@ export default function Appointment() {
                         <select
                           name="dentist_id"
                           // CHANGE 1: Use value linked to state
-                          value={selectedDentistId || ""} 
+                          value={selectedDentistId || ""}
                           required
                           className="block w-full rounded-lg border-gray-300 border text-sm py-2 bg-white"
-                          onChange={handleDentistChange} 
+                          onChange={handleDentistChange}
                         >
                           <option value="" disabled>
                             Select dentist
@@ -620,94 +689,65 @@ export default function Appointment() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Date */}
-                      {/* Date Input */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           User Set Date
                         </label>
-                        <div className="relative">
-                          <Calendar className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                          <input
-                            type="date"
-                            name="user_set_date"
-                            id="user_set_date_input"
-                            required
-                            // Add step="7" to encourage weekly jumps (works on some browsers/mobile)
-                            step="7"
-                            defaultValue={
-                              currentAppointment?.user_set_date
-                                ? new Date(currentAppointment.user_set_date)
-                                    .toISOString()
-                                    .split("T")[0]
-                                : ""
-                            }
-                            // Min is dynamically updated by the Schedule Select, but defaults to today
-                            min={new Date().toISOString().split("T")[0]}
-                            className="pl-9 block w-full rounded-lg border-gray-300 border text-sm py-2"
-                            
-                            // Strict Validation Logic
-                            onChange={(e) => {
-                              // 1. If no schedule selected, do nothing
-                              if (!selectedScheduleDay) return;
-                      
-                              const selectedDate = new Date(e.target.value);
-                              
-                              // Handle Invalid Date input (e.g. user clears the field)
-                              if (isNaN(selectedDate.getTime())) return;
-                      
-                              const dayName = selectedDate.toLocaleDateString("en-US", {
-                                weekday: "long",
-                              });
-                      
-                              // 2. Check if day matches
-                              if (dayName !== selectedScheduleDay) {
-                                e.preventDefault();
-                                
-                                // Find the valid date closest to what they tried to pick
-                                // or just default to the next valid one
-                                const validDates = getValidDatesForDay(selectedScheduleDay, 1);
-                                const nextValidDate = validDates[0].toISOString().split("T")[0];
-                      
-                                alert(
-                                  `You cannot select ${dayName}. The schedule slot is strictly for ${selectedScheduleDay}s.\n\nReverting to the next available ${selectedScheduleDay}: ${validDates[0].toLocaleDateString()}`
-                                );
-                      
-                                // 3. FORCE REVERT THE VALUE
-                                e.target.value = nextValidDate;
-                              }
-                            }}
-                          />
-                          
-                          {/* Keep your Quick Select buttons, they are excellent UX */}
-                          {selectedScheduleDay && (
-                            <div className="mt-2">
-                              <div className="flex flex-wrap gap-2 mt-1">
-                                <span className="text-xs text-gray-600 self-center">Quick select:</span>
-                                {getValidDatesForDay(selectedScheduleDay, 4).map((date, idx) => (
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !selectedDate && "text-muted-foreground",
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {selectedDate ? (
+                                format(selectedDate, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0">
+                            <DayPicker
+                              mode="single"
+                              selected={selectedDate}
+                              onSelect={setSelectedDate}
+                              initialFocus
+                              disabled={[
+                                { dayOfWeek: disabledDays },
+                                { before: new Date() },
+                              ]}
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        {selectedScheduleDay && (
+                          <div className="mt-2">
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              <span className="text-xs text-gray-600 self-center">
+                                Quick select:
+                              </span>
+                              {getValidDatesForDay(selectedScheduleDay, 4).map(
+                                (date, idx) => (
                                   <button
                                     key={idx}
                                     type="button"
                                     onClick={(e) => {
                                       e.preventDefault();
-                                      const dateInput = document.getElementById("user_set_date_input");
-                                      if (dateInput) {
-                                        dateInput.value = date.toISOString().split("T")[0];
-                                      }
+                                      setSelectedDate(date);
                                     }}
                                     className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded border border-blue-200 hover:bg-blue-100 transition-colors cursor-pointer"
                                   >
-                                    {date.toLocaleDateString("en-US", {
-                                      month: "short",
-                                      day: "numeric",
-                                    })}
+                                    {format(date, "MMM d")}
                                   </button>
-                                ))}
-                              </div>
+                                ),
+                              )}
                             </div>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </div>
-                      
 
                       {/* Schedule Dropdown */}
                       <div>
@@ -716,7 +756,7 @@ export default function Appointment() {
                         </label>
                         <select
                           name="schedule_id"
-                          defaultValue={currentAppointment?.schedule_id || ""}
+                          value={selectedScheduleId || ""}
                           required
                           className="block w-full rounded-lg border-gray-300 border text-sm py-2 bg-white"
                           onChange={(e) => {
@@ -724,25 +764,21 @@ export default function Appointment() {
                             setSelectedScheduleId(scheduleId);
                             // Find the selected schedule to get its day of week
                             const selectedSchedule = availableSchedules.find(
-                              (sch) => sch.scheduleID.toString() === scheduleId
+                              (sch) => sch.scheduleID.toString() === scheduleId,
                             );
                             if (selectedSchedule) {
                               const dayOfWeek = selectedSchedule.day_of_week;
-                                      setSelectedScheduleDay(dayOfWeek);
-                              
-                                      // --- NEW LOGIC START ---
-                                      // Automatically set the date input to the next valid date
-                                      const validDates = getValidDatesForDay(dayOfWeek, 1);
-                                      if (validDates.length > 0) {
-                                        const nextValidDateStr = validDates[0].toISOString().split("T")[0];
-                                        const dateInput = document.getElementById("user_set_date_input");
-                                        
-                                        if (dateInput) {
-                                          dateInput.value = nextValidDateStr;
-                                          // Set the 'min' attribute to this date so they can't pick past dates
-                                          dateInput.min = nextValidDateStr;
-                                        }
-                                      }
+                              setSelectedScheduleDay(dayOfWeek);
+
+                              // --- NEW LOGIC START ---
+                              // Automatically set the date input to the next valid date
+                              const validDates = getValidDatesForDay(
+                                dayOfWeek,
+                                1,
+                              );
+                              if (validDates.length > 0) {
+                                setSelectedDate(validDates[0]);
+                              }
                             } else {
                               setSelectedScheduleDay(null);
                             }
@@ -759,7 +795,8 @@ export default function Appointment() {
                         </select>
                         {selectedScheduleDay && (
                           <p className="text-xs text-gray-500 mt-1">
-                            Selected slot is on: <strong>{selectedScheduleDay}</strong>
+                            Selected slot is on:{" "}
+                            <strong>{selectedScheduleDay}</strong>
                           </p>
                         )}
                       </div>

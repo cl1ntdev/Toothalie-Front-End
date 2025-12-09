@@ -141,13 +141,6 @@ export default function Logs() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold text-gray-800">Activity Logs</h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Monitor system actions, security events, and user modifications.
-        </p>
-      </div>
 
       {/* Filters Container */}
       <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
