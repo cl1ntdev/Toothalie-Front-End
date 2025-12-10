@@ -13,8 +13,9 @@ import {
   LayoutDashboard,
   AlertCircle,
   Users,
+  NotebookPen,
 } from "lucide-react";
-
+import DisableAccount from "../ErrorRoute/DisableAccount";
 // API Imports
 import { getDentistData } from "@/API/Authenticated/GetDentist";
 import GetUserInfo from "@/API/Authenticated/GetUserInfoAPI";
@@ -248,6 +249,7 @@ export default function UserDashboard() {
     { label: "Overview", icon: LayoutDashboard, key: "AdminDashboard" },
     { label: "Users", icon: Users, key: "Users" },
     { label: "Appointments", icon: Calendar, key: "Appointments" },
+    { label: "Reminders", icon: NotebookPen, key: "Reminders" },
     { label: "Services", icon: User, key: "DentistServices" },
     { label: "Schedules", icon: Clock, key: "Schedules" },
     { label: "System Logs", icon: TableOfContents, key: "Logs" },
@@ -257,14 +259,18 @@ export default function UserDashboard() {
   const [currentPane, setCurrentPane] = useState("Dashboard");
   const [isLoading, setIsLoading] = useState(true);
   const [openProfile, setOpenProfile] = useState(false);
-
+  const [isDisable,setIsDisable] = useState(false)
+  
   useEffect(() => {
     async function fetchUserInfo() {
       try {
         const data = await GetUserInfo();
         console.log("Fetched User:", data);
         setUserInfo(data.user);
-        
+        if(data.user.disable){
+          console.log("disabled")
+          setIsDisable(true)
+        }
         if (data.user?.roles) {
            let roles = data.user.roles;
            if (roles.length === 1 && typeof roles[0] === "string" && roles[0].startsWith("[")) {
@@ -302,6 +308,12 @@ export default function UserDashboard() {
         </div>
       </div>
     );
+  }
+  
+  if(isDisable){
+    return(
+      <DisableAccount />
+    )
   }
 
   let roles = userInfo.roles;
