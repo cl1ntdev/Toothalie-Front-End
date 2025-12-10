@@ -65,7 +65,6 @@ export default function SettingsService() {
              });
      
       setOriginalIds(Array.from(selected));
-      setMsg({ type: 'success', text: 'Services updated successfully!' });
     } catch {
       setMsg({ type: 'error', text: 'Failed to save changes. Please try again.' });
     } finally {

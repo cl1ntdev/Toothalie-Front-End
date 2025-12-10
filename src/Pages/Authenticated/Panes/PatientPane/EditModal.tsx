@@ -131,7 +131,7 @@ export default function EditModal({
   }
 
   if (!appointmentInfo) return null;
-
+  console.log(appointmentInfo)
   return (
     <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 font-sans animate-in fade-in duration-200">
       <div className="bg-white rounded-3xl w-full max-w-lg shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-200 border border-slate-100">
@@ -162,7 +162,7 @@ export default function EditModal({
             <div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Dentist</p>
               <p className="text-slate-900 font-bold text-lg leading-tight">
-                {appointmentInfo.dentist.name}
+                {appointmentInfo.dentist.first_name + " " + appointmentInfo.dentist.last_name }
               </p>
               <p className="text-sm text-slate-500 font-medium">
                 {appointmentInfo.dentist.specialty}

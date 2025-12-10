@@ -128,8 +128,13 @@ export default function Schedule() {
       fetchSchedules();
       handleModalClose();
     } catch (error) {
+      setAlert({
+               show: true,
+               type: "error", // success, error, warning, info
+               title: "Failed",
+               message: "Invalid Input"
+             });
       console.error("Error saving schedule", error);
-      alert("Failed to save schedule");
     }
   };
 

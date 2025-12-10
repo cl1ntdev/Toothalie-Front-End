@@ -159,9 +159,9 @@ export default function AppUserCreate({ onClose, onSuccess }) {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              {/*<p className="text-xs text-gray-500 mt-1">
                 Must be at least 8 characters long.
-              </p>
+              </p>*/}
             </div>
 
           </form>

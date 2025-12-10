@@ -26,7 +26,7 @@ interface ViewModalProps {
 
 export default function ViewAppointmentModal({ appointmentData, onClose }: ViewModalProps) {
   const [view, setView] = useState<'details' | 'reminders'>('details');
-
+  console.log(appointmentData)
   if (!appointmentData) return null;
 
   const { appointment, dentist, schedules } = appointmentData;

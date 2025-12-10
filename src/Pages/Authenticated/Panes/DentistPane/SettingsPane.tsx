@@ -205,7 +205,7 @@ export function SettingsPane() {
       {/* Header */}
       <div className="flex justify-between items-end border-b border-gray-200 pb-4">
         <div>
-          <h1 className="text-3xl font-bold font-ceramon text-slate-900">Account Settings</h1>
+          <h1 className="text-3xl font-bold font-ceramon text-slate-900">Weekly Schedule</h1>
           <p className="text-slate-500 mt-1">Manage your profile details and availability.</p>
         </div>
         <button 
@@ -218,44 +218,7 @@ export function SettingsPane() {
         </button>
       </div>
 
-      {/* Dentist Profile Card */}
-      {dentistInfo && (
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-          <div className="bg-slate-50/50 px-6 py-4 border-b border-slate-100 flex items-center gap-3">
-            <div className="p-2 bg-indigo-100 text-indigo-600 rounded-lg">
-              <User size={20} />
-            </div>
-            <h2 className="text-lg font-bold text-slate-800">Profile Information</h2>
-          </div>
-          
-          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Full Name</label>
-              <p className="text-lg font-semibold text-slate-900">{dentistInfo.first_name} {dentistInfo.last_name}</p>
-            </div>
-            
-            <div>
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block flex items-center gap-1">
-                <Mail size={12} /> Email Address
-              </label>
-              <p className="text-base text-slate-700 font-medium">{dentistInfo.email}</p>
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block flex items-center gap-1">
-                <Shield size={12} /> Assigned Roles
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {JSON.parse(dentistInfo.roles).map((role: string, idx: number) => (
-                  <span key={idx} className="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-full border border-slate-200">
-                    {role.replace('ROLE_', '')}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      
 
       {/* Schedule Management Section */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">

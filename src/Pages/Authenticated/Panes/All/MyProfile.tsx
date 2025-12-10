@@ -51,10 +51,10 @@ export function MyProfile({ onClose }: AdminProps) {
       setPasswordError("New passwords do not match.");
       return;
     }
-    if (passwordData.newPassword.length < 6) {
-      setPasswordError("Password must be at least 6 characters.");
-      return;
-    }
+    // if (passwordData.newPassword.length < 6) {
+    //   setPasswordError("Password must be at least 6 characters.");
+    //   return;
+    // }
 
     // Simulate API call
     console.log("Updating password...", passwordData);
