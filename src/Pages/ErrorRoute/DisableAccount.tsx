@@ -10,7 +10,7 @@ export default function DisableAccount() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+    <div className="min-h-screen font-ceramon flex flex-col items-center justify-center bg-gray-100 px-4">
       <div className="text-center space-y-6 max-w-lg">
         {/* Large 403 Text */}
         <h1 className="text-9xl font-black text-gray-200">ACCOUNT DISABLED</h1>
@@ -18,10 +18,10 @@ export default function DisableAccount() {
         {/* Message Container */}
         <div className="-mt-12 relative">
           <h2 className="text-3xl font-bold text-gray-800">
-            Access Denied
+            Access Denied. Your Account has been disabled
           </h2>
           <p className="text-gray-600 mt-2">
-            please contact administration
+            Please Contact Administration
           </p>
         </div>
 

@@ -34,7 +34,12 @@ export default function DentistService() {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [IDtoDelete, setIDtoDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
+ 
+  const [selectedServiceFilter, setSelectedServiceFilter] = useState('All'); 
+  const uniqueServiceNames = ['All', ...new Set(dentistServices.map(ds => ds.service_name).filter(Boolean))];
+  // ... inside the component, near uniqueServiceTypes ...
+  
+  // ADD THIS LINE:
   const [alert, setAlert] = useState({ 
        show: false, 
        type: "info", 
@@ -147,15 +152,21 @@ export default function DentistService() {
   const uniqueServiceTypes = ['All', ...new Set(dentistServices.map(ds => ds.service_type_name).filter(Boolean))];
 
   const filteredDentistServices = dentistServices.filter((ds) => {
+    // console.log(ds)
     const matchesSearch =
       ds.dentist_first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ds.dentist_last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ds.service_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       ds.service_type_name?.toLowerCase().includes(searchTerm.toLowerCase());
-
+      ds.service_name?.toLowerCase().includes(searchTerm.toLowerCase());
+  
     const matchesCategory = selectedFilter === 'All' || ds.service_type_name === selectedFilter;
-
-    return matchesSearch && matchesCategory;
+    
+    // ADD THIS LINE:
+    const matchesService = selectedServiceFilter === 'All' || ds.service_name === selectedServiceFilter;
+  
+    // UPDATE RETURN:
+    return matchesSearch && matchesCategory && matchesService;
   });
 
   const getServiceBadge = (type) => {
@@ -207,6 +218,21 @@ export default function DentistService() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
+            {/* NEW: Service Name Filter */}
+                <div className="relative flex-1 md:flex-none">
+                  <select
+                    className="w-full appearance-none pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-sm font-sans text-slate-600 cursor-pointer hover:bg-slate-50 transition-colors shadow-sm"
+                    value={selectedServiceFilter}
+                    onChange={(e) => setSelectedServiceFilter(e.target.value)}
+                  >
+                    {uniqueServiceNames.map((name) => (
+                      <option key={name} value={name}>
+                        {name === 'All' ? 'All Services' : name}
+                      </option>
+                    ))}
+                  </select>
+                  <BriefcaseMedical className="absolute right-3 top-2.5 h-4 w-4 text-slate-400 pointer-events-none" />
+                </div>
 
             {/* Filter Dropdown */}
             <div className="relative flex-1 md:flex-none">

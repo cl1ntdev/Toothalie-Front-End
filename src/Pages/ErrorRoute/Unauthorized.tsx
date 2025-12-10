@@ -10,7 +10,7 @@ export default function Unauthorized() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 px-4">
+    <div className="min-h-screen font-ceramon flex flex-col items-center justify-center bg-gray-100 px-4">
       <div className="text-center space-y-6 max-w-lg">
         {/* Large 403 Text */}
         <h1 className="text-9xl font-black text-gray-200">403</h1>
