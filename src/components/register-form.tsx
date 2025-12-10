@@ -5,9 +5,17 @@ import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
 import { useState } from "react"
 import { registerUser } from "@/API/Authenticated/RegisterUser"
+import Alert from "@/components/_myComp/Alerts";
+
 export function RegisterForm({ className, ...props }: React.ComponentProps<"form">) {
   const navigate = useNavigate()
-
+  const [alert, setAlert] = useState({ 
+       show: false, 
+       type: "info", 
+       title: "", 
+       message: "" 
+     });
+ 
   const [form, setForm] = useState({
     username: "",
     first_name: "",
@@ -23,10 +31,19 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"form
   }
 
   const handleRegister = async () => {
+    console.log('working')
+    console.log('working')
     if (form.password.trim() !== form.confPassword.trim()) {
-      alert("Passwords do not match.")
+      setAlert({
+               show: true,
+               type: "error", // success, error, warning, info
+               title: "Password does not match! ",
+               message: "Input matching passwords "
+             });
       return
     }
+    console.log('working2')
+    
 
     const created_at = new Date().toISOString()
     const role = ["ROLE_PATIENT"] 
@@ -44,11 +61,22 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"form
     console.log("Register Response:", res)
 
     if (!res || res.status !== 'ok') {
-      alert("Registration failed")
+      setAlert({
+               show: true,
+               type: "error", // success, error, warning, info
+               title: "Failed to Register ",
+               message: "Failed to register account. Please try again later "
+             });
       return
+    }else{
+      setAlert({
+               show: true,
+               type: "success", // success, error, warning, info
+               title: "Registration Complete ",
+               message: "Registered account successfuly "
+             });
     }
 
-    alert("Account successfully created!")
     navigate(`/login`)
   }
 
@@ -131,6 +159,16 @@ export function RegisterForm({ className, ...props }: React.ComponentProps<"form
         Already have an account?{" "}
         <Link to="/login" className="underline underline-offset-4">Login</Link>
       </div>
+      
+      <Alert 
+                      isOpen={alert.show} 
+                      type={alert.type}
+                      title={alert.title}
+                      message={alert.message}
+                      onClose={() => setAlert({ ...alert, show: false })} 
+                    />
+        
+
     </form>
   )
 }
