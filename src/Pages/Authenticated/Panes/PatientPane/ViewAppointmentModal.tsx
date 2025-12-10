@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   CalendarClock,
   MapPin, 
+  Activity,
   FileText 
 } from "lucide-react";
 
@@ -75,7 +76,8 @@ export default function ViewAppointmentModal({ appointmentData, onClose }: ViewM
   const StatusIcon = statusCfg.icon;
   const TypeIcon = typeCfg.icon;
   const isEmergency = appointment.emergency === 1;
-
+  const service_name = appointment.service_name
+  console.log(service_name)
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200 font-sans">
       <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200 transition-all border border-slate-100">
@@ -91,6 +93,7 @@ export default function ViewAppointmentModal({ appointmentData, onClose }: ViewM
                   Emergency Appointment
                 </div>
               )}
+             
               
               <div className="flex items-start justify-between mt-4"> {/* Added margin top to clear emergency banner */}
                 <div className="flex items-center gap-4">
@@ -115,7 +118,29 @@ export default function ViewAppointmentModal({ appointmentData, onClose }: ViewM
             </div>
 
             <div className="h-px bg-slate-100 mx-6"></div>
-
+            {/* ================= SERVICE SECTION ================= */}
+            <div className="px-6 py-4">
+              <div className="bg-indigo-50/50 border border-indigo-100 rounded-2xl p-4 flex items-center gap-4 group transition-colors hover:bg-indigo-50 hover:border-indigo-200">
+                
+                {/* Icon Box */}
+                <div className="bg-white p-3 rounded-xl border border-indigo-100 shadow-sm text-indigo-600 group-hover:scale-105 transition-transform">
+                  <Activity className="w-5 h-5" />
+                </div>
+            
+                {/* Text Content */}
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold text-indigo-400 uppercase tracking-wider mb-0.5">
+                    Scheduled Service
+                  </p>
+                  <p className="text-base font-bold text-slate-800 leading-tight">
+                    {service_name || "General Consultation"}
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="h-px bg-slate-100 mx-6 mb-2"></div>
+            {/* ================= END SERVICE SECTION ================= */}
             {/* Scrollable Content */}
             <div className="overflow-y-auto px-6 py-6 space-y-6 flex-1 bg-slate-50/30">
               
