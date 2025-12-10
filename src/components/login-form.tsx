@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link } from "react-router-dom"
+import Alert from "@/components/_myComp/Alerts";
 
 import LoginAuth from "@/API/LoginAuth" // checking username and password only
 import { UserLoginInfoClass } from "@/Classes/UserLogin"
 import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
-import Alert from "./_myComp/Alerts"
 import { IconFlagSearch } from "@tabler/icons-react"
 import { authenticateUser } from "@/API/AuthenticateUser"
 
@@ -22,7 +22,13 @@ export function LoginForm({
   const [submitButton,setSubmitButton] = useState<string>("Login") 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const navigate = useNavigate()
-  
+  const [alert, setAlert] = useState({ 
+       show: false, 
+       type: "info", 
+       title: "", 
+       message: "" 
+     });
+ 
   useEffect(()=>{
     const remember = async () => {
       const userInfoStr = localStorage.getItem('userInfo');
@@ -50,21 +56,38 @@ export function LoginForm({
   
   
   const handleLogin = async() =>{
-    setIsSubmitting(true);
-    const user = new UserLoginInfoClass(userName,password)
-    setSubmitButton("Loading Please Wait ...")
-    const userLoginInfo = await LoginAuth(user) // this returns only a token
-    const userLoginID = userLoginInfo.id
-    if(userLoginInfo.status != "error"){
+    
+    try{
+      setIsSubmitting(true);
+      const user = new UserLoginInfoClass(userName,password)
+      // setSubmitButton("Loading Please Wait ...")
+      const userLoginInfo = await LoginAuth(user) // this returns only a token
       console.log(userLoginInfo)
-      localStorage.setItem('userInfo',JSON.stringify(userLoginInfo))
-      navigate(`/user`)      
-    }else{
-      console.log("Error Login")
-      setIsWrong(true)
-  
+      const userLoginID = userLoginInfo.id
+      if(userLoginInfo.code == 401){
+        setAlert({
+                 show: true,
+                 type: "error", // success, error, warning, info
+                 title: "Invalid Credentials",
+                 message: "Please input correct information"
+               });
+        setIsSubmitting(false);
+        
+        
+      }else{
+        localStorage.setItem('userInfo',JSON.stringify(userLoginInfo))
+        navigate(`/user`)  
+      }
+            
+    }catch(e){
+      setAlert({
+               show: true,
+               type: "error", // success, error, warning, info
+               title: "Invalid Credentials",
+               message: "Please input correct information"
+             });
     }
-    console.log(userLoginInfo)
+    
     setIsSubmitting(false);
   }
   
@@ -130,6 +153,13 @@ export function LoginForm({
       {isWrong && (
         <Alert status="error_stat_1" />
       )}
+      <Alert 
+                      isOpen={alert.show} 
+                      type={alert.type}
+                      title={alert.title}
+                      message={alert.message}
+                      onClose={() => setAlert({ ...alert, show: false })} 
+                    />
     </form>
     
   )
