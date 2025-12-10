@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { ArrowLeft, User, Mail, Shield, Lock, Save, X, Camera } from 'lucide-react'
 import GetUserInfo from '@/API/Authenticated/GetUserInfoAPI'
 import ChangePassword from '@/API/Authenticated/ChangePassword'
+import Alert from '@/components/_myComp/Alerts'
 type AdminProps = {
   onClose: () => void
 }
@@ -17,6 +18,14 @@ export function MyProfile({ onClose }: AdminProps) {
     newPassword: '',
     confirmPassword: ''
   });
+  const [alert, setAlert] = useState({ 
+        show: false, 
+        type: "info", 
+        title: "", 
+        message: "" 
+      });
+  
+
   const [passwordError, setPasswordError] = useState('');
   const [passwordSuccess, setPasswordSuccess] = useState('');
 
@@ -58,14 +67,31 @@ export function MyProfile({ onClose }: AdminProps) {
 
     // Simulate API call
     console.log("Updating password...", passwordData);
-    setPasswordSuccess("Password updated successfully!");
     const result = await ChangePassword(passwordData.currentPassword, passwordData.newPassword, passwordData.confirmPassword );
     console.log(result)
     if(result.status == 'ok'){
       setIsChangingPassword(false);
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
       setPasswordSuccess('');
-    }else{
+      setPasswordSuccess("Password updated successfully!");
+      
+      setAlert({
+               show: true,
+               type: "success", // success, error, warning, info
+               title: "Changed Successfully",
+               message: "Your password was successfully changed"
+             });
+     
+     
+
+    }else if(result.status == 'error'){
+      
+      setAlert({
+               show: true,
+               type: "error", // success, error, warning, info
+               title: "Error Changin",
+               message: "Make sure passwords match!"
+             });
       setIsChangingPassword(false);
       setPasswordSuccess('Error');
     }
@@ -232,12 +258,7 @@ export function MyProfile({ onClose }: AdminProps) {
                                     />
                                 </div>
 
-                                {passwordError && (
-                                    <p className="text-red-500 text-xs font-medium bg-red-50 p-2 rounded">{passwordError}</p>
-                                )}
-                                {passwordSuccess && (
-                                    <p className="text-green-600 text-xs font-medium bg-green-50 p-2 rounded">{passwordSuccess}</p>
-                                )}
+                               
 
                                 <div className="flex gap-2 pt-2">
                                     <button 
@@ -267,6 +288,16 @@ export function MyProfile({ onClose }: AdminProps) {
           </div>
         )}
       </div>
+      
+      <Alert 
+                      isOpen={alert.show} 
+                      type={alert.type}
+                      title={alert.title}
+                      message={alert.message}
+                      onClose={() => setAlert({ ...alert, show: false })} 
+                    />
+        
+
     </div>
   )
 }
