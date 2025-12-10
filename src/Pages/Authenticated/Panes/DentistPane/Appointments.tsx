@@ -97,6 +97,7 @@ export default function Appointments() {
               message: appt.message,
               created_at: appt.created_at,
               appointment_date: appt.appointment_date,
+              service_name: appt.service_name,
             };
           });
 
@@ -163,6 +164,7 @@ export default function Appointments() {
   };
 
   const handleView = (appointment: any) => {
+    console.log(appointment)
     setModalMode('details');
     // console.log(viewAppointment)
     // Initialize with one empty day when opening
@@ -573,6 +575,10 @@ export default function Appointments() {
                                     <div>
                                         <span className="block text-xs text-gray-500 mb-1">Time Slot</span>
                                         <span className="font-semibold text-gray-900">{viewAppointment.time_slot}</span>
+                                    </div>
+                                    <div>
+                                        <span className="block text-xs text-gray-500 mb-1">Service</span>
+                                        <span className="font-semibold text-gray-900">{viewAppointment.service_name}</span>
                                     </div>
                                 </div>
                                 
