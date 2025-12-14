@@ -117,7 +117,7 @@ export default function AppUserCreate({ onClose, onSuccess }) {
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white"
               >
-                <option value="ROLE_USER">User</option>
+                {/*<option value="ROLE_USER">User</option>*/}
                 <option value="ROLE_DENTIST">Dentist</option>
                 <option value="ROLE_ADMIN">Admin</option>
                 <option value="ROLE_PATIENT">Patient</option>

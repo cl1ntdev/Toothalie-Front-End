@@ -202,7 +202,7 @@ export default function AppUser() {
                       onChange={(e) => setRoleFilter(e.target.value)}
                     >
                       <option value="ALL">All Roles</option>
-                      <option value="ROLE_USER">User</option>
+                      {/*<option value="ROLE_USER">User</option>*/}
                       <option value="ROLE_DENTIST">Dentist</option>
                       <option value="ROLE_ADMIN">Admin</option>
                     </select>
