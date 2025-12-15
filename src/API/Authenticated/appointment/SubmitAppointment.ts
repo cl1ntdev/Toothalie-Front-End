@@ -1,13 +1,13 @@
 export default async function SubmitAppointment(
-  dentistID:string,
-  day:string,
-  time:string,
-  emergency:boolean,
-  familyBooking:boolean,
-  date:string | null,
-  message:string,
-  serviceID: string | null
-){
+  dentistID: string,
+  day: string,
+  time: string,
+  emergency: boolean,
+  familyBooking: boolean,
+  date: string | null,
+  message: string,
+  serviceID: string | null,
+) {
   // console.log(patientID)
   // console.log(dentistID)
   // console.log(day)
@@ -15,16 +15,16 @@ export default async function SubmitAppointment(
   // console.log(emergency)
   // console.log(familyBooking)
   // console.log(date)
-  console.log(serviceID)
-  
-const userInfo = JSON.parse(localStorage.getItem('userInfo'))
-const token = userInfo.token
-  
-  const submit = await fetch('http://127.0.0.1:8000/api/add-appointment',{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json",
-      "Authorization": `Bearer ${token}`, 
+  console.log(serviceID);
+
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const token = userInfo.token;
+
+  const submit = await fetch("/api/add-appointment", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
       dentistID,
@@ -34,14 +34,14 @@ const token = userInfo.token
       familyBooking,
       date,
       message,
-      serviceID
-    })
-  })
-  if(!submit.ok){
+      serviceID,
+    }),
+  });
+  if (!submit.ok) {
     const errorData = await submit.json();
     throw new Error(errorData.message || "Failed to submit appointment");
   }
-  
-  console.log(submit)
-  return submit
+
+  console.log(submit);
+  return submit;
 }

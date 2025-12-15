@@ -1,7 +1,8 @@
 export async function authenticateUser(token: string) {
-  console.log(token)
+  console.log(token);
   try {
-    const res = await fetch('http://127.0.0.1:8000/api/auth/me', {
+    const res = await fetch("/api/auth/me", {
+      // const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -11,7 +12,6 @@ export async function authenticateUser(token: string) {
 
     const data = await res.json();
     return { status: "ok", user: data };
-    
   } catch {
     return { status: "error" };
   }

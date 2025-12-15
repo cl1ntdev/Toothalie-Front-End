@@ -1,15 +1,15 @@
-export async function saveReminder(payload,appointmentID: string) {
-  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+export async function saveReminder(payload, appointmentID: string) {
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-  console.log(payload)
-  console.log(appointmentID)
-  const result = await fetch("http://127.0.0.1:8000/api/save-reminder", {
+  console.log(payload);
+  console.log(appointmentID);
+  const result = await fetch("/api/save-reminder", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${userInfo.token}`
+      Authorization: `Bearer ${userInfo.token}`,
     },
-    body: JSON.stringify({ payload ,appointmentID})
+    body: JSON.stringify({ payload, appointmentID }),
   });
 
   const data = await result.json();
@@ -18,16 +18,16 @@ export async function saveReminder(payload,appointmentID: string) {
 }
 
 export async function getReminder(appointmentID: string) {
-  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-  console.log(appointmentID)
-  const result = await fetch("http://127.0.0.1:8000/api/get-reminder", {
+  console.log(appointmentID);
+  const result = await fetch("/api/get-reminder", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${userInfo.token}`
+      Authorization: `Bearer ${userInfo.token}`,
     },
-    body: JSON.stringify({ appointmentID })
+    body: JSON.stringify({ appointmentID }),
   });
 
   const data = await result.json();
@@ -37,15 +37,15 @@ export async function getReminder(appointmentID: string) {
 
 // Update Reminder
 export async function updateReminder(appointmentID: string, payload: any) {
-  const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
-  const result = await fetch("http://127.0.0.1:8000/api/update-reminder", {
+  const result = await fetch("/api/update-reminder", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${userInfo.token}`
+      Authorization: `Bearer ${userInfo.token}`,
     },
-    body: JSON.stringify({ appointmentID, payload })  // Match backend
+    body: JSON.stringify({ appointmentID, payload }), // Match backend
   });
 
   const data = await result.json();

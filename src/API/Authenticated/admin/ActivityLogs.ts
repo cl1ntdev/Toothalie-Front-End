@@ -17,11 +17,13 @@ export interface ActivityLogFilters {
   offset?: number;
 }
 
-export async function getActivityLogs(filters?: ActivityLogFilters): Promise<ActivityLogsResponse> {
+export async function getActivityLogs(
+  filters?: ActivityLogFilters,
+): Promise<ActivityLogsResponse> {
   try {
     const userInfoStr = localStorage.getItem("userInfo");
     if (!userInfoStr) throw new Error("No user info found");
-    
+
     const userInfo = JSON.parse(userInfoStr);
     const token = userInfo?.token;
     if (!token) throw new Error("Unauthorized: No token found");
@@ -33,20 +35,20 @@ export async function getActivityLogs(filters?: ActivityLogFilters): Promise<Act
     if (filters?.action) params.append("action", filters.action);
     if (filters?.dateFrom) params.append("dateFrom", filters.dateFrom);
     if (filters?.dateTo) params.append("dateTo", filters.dateTo);
-    
+
     // Pagination defaults
     params.append("limit", (filters?.limit ?? 50).toString());
     params.append("offset", (filters?.offset ?? 0).toString());
 
     const response = await fetch(
-      `http://127.0.0.1:8000/api/admin/activity-logs?${params.toString()}`,
+      `/api/admin/activity-logs?${params.toString()}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      }
+      },
     );
 
     const text = await response.text();

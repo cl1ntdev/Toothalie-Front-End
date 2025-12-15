@@ -6,7 +6,7 @@ export async function getServices() {
     const token = userInfo?.token;
     if (!token) throw new Error("No token");
 
-    const response = await fetch("http://127.0.0.1:8000/api/get-services", {
+    const response = await fetch("/api/get-services", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -25,4 +25,3 @@ export async function getServices() {
     throw error;
   }
 }
-
